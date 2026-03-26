@@ -1,0 +1,62 @@
+import Image from 'next/image';
+import { ImageData } from '@/types';
+import { Download } from 'lucide-react';
+
+interface ImageCardProps {
+  image: ImageData;
+}
+
+export default function ImageCard({ image }: ImageCardProps) {
+  return (
+    <div className="group relative overflow-hidden rounded-lg bg-zinc-900 cursor-pointer transition-transform hover:scale-[1.02]">
+      <div className="relative aspect-[3/4]">
+        <Image
+          src={image.imageUrl}
+          alt={image.title}
+          fill
+          className="object-cover"
+        />
+        
+        <div className="absolute top-3 right-3">
+          <span className="capitalize px-3 py-1 text-xs font-medium bg-zinc-800/90 text-white rounded-md backdrop-blur-sm">
+            {image.category}
+          </span>
+        </div>
+
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h3 className="text-white font-medium text-lg mb-2 line-clamp-2">
+              {image.title}
+            </h3>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {image.author.avatar && (
+                  <div className="w-6 h-6 rounded-full bg-zinc-700 overflow-hidden">
+                    <Image
+                      src={image.author.avatar}
+                      alt={image.author.name}
+                      width={24}
+                      height={24}
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <span className="text-sm text-zinc-300">{image.author.name}</span>
+              </div>
+              
+              <button 
+                className="p-2 bg-primary hover:opacity-80 rounded-full transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <Download className="w-4 h-4 text-white" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
