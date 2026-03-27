@@ -1,22 +1,34 @@
-import Image from 'next/image';
-import { ImageData } from '@/types';
-import { Download } from 'lucide-react';
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import { ImageData } from "@/types";
+import { Download, ImageOff } from "lucide-react";
 
 interface ImageCardProps {
   image: ImageData;
 }
 
 export default function ImageCard({ image }: ImageCardProps) {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <div className="group relative overflow-hidden rounded-lg bg-zinc-900 cursor-pointer transition-transform hover:scale-[1.02]">
-      <div className="relative aspect-[3/4]">
-        <Image
-          src={image.imageUrl}
-          alt={image.title}
-          fill
-          className="object-cover"
-        />
-        
+      <div className="relative aspect-3/4">
+        {imageError ? (
+          <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center">
+            <ImageOff className="w-8 h-8 text-zinc-600" />
+          </div>
+        ) : (
+          <Image
+            src={image.imageUrl}
+            alt={image.title}
+            fill
+            className="object-cover"
+            onError={() => setImageError(true)}
+          />
+        )}
+
         <div className="absolute top-3 right-3">
           <span className="capitalize px-3 py-1 text-xs font-medium bg-zinc-800/90 text-white rounded-md backdrop-blur-sm">
             {image.category}
@@ -28,7 +40,7 @@ export default function ImageCard({ image }: ImageCardProps) {
             <h3 className="text-white font-medium text-lg mb-2 line-clamp-2">
               {image.title}
             </h3>
-            
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {image.author.avatar && (
@@ -42,10 +54,12 @@ export default function ImageCard({ image }: ImageCardProps) {
                     />
                   </div>
                 )}
-                <span className="text-sm text-zinc-300">{image.author.name}</span>
+                <span className="text-sm text-zinc-300">
+                  {image.author.name}
+                </span>
               </div>
-              
-              <button 
+
+              <button
                 className="p-2 bg-primary hover:opacity-80 rounded-full transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
