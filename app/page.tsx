@@ -21,6 +21,17 @@ const matchesSearch = (image: ImageData, query: string) => {
   );
 };
 
+const groupImagesByFolder = (images: ImageData[]) => {
+  const grouped = new Map<string, ImageData[]>();
+  images.forEach((image) => {
+    if (!grouped.has(image.folder)) {
+      grouped.set(image.folder, []);
+    }
+    grouped.get(image.folder)!.push(image);
+  });
+  return Array.from(grouped.entries());
+};
+
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -31,6 +42,8 @@ export default function HomePage() {
       matchesSearch(image, searchQuery),
   );
 
+  const groupedImages = groupImagesByFolder(filteredImages);
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div>
@@ -40,7 +53,14 @@ export default function HomePage() {
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
         />
-        <ImageGallery images={filteredImages} />
+        <div>
+          {groupedImages.map(([folder, images]) => (
+            <div key={folder}>
+              <h2 className="text-2xl font-bold mb-6 text-primary">{folder}</h2>
+              <ImageGallery images={images} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ export interface ImageData {
   };
   imageUrl: string;
   category: string;
+  folder: string;
   tags?: string[];
 }
 
