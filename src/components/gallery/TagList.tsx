@@ -1,6 +1,7 @@
 "use client";
 
 import { Category } from "@/types";
+import Tag from "./Tag";
 
 interface TagListProps {
   categories: Category[];
@@ -19,25 +20,19 @@ export default function TagList({
         onClick={() => onCategoryChange(null)}
         className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
           selectedCategory === null
-            ? "bg-primary text-white"
-            : "bg-zinc-900 text-zinc-300 hover:bg-zinc-800"
+            ? "bg-primary text-text-primary"
+            : "bg-surface text-surface-muted hover:bg-surface-light"
         }`}
       >
         <span className="text-sm font-medium">All</span>
       </button>
       {categories.map((category) => (
-        <button
+        <Tag
           key={category.id}
+          category={category}
+          isSelected={selectedCategory === category.id}
           onClick={() => onCategoryChange(category.id)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
-            selectedCategory === category.id
-              ? "bg-primary text-white"
-              : "bg-zinc-900 text-zinc-300 hover:bg-zinc-800"
-          }`}
-        >
-          <span>{category.icon}</span>
-          <span className="text-sm font-medium">{category.name}</span>
-        </button>
+        />
       ))}
     </div>
   );

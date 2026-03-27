@@ -45,7 +45,7 @@ export default function HomePage() {
   const groupedImages = groupImagesByFolder(filteredImages);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div>
         <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
         <TagList
@@ -55,7 +55,7 @@ export default function HomePage() {
         />
         <div>
           {groupedImages.map(([folder, images]) => (
-            <div key={folder}>
+            <div key={folder} className="mb-5">
               <h2 className="text-2xl font-bold mb-6 text-primary">{folder}</h2>
               <ImageGallery images={images} />
             </div>

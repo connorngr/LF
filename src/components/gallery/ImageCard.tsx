@@ -13,11 +13,11 @@ export default function ImageCard({ image }: ImageCardProps) {
   const [imageError, setImageError] = useState(false);
 
   return (
-    <div className="group relative overflow-hidden rounded-lg bg-zinc-900 cursor-pointer transition-transform hover:scale-[1.02]">
+    <div className="group relative overflow-hidden rounded-lg bg-surface cursor-pointer transition-transform hover:scale-[0.98]">
       <div className="relative aspect-3/4">
         {imageError ? (
-          <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center">
-            <ImageOff className="w-8 h-8 text-zinc-600" />
+          <div className="absolute inset-0 bg-surface-light flex items-center justify-center">
+            <ImageOff className="w-8 h-8 text-surface-muted" />
           </div>
         ) : (
           <Image
@@ -30,21 +30,21 @@ export default function ImageCard({ image }: ImageCardProps) {
         )}
 
         <div className="absolute top-3 right-3">
-          <span className="capitalize px-3 py-1 text-xs font-medium bg-zinc-800/90 text-white rounded-md backdrop-blur-sm">
+          <span className="capitalize px-3 py-1 text-xs font-medium bg-surface-light/90 text-foreground rounded-md backdrop-blur-sm">
             {image.category}
           </span>
         </div>
 
         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-white font-medium text-lg mb-2 line-clamp-2">
+            <h3 className="text-text-primary font-medium text-lg mb-2 line-clamp-2">
               {image.title}
             </h3>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {image.author.avatar && (
-                  <div className="w-6 h-6 rounded-full bg-zinc-700 overflow-hidden">
+                  <div className="w-6 h-6 rounded-full bg-surface-lighter overflow-hidden">
                     <Image
                       src={image.author.avatar}
                       alt={image.author.name}
@@ -54,7 +54,7 @@ export default function ImageCard({ image }: ImageCardProps) {
                     />
                   </div>
                 )}
-                <span className="text-sm text-zinc-300">
+                <span className="text-sm text-surface-muted">
                   {image.author.name}
                 </span>
               </div>
@@ -65,7 +65,7 @@ export default function ImageCard({ image }: ImageCardProps) {
                   e.stopPropagation();
                 }}
               >
-                <Download className="w-4 h-4 text-white" />
+                <Download className="w-4 h-4 text-text-primary" />
               </button>
             </div>
           </div>
