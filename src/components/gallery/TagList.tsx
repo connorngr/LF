@@ -15,10 +15,10 @@ export default function TagList({
   onCategoryChange,
 }: Readonly<TagListProps>) {
   return (
-    <div className="flex gap-3 overflow-x-auto pb-4 mb-8">
+    <div className="flex gap-md overflow-x-auto pb-md mb-xl">
       <button
         onClick={() => onCategoryChange(null)}
-        className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
+        className={`flex items-center gap-sm px-md py-sm rounded-full whitespace-nowrap transition-colors ${
           selectedCategory === null
             ? "bg-primary text-text-primary"
             : "bg-surface text-surface-muted hover:bg-surface-light"

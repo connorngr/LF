@@ -9,7 +9,7 @@ interface ImageCardProps {
   image: ImageData;
 }
 
-export default function ImageCard({ image }: ImageCardProps) {
+export default function ImageCard({ image }: Readonly<ImageCardProps>) {
   const [imageError, setImageError] = useState(false);
 
   return (
@@ -29,20 +29,20 @@ export default function ImageCard({ image }: ImageCardProps) {
           />
         )}
 
-        <div className="absolute top-3 right-3">
-          <span className="capitalize px-3 py-1 text-xs font-medium bg-surface-light/90 text-foreground rounded-md backdrop-blur-sm">
+        <div className="absolute top-md right-md">
+          <span className="capitalize px-md py-xs text-xs font-medium bg-surface-light/90 text-foreground rounded-md backdrop-blur-sm">
             {image.category}
           </span>
         </div>
 
         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-text-primary font-medium text-lg mb-2 line-clamp-2">
+          <div className="absolute bottom-0 left-0 right-0 p-md">
+            <h3 className="text-text-primary font-medium text-lg mb-sm line-clamp-2">
               {image.title}
             </h3>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-sm">
                 {image.author.avatar && (
                   <div className="w-6 h-6 rounded-full bg-surface-lighter overflow-hidden">
                     <Image
@@ -60,7 +60,7 @@ export default function ImageCard({ image }: ImageCardProps) {
               </div>
 
               <button
-                className="p-2 bg-primary hover:opacity-80 rounded-full transition-colors"
+                className="p-sm bg-primary hover:opacity-80 rounded-full transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}

@@ -15,7 +15,7 @@ export default function Tag({
     <button
       key={category.id}
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
+      className={`flex items-center gap-sm px-md py-sm rounded-full whitespace-nowrap transition-colors ${
         isSelected
           ? "bg-primary text-text-primary"
           : "bg-surface text-surface-muted hover:bg-surface-light"
