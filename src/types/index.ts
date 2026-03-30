@@ -16,3 +16,14 @@ export interface Category {
   name: string;
   icon: string;
 }
+
+export interface PersonalInfo {
+  name: string;
+  bio: string;
+  avatar: string;
+  isVerified?: boolean;
+  stats: {
+    followers: number;
+    posts: number;
+  };
+}

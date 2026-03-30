@@ -1,4 +1,4 @@
-import { Category, ImageData } from ".";
+import { Category, ImageData, PersonalInfo } from ".";
 
 export const categories: Category[] = [
   { id: 'nature', name: 'Nature', icon: '🌳' },
@@ -84,3 +84,14 @@ export const sampleImages: ImageData[] = [
     folder: 'Landscapes',
   },
 ];
+
+export const samplePersonalInfo: PersonalInfo = {
+  name: 'Sophie Bennett',
+  bio: 'Product Designer who focuses on simplicity & usability.',
+  avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80',
+  isVerified: true,
+  stats: {
+    followers: 312,
+    posts: 48,
+  },
+};

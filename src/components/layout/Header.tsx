@@ -12,7 +12,7 @@ export default function Header({
   onSearchChange,
 }: Readonly<HeaderProps>) {
   return (
-    <div className="flex items-center justify-between gap-lg mb-xl sticky top-0 bg-background z-10 py-lg w-full">
+    <div className="flex items-center justify-between gap-lg mb-xl sticky top-0 bg-background z-10 py-lg w-full p-2 rounded-b-2xl shadow-md shadow-primary">
       <h1 className="hidden sm:block text-2xl sm:text-3xl font-bold text-foreground">
         Dashboard
       </h1>
