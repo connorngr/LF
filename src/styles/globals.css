@@ -58,6 +58,7 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   padding: 1rem;
+  padding-top: 0rem;
   max-width: 1200px;
   margin: auto;
 }
