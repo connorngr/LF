@@ -9,9 +9,5 @@ export const generateMetadata = (): Metadata => {
 };
 
 export default function Gallery() {
-  return (
-    <div className="fixed top-5 left-5">
-      <ImageDetail />
-    </div>
-  );
+  return <ImageDetail />;
 }
