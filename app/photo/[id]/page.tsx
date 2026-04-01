@@ -2,10 +2,10 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page() {
   const router = useRouter();
   useEffect(() => {
     router.push(`/`);
-  }, [params.id]);
+  }, [router]);
   return null;
 }
