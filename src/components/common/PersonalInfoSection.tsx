@@ -15,18 +15,8 @@ export default function PersonalInfoSection({
 }: Readonly<PersonalInfoSectionProps>) {
   return (
     <section className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl bg-surface shadow-md shadow-primary">
-      <div className="flex flex-col lg:flex-row min-h-[65vh] sm:min-h-[70vh] md:min-h-[75vh] lg:min-h-[80vh]">
+      <div className="flex flex-col lg:flex-row">
         <div className="relative lg:w-1/2 order-2 lg:order-1 flex flex-col justify-end p-6 sm:p-8 md:p-10 lg:p-12 xl:p-16 bg-background">
-          <div className="lg:hidden absolute inset-0 -z-10">
-            <Image
-              src={info.avatar}
-              alt={info.name}
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/50 to-transparent" />
-          </div>
 
           <div className="w-full bg-surface/50 lg:bg-surface lg:border lg:border-surface-lighter p-6 sm:p-8 md:p-10 rounded-2xl backdrop-blur-md shadow-lg shadow-primary">
             <div className="flex items-center sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-6">
@@ -71,11 +61,12 @@ export default function PersonalInfoSection({
           </div>
         </div>
 
-        <div className="relative lg:w-1/2 order-1 lg:order-2 min-h-[40vh] lg:min-h-full">
+        <div className="relative lg:w-1/2 order-1 lg:order-2 min-h-[50vh] lg:min-h-full">
           <Image
             src={info.avatar}
             alt={info.name}
             fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover object-center"
             priority
           />

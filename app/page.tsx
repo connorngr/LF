@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ImageGallery from "@/components/gallery/ImageGallery";
 import Header from "@/components/layout/Header";
 import TagList from "@/components/gallery/TagList";
@@ -41,19 +41,26 @@ export default function HomePage() {
     console.log("Follow clicked!");
   };
 
-  const filteredImages = sampleImages.filter(
-    (image) =>
-      matchesCategory(image, selectedCategory) &&
-      matchesSearch(image, searchQuery),
+  const filteredImages = useMemo(
+    () =>
+      sampleImages.filter(
+        (image) =>
+          matchesCategory(image, selectedCategory) &&
+          matchesSearch(image, searchQuery),
+      ),
+    [selectedCategory, searchQuery],
   );
 
-  const groupedImages = groupImagesByFolder(filteredImages);
+  const groupedImages = useMemo(
+    () => groupImagesByFolder(filteredImages),
+    [filteredImages],
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div>
         <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        
+
         <div className="mb-xl">
           <PersonalInfoSection
             info={samplePersonalInfo}
@@ -69,7 +76,9 @@ export default function HomePage() {
         <div>
           {groupedImages.map(([folder, images]) => (
             <div key={folder} className="mb-xl">
-              <h2 className="text-2xl font-bold mb-lg text-primary">{folder}</h2>
+              <h2 className="text-2xl font-bold mb-lg text-primary">
+                {folder}
+              </h2>
               <ImageGallery images={images} />
             </div>
           ))}
