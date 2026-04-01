@@ -2,7 +2,7 @@
 import { sampleImages } from "@/types/mockData";
 import { ImageOff } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function ImageDetail() {
   const { id } = useParams();
@@ -12,20 +12,42 @@ export function ImageDetail() {
   };
   const findImage = sampleImages.find((image) => image.id === id);
   const [imageError, setImageError] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    document.addEventListener("mousedown", (e) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        handleClose();
+      }
+    });
     return () => {
       document.body.style.overflow = "unset";
+      document.removeEventListener("mousedown", () => {});
     };
   }, []);
 
   return (
-    <div className="z-50 fixed inset-0 bg-black/50 flex items-center justify-center overflow-hidden m-0">
-      <div className="bg-white rounded-lg p-4">
-        <h1 className="text-2xl font-bold mb-4 text-primary">
-          {findImage?.title}
-        </h1>
+    <div className="z-50 fixed inset-0 bg-black/50 flex items-center justify-center overflow-hidden m-0 cursor-pointer">
+      <div
+        className="bg-white rounded-lg p-4 cursor-default"
+        ref={containerRef}
+      >
+        <div className="flex justify-between items-start gap-lg">
+          <h1 className="text-2xl font-bold mb-4 text-primary">
+            {findImage?.title}
+          </h1>
+          <button
+            onClick={handleClose}
+            className="px-4 py-2 bg-primary text-white rounded-lg cursor-pointer"
+          >
+            Close
+          </button>
+        </div>
+
         {findImage && !imageError ? (
           <img
             src={findImage.imageUrl}
@@ -34,21 +56,13 @@ export function ImageDetail() {
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="bg-surface-light flex items-center justify-center max-w-[20vw] max-h-[20vh] p-2xl">
+          <div className="bg-surface-light flex items-center justify-center p-2xl">
             <ImageOff className="w-8 h-8 text-surface-muted" />
           </div>
         )}
-        <div className="flex justify-between items-center gap-lg">
-          <button
-            onClick={handleClose}
-            className="mt-4 px-4 py-2 bg-primary text-white rounded-lg"
-          >
-            Close
-          </button>
-          <p className="text-md text-surface-muted">
-            Author: {findImage?.author.name}
-          </p>
-        </div>
+        <p className="text-md text-surface-muted flex justify-end w-full mt-sm">
+          Author: {findImage?.author.name}
+        </p>
       </div>
     </div>
   );
