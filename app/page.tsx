@@ -5,8 +5,8 @@ import ImageGallery from "@/components/gallery/ImageGallery";
 import Header from "@/components/layout/Header";
 import TagList from "@/components/gallery/TagList";
 import PersonalInfoSection from "@/components/common/PersonalInfoSection";
-import { ImageData } from "@/types";
-import { categories, sampleImages, samplePersonalInfo } from "@/types/mockData";
+import { ImageData } from "@/schemas";
+import { categories, sampleImages, samplePersonalInfo } from "@/schemas/mockData";
 
 const matchesCategory = (image: ImageData, category: string | null) => {
   if (!category) return true;

@@ -1,5 +1,5 @@
 "use client";
-import { sampleImages } from "@/types/mockData";
+import { sampleImages } from "@/schemas/mockData";
 import { ImageOff } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";

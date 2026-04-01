@@ -1,6 +1,6 @@
 "use client";
 
-import { Category } from "@/types";
+import { Category } from "@/schemas";
 import Tag from "./Tag";
 
 interface TagListProps {

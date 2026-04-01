@@ -1,6 +1,6 @@
 'use client';
 
-import { ImageData } from '@/types';
+import { ImageData } from '@/schemas';
 import ImageCard from './ImageCard';
 import Link from 'next/link';
 

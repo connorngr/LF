@@ -1,6 +1,8 @@
 "use client";
 
 import { Search } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface HeaderProps {
   searchQuery: string;
@@ -11,6 +13,9 @@ export default function Header({
   searchQuery,
   onSearchChange,
 }: Readonly<HeaderProps>) {
+  const pathname = usePathname();
+  
+  const isActive = (path: string) => pathname === path;
   return (
     <div className="flex items-center justify-between gap-lg mb-xl sticky top-0 bg-background z-10 py-lg w-full p-2 rounded-b-2xl shadow-md shadow-primary">
       <h1 className="hidden sm:block text-2xl sm:text-3xl font-bold text-foreground">
@@ -18,19 +23,26 @@ export default function Header({
       </h1>
       <div className="flex items-center gap-4 sm:gap-8 flex-1 sm:flex-none">
         <nav className="flex gap-4 sm:gap-8">
-          {/* TODO: Build navigation for admin */}
-          <a
-            href="#"
-            className="text-primary border-b-2 border-primary pb-2 text-sm sm:text-base"
+          <Link
+            href="/"
+            className={`pb-2 text-sm sm:text-base transition-colors ${
+              isActive("/")
+                ? "text-primary border-b-2 border-primary"
+                : "text-surface-muted hover:text-foreground"
+            }`}
           >
             Feed
-          </a>
-          <a
-            href="#"
-            className="text-surface-muted hover:text-foreground pb-2 text-sm sm:text-base"
+          </Link>
+          <Link
+            href="/admin"
+            className={`pb-2 text-sm sm:text-base transition-colors ${
+              isActive("/admin")
+                ? "text-primary border-b-2 border-primary"
+                : "text-surface-muted hover:text-foreground"
+            }`}
           >
             Edit
-          </a>
+          </Link>
         </nav>
 
         <div className="relative w-full sm:w-64">

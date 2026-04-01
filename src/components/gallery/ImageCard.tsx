@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ImageData } from "@/types";
+import { ImageData } from "@/schemas";
 import { Download, ImageOff } from "lucide-react";
 
 interface ImageCardProps {

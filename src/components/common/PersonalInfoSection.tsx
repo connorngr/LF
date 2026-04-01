@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { Check, Users, ImageIcon } from "lucide-react";
-import { PersonalInfo } from "@/types";
+import { PersonalInfo } from "@/schemas";
+import Button from "./Button";
 
 interface PersonalInfoSectionProps {
   info: PersonalInfo;
@@ -51,12 +52,15 @@ export default function PersonalInfoSection({
                 </div>
               </div>
 
-              <button
+              <Button
                 onClick={onFollowClick}
-                className="w-full px-6 sm:px-8 md:px-10 py-3 sm:py-3.5 md:py-4 bg-primary text-primary-text rounded-full font-semibold text-base sm:text-lg md:text-xl lg:text-2xl hover:bg-primary/90 hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap shadow-lg border-2 border-primary-text/20"
+                variant="primary"
+                size="lg"
+                fullWidth
+                className="whitespace-nowrap sm:w-auto lg:text-2xl"
               >
                 Follow <span className="text-xl sm:text-2xl md:text-3xl font-light">+</span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>
