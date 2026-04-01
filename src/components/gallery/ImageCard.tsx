@@ -14,7 +14,7 @@ export default function ImageCard({ image }: Readonly<ImageCardProps>) {
 
   return (
     <div className="group relative overflow-hidden rounded-lg bg-surface cursor-pointer transition-transform hover:scale-[0.98]">
-      <div className="relative aspect-3/4">
+      <div className="relative aspect-4/4 md:aspect-3/4">
         {imageError ? (
           <div className="absolute inset-0 bg-surface-light flex items-center justify-center">
             <ImageOff className="w-8 h-8 text-surface-muted" />

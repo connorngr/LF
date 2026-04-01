@@ -14,15 +14,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  gallerymodal,
 }: Readonly<{
   children: React.ReactNode;
+  gallerymodal: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${spaceGrotesk.className} antialiased`}
-      >
+      <body className={`${spaceGrotesk.className} antialiased`}>
         {children}
+        {gallerymodal}
       </body>
     </html>
   );
