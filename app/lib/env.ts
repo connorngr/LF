@@ -1,3 +1,31 @@
+/**
+ * Environment variables for Life Frame MVP
+ * 
+ * @module app/lib/env
+ * @description Validates and exposes environment variables at runtime.
+ * 
+ * **Usage in Server Components:**
+ * ```typescript
+ * import { profileName, avatarUrl } from '@/app/lib/env'
+ * 
+ * export default function Profile() {
+ *   return <img src={avatarUrl} alt={profileName} />
+ * }
+ * ```
+ * 
+ * **Usage in Server Actions / API Routes:**
+ * ```typescript
+ * import { adminPassword, supabaseUrl } from '@/app/lib/env'
+ * ```
+ * 
+ * **Validation:**
+ * - Runs on module import (server startup)
+ * - Fails fast with clear error if any variable is missing or invalid
+ * - Uses zod v4 for schema validation
+ * 
+ * @see {@link https://github.com/colinhacks/zod Zod documentation}
+ */
+
 import { z } from 'zod'
 
 const envVarSchema = z.object({
@@ -27,6 +55,10 @@ function parseEnv(): EnvSchema {
 
 export const env = parseEnv()
 
+/**
+ * Profile name from NEXT_PUBLIC_PROFILE_NAME
+ * @example "John Doe"
+ */
 export const {
   NEXT_PUBLIC_PROFILE_NAME: profileName,
   NEXT_PUBLIC_PROFILE_HANDLE: profileHandle,
@@ -37,4 +69,5 @@ export const {
   NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey,
 } = env
 
+/** All env variables as object */
 export type Env = typeof env
