@@ -1,3 +1,5 @@
+import { profileName } from "./lib/env";
+
 export default function HomePage() {
-  return <main />;
+  return <h1>Hello, {profileName}</h1>;
 }
