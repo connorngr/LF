@@ -1,6 +1,6 @@
 # MVP Progress Tracker
 
-> Last updated: 2026-04-26
+> Last updated: 2026-04-27
 
 ## Completed Tickets
 
@@ -8,6 +8,7 @@
 |--------|-------|-------|-------|
 | LIF-22 | LF-001: Project Setup | ✅ Done | Next.js + TypeScript + Tailwind |
 | LIF-24 | LF-004: Environment Configuration | ✅ Done | .env + zod validation |
+| LIF-23 | LF-002: Database Schema | ✅ Done | Prisma + posts table |
 
 ## In Progress
 
@@ -17,7 +18,6 @@ None yet.
 
 | Priority | Ticket | Title | Dependencies |
 |----------|--------|-------|--------------|
-| Urgent | LIF-23 | LF-002: Database Schema | LIF-24 |
 | Urgent | LIF-25 | LF-003: Storage Setup | LIF-23, LIF-24 |
 | Urgent | LIF-26 | LF-005: Profile Header | LIF-23, LIF-24 |
 | Urgent | LIF-27 | LF-006: Image Grid - Desktop | LIF-23, LIF-24 |
@@ -33,5 +33,5 @@ None yet.
 
 ## Notes
 
-- LIF-24 (Environment Config) is done - sets foundation for all other tickets
-- Next logical ticket: LIF-23 (Database Schema) depends on env vars being ready
+- LIF-23 (Database Schema) is done - Prisma client ready in src/lib/prisma.ts
+- Next logical ticket: LIF-25 (Storage Setup) depends on schema being ready
