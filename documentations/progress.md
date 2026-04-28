@@ -63,3 +63,7 @@ None yet.
 - **Context7**: Use `npx ctx7@latest` to fetch current docs for design patterns
 - **shadcn components**: Using Card, Avatar, AvatarImage, AvatarFallback, Skeleton from `src/components/ui/`
 - **LIF-26 implementation**: PersonalInfoHero with shadcn Card (size=sm), Avatar (size=lg), Skeleton for loading state
+
+## Random thoughts
+- Integrate blog
+- 
