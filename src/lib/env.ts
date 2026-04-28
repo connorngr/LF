@@ -36,6 +36,12 @@ const envVarSchema = z.object({
   ADMIN_PASSWORD: z.string().min(1),
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+  R2_ACCOUNT_ID: z.string().min(1),
+  R2_ACCESS_KEY_ID: z.string().min(1),
+  R2_SECRET_ACCESS_KEY: z.string().min(1),
+  R2_BUCKET_NAME: z.string().min(1),
+  R2_PUBLIC_URL: z.string().min(1),
+  NEXT_PUBLIC_BASE_URL: z.string().min(1),
 })
 
 type EnvSchema = z.infer<typeof envVarSchema>
@@ -67,6 +73,12 @@ export const {
   ADMIN_PASSWORD: adminPassword,
   NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey,
+  R2_ACCOUNT_ID: r2AccountId,
+  R2_ACCESS_KEY_ID: r2AccessKeyId,
+  R2_SECRET_ACCESS_KEY: r2SecretAccessKey,
+  R2_BUCKET_NAME: r2BucketName,
+  R2_PUBLIC_URL: r2PublicUrl,
+  NEXT_PUBLIC_BASE_URL: nextPublicBaseUrl,
 } = env
 
 /** All env variables as object */

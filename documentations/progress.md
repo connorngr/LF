@@ -9,6 +9,7 @@
 | LIF-22 | LF-001: Project Setup | ✅ Done | Next.js + TypeScript + Tailwind |
 | LIF-24 | LF-004: Environment Configuration | ✅ Done | .env + zod validation |
 | LIF-23 | LF-002: Database Schema | ✅ Done | Prisma + posts table |
+| LIF-25 | LF-003: Storage Setup | ✅ Done | Cloudflare R2 + @aws-sdk/client-s3 |
 
 ## In Progress
 
@@ -18,7 +19,6 @@ None yet.
 
 | Priority | Ticket | Title | Dependencies |
 |----------|--------|-------|--------------|
-| Urgent | LIF-25 | LF-003: Storage Setup | LIF-23, LIF-24 |
 | Urgent | LIF-26 | LF-005: Profile Header | LIF-23, LIF-24 |
 | Urgent | LIF-27 | LF-006: Image Grid - Desktop | LIF-23, LIF-24 |
 | Urgent | LIF-28 | LF-007: Image Grid - Mobile | LIF-27 |

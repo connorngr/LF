@@ -1107,7 +1107,103 @@ Reference: [https://nextjs.org/docs/app/api-reference/functions/after](https://n
 
 ---
 
-## 4. Client-Side Data Fetching
+## 4. Storage: Cloudflare R2
+
+**Impact: HIGH (replaces Supabase Storage with 10GB free tier)**
+
+Use Cloudflare R2 (S3-compatible) for image storage. Access environment variables via `@/app/lib/env`.
+
+### 4.1 Environment Variables via @/app/lib/env
+
+**Source:** `app/lib/env.ts`
+
+All R2 environment variables are validated with Zod and exposed via `@/app/lib/env`:
+
+```typescript
+import { r2AccountId, r2AccessKeyId, r2SecretAccessKey, r2BucketName, r2PublicUrl } from '@/app/lib/env'
+```
+
+| Variable | Export Name | Purpose |
+|----------|-------------|---------|
+| `R2_ACCOUNT_ID` | `r2AccountId` | Cloudflare Account ID |
+| `R2_ACCESS_KEY_ID` | `r2AccessKeyId` | S3-compatible access key |
+| `R2_SECRET_ACCESS_KEY` | `r2SecretAccessKey` | S3-compatible secret key |
+| `R2_BUCKET_NAME` | `r2BucketName` | Bucket name (e.g., `life-frame-images`) |
+| `R2_PUBLIC_URL` | `r2PublicUrl` | Public URL (e.g., `https://<subdomain>.r2.dev`) |
+
+### 4.2 R2 Client Setup
+
+**Source:** `src/lib/r2.ts`
+
+R2 uses the standard AWS SDK v3 S3 client with a custom endpoint:
+
+```typescript
+import { S3Client } from "@aws-sdk/client-s3"
+import { r2AccountId, r2AccessKeyId, r2SecretAccessKey } from '@/app/lib/env'
+
+const r2 = new S3Client({
+  region: "auto",
+  endpoint: `https://${r2AccountId}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: r2AccessKeyId,
+    secretAccessKey: r2SecretAccessKey,
+  },
+})
+```
+
+### 4.3 Upload Helper
+
+**Source:** `src/lib/r2.ts`
+
+Exports: `uploadToR2()`, `deleteFromR2()`, `getPublicUrl()`
+
+```typescript
+// Upload: returns public URL
+const url = await uploadToR2(buffer, key, contentType)
+
+// Delete by URL
+await deleteFromR2(key)
+
+// Get public URL from key
+const url = getPublicUrl(key) // ${r2PublicUrl}/${key}
+```
+
+**Key format:** `images/${timestamp}-${random}.${ext}`
+
+### 4.4 Server Action Example
+
+**Source:** `src/app/actions/upload.ts`
+
+```typescript
+'use server'
+
+import { uploadToR2 } from '@/lib/r2'
+import { prisma } from '@/lib/prisma'
+
+export async function uploadImage(formData: FormData) {
+  const file = formData.get('file') as File | null
+  if (!file) return { error: 'No file provided' }
+
+  // Validate type + size
+  const buffer = Buffer.from(await file.arrayBuffer())
+  const key = `images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+
+  const url = await uploadToR2(buffer, key, file.type)
+
+  // Save to DB
+  const post = await prisma.post.create({
+    data: { imageUrl: url, caption },
+  })
+
+  return { success: true, url, postId: post.id }
+}
+```
+
+**Test route:** `src/app/test-upload/page.tsx` — verifies upload + display
+
+---
+
+## 5. Client-Side Data Fetching
 
 **Impact: MEDIUM-HIGH**
 
