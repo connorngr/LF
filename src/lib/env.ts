@@ -6,7 +6,7 @@
  * 
  * **Usage in Server Components:**
  * ```typescript
- * import { profileName, avatarUrl } from '@/app/lib/env'
+ * import { profileName, avatarUrl } from '@/lib/env'
  * 
  * export default function Profile() {
  *   return <img src={avatarUrl} alt={profileName} />
@@ -28,10 +28,16 @@
 
 import { z } from 'zod'
 
+export const defaultProfileMottoMarkdown =
+  '**Life, uncurated.**\n\nEveryday frames — not reels, just real.'
+
 const envVarSchema = z.object({
   NEXT_PUBLIC_PROFILE_NAME: z.string().min(1),
   NEXT_PUBLIC_PROFILE_HANDLE: z.string().min(1),
   NEXT_PUBLIC_AVATAR_URL: z.url(),
+  NEXT_PUBLIC_PROFILE_MOTTO_MARKDOWN: z
+    .string()
+    .default(defaultProfileMottoMarkdown),
   ADMIN_USERNAME: z.string().min(1),
   ADMIN_PASSWORD: z.string().min(1),
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
@@ -69,6 +75,7 @@ export const {
   NEXT_PUBLIC_PROFILE_NAME: profileName,
   NEXT_PUBLIC_PROFILE_HANDLE: profileHandle,
   NEXT_PUBLIC_AVATAR_URL: avatarUrl,
+  NEXT_PUBLIC_PROFILE_MOTTO_MARKDOWN: profileMottoMarkdown,
   ADMIN_USERNAME: adminUsername,
   ADMIN_PASSWORD: adminPassword,
   NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,

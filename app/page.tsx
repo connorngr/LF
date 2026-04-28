@@ -1,5 +1,15 @@
-import { profileName } from "@/lib/env";
+import { Suspense } from 'react'
+import {
+  PersonalInfoHero,
+  PersonalInfoHeroSkeleton,
+} from '@/components/organisms/PersonalInfoHero'
 
 export default function HomePage() {
-  return <h1>Hello, {profileName}</h1>;
+  return (
+    <main className="mx-auto max-w-5xl px-4 py-8">
+      <Suspense fallback={<PersonalInfoHeroSkeleton />}>
+        <PersonalInfoHero />
+      </Suspense>
+    </main>
+  )
 }
