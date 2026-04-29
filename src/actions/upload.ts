@@ -1,41 +1,16 @@
 'use server'
 
-import { z } from 'zod'
+import { uploadSchema, generateSecureKey } from '@/schemas/upload'
 import { uploadToR2 } from '@/lib/r2'
 import { prisma } from '@/lib/prisma'
-
-const MIME_TYPE_TO_EXT: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-  'image/gif': 'gif',
-}
-
-const uploadSchema = z.object({
-  file: z
-    .instanceof(File)
-    .refine((file) => file.size > 0, 'File cannot be empty')
-    .refine((file) => file.size <= 10 * 1024 * 1024, 'File must be less than 10MB')
-    .refine(
-      (file) => ['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type),
-      'Only JPEG, PNG, WebP, and GIF images are allowed'
-    ),
-  caption: z.string().max(500).optional(),
-})
-
-
-function getExtension(mimeType: string): string {
-  return MIME_TYPE_TO_EXT[mimeType] || 'jpg'
-}
-
-function generateSecureKey(mimeType: string): string {
-  const timestamp = Date.now()
-  const randomBytes = Math.random().toString(36).slice(2, 10)
-  const ext = getExtension(mimeType)
-  return `${timestamp}-${randomBytes}.${ext}`
-}
+import { isAuthenticated } from '@/lib/auth'
 
 export async function uploadImage(formData: FormData) {
+  const authenticated = await isAuthenticated()
+  if (!authenticated) {
+    return { error: 'Unauthorized: Admin authentication required' }
+  }
+
   const file = formData.get('file') as File | null
   const caption = (formData.get('caption') as string | null) || undefined
 
@@ -59,5 +34,5 @@ export async function uploadImage(formData: FormData) {
     data: { imageUrl: savedKey, caption: validCaption },
   })
 
-  return { success: true, postId: post.id }
+  return { success: true, url: savedKey, postId: post.id }
 }

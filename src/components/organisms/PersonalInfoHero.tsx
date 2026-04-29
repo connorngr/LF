@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -18,9 +19,11 @@ export async function PersonalInfoHero() {
     <div className="mx-auto max-w-4xl border-0 bg-transparent shadow-none">
       <div className="space-y-6 px-4 py-6 md:px-8">
         <div className="flex flex-row items-start gap-4 md:items-center md:gap-8">
-          <Avatar className="size-35 shrink-0 border-4 border-background md:size-40">
-            <AvatarImage src={await getUrl(avatarUrl)} />
-          </Avatar>
+          <Link href="/upload" className="group cursor-pointer">
+            <Avatar className="size-35 shrink-0 border-4 border-background transition-opacity group-hover:opacity-80 md:size-40">
+              <AvatarImage src={await getUrl(avatarUrl)} />
+            </Avatar>
+          </Link>
           <div className="min-w-0 flex-1 space-y-2 md:space-y-3">
             <h1 className="font-heading text-xl leading-tight tracking-tight md:text-2xl">
               {profileName}

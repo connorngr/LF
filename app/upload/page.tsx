@@ -1,9 +1,31 @@
+import Link from 'next/link'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { UploadForm } from './UploadForm'
 import { ImageGallery } from '@/components/organisms/ImageGallery'
 
 export default function UploadPage() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-12 lg:py-16">
+      <Breadcrumb className="mb-8">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Upload</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <div className="space-y-10">
         <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight">Upload Images</h1>
