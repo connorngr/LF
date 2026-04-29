@@ -1,8 +1,16 @@
+import { createHash } from 'crypto'
 import { adminUsername, adminPassword } from '@/lib/env'
 import { cookies } from 'next/headers'
 
-export const AUTH_COOKIE_NAME = 'lifeframe_auth_token'
-export const AUTH_COOKIE_VALUE = 'authenticated'
+function generateHashedSecret(input: string, salt: string = 'lifeframe'): string {
+  return createHash('sha256')
+    .update(`${input}:${salt}:${adminUsername}${adminPassword}`)
+    .digest('hex')
+    .slice(0, 32)
+}
+
+export const AUTH_COOKIE_NAME = generateHashedSecret('cookie_name')
+export const AUTH_COOKIE_VALUE = generateHashedSecret('cookie_value')
 
 export function validateCredentials(username: string, password: string): boolean {
   return username === adminUsername && password === adminPassword
