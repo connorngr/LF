@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { uploadToR2, getPublicUrl } from '@/lib/r2'
+import { uploadToR2 } from '@/lib/r2'
 import { prisma } from '@/lib/prisma'
 
 const MIME_TYPE_TO_EXT: Record<string, string> = {
@@ -59,5 +59,5 @@ export async function uploadImage(formData: FormData) {
     data: { imageUrl: savedKey, caption: validCaption },
   })
 
-  return { success: true, url: getPublicUrl(savedKey), postId: post.id }
+  return { success: true, postId: post.id }
 }

@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
-import { r2AccessKeyId, r2AccountId, r2BucketName, r2PublicUrl, r2SecretAccessKey } from "./env"
+import { r2AccessKeyId, r2AccountId, r2BucketName, r2SecretAccessKey } from "./env"
 
 const r2 = new S3Client({
   region: "auto",
@@ -12,10 +12,6 @@ const r2 = new S3Client({
 })
 
 const BUCKET = r2BucketName
-
-export function getPublicUrl(key: string): string {
-  return `${r2PublicUrl}/${key}`
-}
 
 export async function uploadToR2(
   body: Buffer,

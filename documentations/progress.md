@@ -23,6 +23,9 @@
 ## In Progress
 
 None yet.
+Carousel
+optimize thumbnail/skeleton load, PTS creation skills
+seo by using slug, handle same slug based on caption
 
 ## Upcoming (Execution Order)
 
@@ -65,5 +68,5 @@ None yet.
 - **LIF-26 implementation**: PersonalInfoHero with shadcn Card (size=sm), Avatar (size=lg), Skeleton for loading state
 
 ## Random thoughts
-- Integrate blog
-- 
+- Integrate blog - there might be a quick solution to build this
+- Integrate spotify music for each posts

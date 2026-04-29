@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ProfileMottoMarkdown } from '@/components/molecules/ProfileMottoMarkdown'
 import {
@@ -9,6 +9,7 @@ import {
   profileMottoMarkdown,
 } from '@/lib/env'
 import { prisma } from '@/lib/prisma'
+import { getUrl } from '@/lib/r2'
 
 export async function PersonalInfoHero() {
   const postCount = await prisma.post.count()
@@ -17,8 +18,8 @@ export async function PersonalInfoHero() {
     <div className="mx-auto max-w-4xl border-0 bg-transparent shadow-none">
       <div className="space-y-6 px-4 py-6 md:px-8">
         <div className="flex flex-row items-start gap-4 md:items-center md:gap-8">
-          <Avatar className="size-20 shrink-0 border-4 border-background md:size-40">
-            <AvatarImage src={avatarUrl} alt={profileName} />
+          <Avatar className="size-35 shrink-0 border-4 border-background md:size-40">
+            <AvatarImage src={await getUrl(avatarUrl)} />
           </Avatar>
           <div className="min-w-0 flex-1 space-y-2 md:space-y-3">
             <h1 className="font-heading text-xl leading-tight tracking-tight md:text-2xl">

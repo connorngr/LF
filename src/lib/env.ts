@@ -34,7 +34,7 @@ export const defaultProfileMottoMarkdown =
 const envVarSchema = z.object({
   NEXT_PUBLIC_PROFILE_NAME: z.string().min(1),
   NEXT_PUBLIC_PROFILE_HANDLE: z.string().min(1),
-  NEXT_PUBLIC_AVATAR_URL: z.url(),
+  NEXT_PUBLIC_AVATAR_URL: z.string().min(1),
   NEXT_PUBLIC_PROFILE_MOTTO_MARKDOWN: z
     .string()
     .default(defaultProfileMottoMarkdown),
