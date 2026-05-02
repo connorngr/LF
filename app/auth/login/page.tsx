@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { LoginForm } from '../LoginForm'
 import { profileName } from '@/lib/env'
 
@@ -13,7 +14,9 @@ export default function LoginPage() {
         </div>
 
         <div className="rounded-lg border border-border/50 bg-linear-to-b from-card to-card/95 p-6 shadow-sm backdrop-blur-sm">
-          <LoginForm />
+          <Suspense fallback={<div className="h-[200px] animate-pulse rounded-md bg-muted/30" aria-hidden />}>
+            <LoginForm />
+          </Suspense>
         </div>
 
         <p className="text-center text-xs text-muted-foreground">

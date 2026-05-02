@@ -60,11 +60,11 @@ export async function ImageDetail({ id }: Readonly<{ id: string }>) {
         opts={{ align: 'start', loop: images.length > 1 }}
         className="grid overflow-hidden bg-card lg:grid-cols-[minmax(0,1fr)_18rem] rounded-2xl"
       >
-        <div className="relative min-w-0 bg-neutral-950">
+        <div className="relative min-w-0 ">
           <CarouselContent className="ml-0">
             {images.map((image, index) => (
               <CarouselItem key={image.key} className="pl-0">
-                <figure className="relative flex aspect-photo max-h-[80vh] min-h-[80vh] w-full items-center justify-center bg-neutral-950">
+                <figure className="relative flex aspect-photo max-h-[80vh] min-h-[80vh] w-full items-center justify-center">
                   <LoadingPhoto
                     src={image.url}
                     alt={`${post.caption ?? 'Uploaded image'} - ${index + 1}`}

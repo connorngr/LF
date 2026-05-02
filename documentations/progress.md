@@ -1,6 +1,6 @@
 # MVP Progress Tracker
 
-> Last updated: 2026-04-29
+> Last updated: 2026-05-02
 
 ## Execution Plan: Eat the Frog First 🐸
 
@@ -9,6 +9,7 @@
 3. **Auth** - Admin Authentication (LIF-30) ✅
 4. **Phase 3** - Mobile Grid (LIF-28) ✅, Thumbnails (LIF-34) ✅, Aspect Ratio (LIF-36) ✅
 5. **Phase 4** - Upload (LIF-31) ✅, Upload Interface (LIF-32) ✅
+6. **Phase 1 (frog)** - Multi-image posts & thumbnails (LIF-46) ✅
 
 ## Completed Tickets
 
@@ -26,6 +27,7 @@
 | LIF-32 | LF-011: Upload Interface | ✅ Done | /upload page, UploadForm with improved UX |
 | LIF-34 | LF-013: Image Thumbnail Generation | ✅ Done | Optimized thumbnails for grid view |
 | LIF-36 | LF-014: Image Aspect Ratio Handling | ✅ Done | Square crop / object-fit: cover |
+| LIF-46 | LF-024: Multi-Image Posts & Thumbnail Optimization | ✅ Done | Prisma `Image` relation on `Post`, carousel detail, thumbnails, upload flow |
 
 ## In Progress
 
@@ -36,7 +38,7 @@ None yet.
 ### 🔥 Phase 1: Multi-Image Architecture (Biggest Feature - DO FIRST)
 | Priority | Ticket | Title | Status | Dependencies |
 |----------|--------|-------|--------|--------------|
-| High | LIF-46 | LF-024: Multi-Image Posts & Thumbnail Optimization | Backlog | LIF-31 |
+| High | LIF-46 | LF-024: Multi-Image Posts & Thumbnail Optimization | ✅ Done | LIF-31 |
 | High | LIF-45 | LF-025: Carousel View for Multi-Image Posts | Backlog | LIF-46 |
 | High | LIF-48 | LF-026: SEO Improvement - Slug-based URLs | Backlog | LIF-46 |
 
@@ -104,16 +106,16 @@ None yet.
 
 ## Where We're Heading
 
-**Next up (Eat the Frog 🐸):** LIF-46 (Multi-Image Posts) — biggest architecture change, do it FIRST!
+**Next up (Eat the Frog 🐸):** LIF-45 (Carousel for multi-image) — unblocks richer gallery UX now that LIF-46 is done.
 
 **Roadmap overview:**
-1. 🔥 **Phase 1** - Multi-Image (LIF-46) → Carousel (LIF-45) → SEO Slug (LIF-48)
+1. 🔥 **Phase 1** - Multi-Image (LIF-46) ✅ → Carousel (LIF-45) → SEO Slug (LIF-48)
 2. 🎨 **Phase 2** - Polish: Email (LIF-47) + Stories (LIF-44) + Music (LIF-43)
 3. 💬 **Phase 3** - Social: Comments (LIF-39) + Infinite Scroll (LIF-37) + View Count (LIF-40)
 4. 🚀 **Phase 4** - Ship: Deploy to Vercel (LIF-33) + Storage Comparison (LIF-35) — **LAST!**
 5. 📦 **Phase 5** - Future: Advanced Auth (LIF-41) + Blog (LIF-42)
 
-**Philosophy:** Do the hardest stuff first (multi-image architecture), leave the "easy" deploy for last. Eat the frog! 🐸
+**Philosophy:** Hardest foundations first (multi-image landed in LIF-46); ship / deploy stays later in Phase 4. Eat the frog! 🐸
 
 ## Notes
 
@@ -129,6 +131,7 @@ None yet.
 - **LIF-30 implementation**: bcrypt hash comparison against .env ADMIN_USERNAME/ADMIN_PASSWORD, session management for admin access
 - **LIF-34 implementation**: Thumbnail generation for optimized grid display
 - **LIF-36 implementation**: Aspect ratio handling with object-fit: cover for square display
+- **LIF-46 implementation**: Multi-image posts via Prisma `Image` model (`images` on `Post`), `ImageDetail` carousel, thumbnail keys on post, related upload/query updates
 - **LIF-41**: New ticket for advanced auth (NextAuth.js or JWT) - future enhancement, see LIF-30 for current basic auth
 
 ## Random thoughts
