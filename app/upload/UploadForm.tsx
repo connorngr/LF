@@ -7,9 +7,9 @@ import { uploadSchema, type UploadInput } from '@/schemas/upload'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 
-type UploadFormResult = 
+type UploadFormResult =
   | { status: 'idle'; message: '' }
-  | { status: 'success'; message: string; imageUrl: string; postId: string }
+  | { status: 'success'; message: string; postId: string }
   | { status: 'error'; message: string }
 
 const initialState: UploadFormResult = {
@@ -19,21 +19,35 @@ const initialState: UploadFormResult = {
 
 export function UploadForm() {
   const [uploadState, setUploadState] = useState<UploadFormResult>(initialState)
+  const [previews, setPreviews] = useState<string[]>([])
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    watch,
   } = useForm<UploadInput>({
     resolver: zodResolver(uploadSchema),
   })
 
+  const files = watch('files')
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files
+    if (!selectedFiles) return
+
+    const newPreviews = Array.from(selectedFiles).map(file => URL.createObjectURL(file))
+    setPreviews(newPreviews)
+  }
+
   const onSubmit = async (data: UploadInput) => {
     const formData = new FormData()
-    formData.append('file', data.file)
-    if (data.caption) {
-      formData.append('caption', data.caption)
-    }
+    Array.from(data.files as FileList).forEach((file: File) => {
+      formData.append('files', file)
+    })
+    formData.append('name', data.name)
+    formData.append('caption', data.caption)
 
     const result = await uploadImage(formData)
 
@@ -46,9 +60,9 @@ export function UploadForm() {
       setUploadState({
         status: 'success',
         message: 'Upload successful',
-        imageUrl: result.url,
         postId: result.postId,
       })
+      setPreviews([])
       reset()
     }
   }
@@ -59,28 +73,62 @@ export function UploadForm() {
       className="sticky top-4 space-y-5 rounded-lg border border-border/50 bg-linear-to-b from-card to-card/95 p-6 shadow-sm backdrop-blur-sm"
     >
       <div className="space-y-1">
-        <h3 className="font-semibold">Add Photo</h3>
-        <p className="text-xs text-muted-foreground">Upload a new image to your gallery</p>
+        <h3 className="font-semibold">Add Photos</h3>
+        <p className="text-xs text-muted-foreground">Upload up to 10 images to your gallery</p>
       </div>
 
       <div className="space-y-2.5">
-        <label htmlFor="file" className="block text-sm font-medium">Image</label>
+        <label htmlFor="files" className="block text-sm font-medium">Images</label>
         <input
-          {...register('file')}
-          id="file"
+          {...register('files', {onChange: handleFileChange})}
+          id="files"
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
+          multiple
           className="block w-full cursor-pointer rounded-md border border-dashed border-input/50 bg-background/50 px-3 py-4 text-sm transition-colors hover:border-input hover:bg-background focus:border-primary focus:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
           disabled={isSubmitting}
         />
-        {errors.file && (
-          <p className="text-xs text-destructive">{errors.file.message}</p>
+        {errors.files && (
+          <p className="text-xs text-destructive">{errors.files.message as string}</p>
+        )}
+      </div>
+
+      {previews.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs text-muted-foreground">Selected: {previews.length} image(s)</p>
+          <div className="grid grid-cols-4 gap-2">
+            {previews.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt=""
+                className="aspect-square w-full rounded-md object-cover border border-border/30"
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-2.5">
+        <label htmlFor="name" className="block text-sm font-medium">
+          Name <span className="text-xs font-normal text-muted-foreground">(required)</span>
+        </label>
+        <input
+          {...register('name')}
+          id="name"
+          type="text"
+          className="block w-full rounded-md border border-input/50 bg-background/50 px-3 py-2.5 text-sm transition-colors placeholder:text-muted-foreground/60 hover:border-input focus:border-primary focus:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+          placeholder="Title for this post"
+          disabled={isSubmitting}
+        />
+        {errors.name && (
+          <p className="text-xs text-destructive">{errors.name.message}</p>
         )}
       </div>
 
       <div className="space-y-2.5">
         <label htmlFor="caption" className="block text-sm font-medium">
-          Caption <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+          Caption <span className="text-xs font-normal text-muted-foreground">(required)</span>
         </label>
         <textarea
           {...register('caption')}
@@ -103,7 +151,7 @@ export function UploadForm() {
             Uploading...
           </div>
         ) : (
-          'Upload Image'
+          `Upload ${files?.length || ''} Image${files?.length === 1 ? '' : 's'}`
         )}
       </Button>
 
@@ -122,13 +170,6 @@ export function UploadForm() {
               Post ID: <span className="font-mono text-xs">{uploadState.postId}</span>
             </p>
           </div>
-          {uploadState.imageUrl && (
-            <img
-              src={uploadState.imageUrl}
-              alt=""
-              className="w-full rounded-md border border-border/30 object-cover"
-            />
-          )}
         </div>
       )}
     </form>

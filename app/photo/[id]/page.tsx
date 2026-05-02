@@ -1,15 +1,10 @@
 import { ImageDetail } from '@/components/organisms/ImageDetail'
 
-type PhotoPageProps = {
-  params: {
-    id: string
-  }
-}
-
-export default function PhotoPage({ params }: PhotoPageProps) {
+export default async function PhotoPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
-      <ImageDetail id={params.id} />
+      <ImageDetail id={id} />
     </main>
   )
 }

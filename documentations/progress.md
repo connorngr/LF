@@ -55,10 +55,20 @@ None yet.
 | Medium | LIF-40 | LF-018: Image View Count Tracking | Backlog | LIF-27 |
 
 ### 🚀 Phase 4: Ship It! (LAST - Easy Win)
+**Workflow Order: LIF-50 FIRST → LIF-49 SECOND → Compare → LIF-33 LAST**
+
 | Priority | Ticket | Title | Status | Dependencies |
 |----------|--------|-------|--------|--------------|
-| Urgent | LIF-33 | LF-012: Vercel Deployment | Backlog | All above ✅ |
+| Urgent | LIF-33 | LF-012: Vercel Deployment | Backlog | LIF-49, All above ✅ |
 | Medium | LIF-35 | LF-015: Storage Comparison - R2 vs Supabase | Backlog | LIF-25 |
+| High | LIF-50 | LF-029: Stress Testing (DO FIRST - Baseline) | ✅ Done | - |
+| High | LIF-49 | LF-028: Prisma Accelerate (DO SECOND - Compare) | ✅ Done | LIF-50 |
+
+### 🛠️ Final Touches Before Deploy
+| Priority | Ticket | Title | Status | Dependencies |
+|----------|--------|-------|--------|--------------|
+| High | LIF-51 | LF-030: Final Touches (Pre-Deploy Checks) | ✅ Done | LIF-33, LIF-50, LIF-49 |
+| Notes: Environment validation, last-mile SEO, error boundary checks, analytics setup, etc. |
 
 ### 📦 Phase 5: Future Enhancements (Post-MVP)
 | Priority | Ticket | Title | Status | Dependencies |
@@ -120,3 +130,8 @@ None yet.
 - **LIF-34 implementation**: Thumbnail generation for optimized grid display
 - **LIF-36 implementation**: Aspect ratio handling with object-fit: cover for square display
 - **LIF-41**: New ticket for advanced auth (NextAuth.js or JWT) - future enhancement, see LIF-30 for current basic auth
+
+## Random thoughts
+- All images to grayscale, revert the color as hovering
+- CRUD operation for posts
+- Documentation & narrative, web vital

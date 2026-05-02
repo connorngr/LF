@@ -5,19 +5,20 @@ import { getUrl } from '@/lib/r2'
 
 type PostSummary = Readonly<{
   id: string
+  name: string
   imageUrl: string
-  caption: string | null
+  _count: { images: number }
 }>
 
 async function getLatestPosts(limit: number): Promise<PostSummary[]> {
   return prisma.post.findMany({
     orderBy: { createdAt: 'desc' },
     take: limit,
-    select: { id: true, imageUrl: true, caption: true },
+    select: { id: true, name: true, imageUrl: true, _count: { select: { images: true } } },
   })
 }
 
-export async function ImageGallery({ limit = 20 }: { limit?: number }) {
+export async function ImageGallery({ limit = 20 }: Readonly<{ limit?: number }>) {
   const posts = await getLatestPosts(limit)
 
   if (posts.length === 0) {
@@ -39,17 +40,25 @@ export async function ImageGallery({ limit = 20 }: { limit?: number }) {
             className="bg-muted relative isolate block overflow-hidden rounded-lg"
           >
             <figure>
-              <img
-                src={await getUrl(post.imageUrl)}
-                alt={post.caption ?? 'Uploaded image'}
-                className="block h-full w-full object-cover aspect-[3/4]"
-                loading="lazy"
-              />
-              {post.caption ? (
-                <figcaption className="overflow-hidden px-2 pb-1.5 pt-1 text-[11px] leading-snug text-muted-foreground whitespace-nowrap text-ellipsis">
-                  {post.caption}
-                </figcaption>
-              ) : null}
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={await getUrl(post.imageUrl)}
+                  alt={post.name}
+                  className="block aspect-photo h-full w-full object-cover"
+                  loading="lazy"
+                />
+                <p
+                  className="pointer-events-none uppercase absolute bottom-2 left-2 max-w-[min(100%,12rem)] truncate text-left text-[0.75rem] font-bold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.95),0_0_12px_rgba(0,0,0,0.65)]"
+                >
+                  {post.name}
+                </p>
+                {post._count.images > 1 && (
+                  <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm">
+                    +{post._count.images}
+                  </span>
+                )}
+              </div>
             </figure>
           </Link>
         ))}
@@ -58,8 +67,12 @@ export async function ImageGallery({ limit = 20 }: { limit?: number }) {
   )
 }
 
-export function ImageGallerySkeleton({ count = 20 }: { count?: number }) {
+export function ImageGallerySkeleton({ count = 20 }: Readonly<{ count?: number }>) {
   const tileCount = Math.max(Math.min(count, 30), 0)
+  const skeletonKeys = Array.from(
+    { length: tileCount },
+    (_, index) => `gallery-skeleton-${index}`
+  )
 
   return (
     <section className="space-y-3">
@@ -67,9 +80,9 @@ export function ImageGallerySkeleton({ count = 20 }: { count?: number }) {
         <Skeleton className="h-7 w-28" />
       </h2>
       <div className="grid grid-cols-3 md:grid-cols-4 gap-1">
-        {Array.from({ length: tileCount }).map((_, index) => (
-          <div key={index} className="space-y-1">
-            <Skeleton className="aspect-[3/4] w-full" />
+        {skeletonKeys.map((skeletonKey) => (
+          <div key={skeletonKey} className="space-y-1">
+            <Skeleton className="aspect-photo w-full" />
             <Skeleton className="h-3 w-4/5" />
           </div>
         ))}
