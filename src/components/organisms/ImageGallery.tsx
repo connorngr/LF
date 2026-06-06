@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { getUrl } from '@/lib/r2'
 
 type PostSummary = Readonly<{
-  id: string
+  slug: string
   name: string
   imageUrl: string
   _count: { images: number }
@@ -14,7 +14,7 @@ async function getLatestPosts(limit: number): Promise<PostSummary[]> {
   return prisma.post.findMany({
     orderBy: { createdAt: 'desc' },
     take: limit,
-    select: { id: true, name: true, imageUrl: true, _count: { select: { images: true } } },
+    select: { slug: true, name: true, imageUrl: true, _count: { select: { images: true } } },
   })
 }
 
@@ -35,8 +35,8 @@ export async function ImageGallery({ limit = 20 }: Readonly<{ limit?: number }>)
       <div className="grid grid-cols-3 md:grid-cols-4 gap-1">
         {posts.map(async (post) => (
           <Link
-            key={post.id}
-            href={`/photo/${post.id}`}
+            key={post.slug}
+            href={`/photo/${post.slug}`}
             className="bg-muted relative isolate block overflow-hidden rounded-lg"
           >
             <figure>

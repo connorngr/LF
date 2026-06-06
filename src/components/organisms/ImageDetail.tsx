@@ -1,63 +1,67 @@
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
-import { getUrl } from '@/lib/r2'
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { getUrl } from "@/lib/r2";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel'
-import { MarkdownContent } from '@/components/molecules/MarkdownContent'
-import { BackButtonWrapper } from '../atoms/BackButtonWrapper'
-import { LoadingPhoto } from './LoadingPhoto'
-
+} from "@/components/ui/carousel";
+import { MarkdownContent } from "@/components/molecules/MarkdownContent";
+import { BackButtonWrapper } from "../atoms/BackButtonWrapper";
+import { LoadingPhoto } from "./LoadingPhoto";
+import { SyncSoundCloudTrack } from "./SyncSoundCloudTrack";
 type PostDetail = Readonly<{
-  imageUrl: string
-  caption: string | null
-  createdAt: Date
-  images: { imageUrl: string; sortOrder: number }[]
-}>
+  imageUrl: string;
+  caption: string | null;
+  createdAt: Date;
+  soundCloudTrackId: string;
+  images: { imageUrl: string; sortOrder: number }[];
+}>;
 
-async function getPostById(id: string): Promise<PostDetail | null> {
+async function getPostBySlugOrId(slugOrId: string): Promise<PostDetail | null> {
   return prisma.post.findFirst({
-    where: { id },
+    where: { OR: [{ id: slugOrId }, { slug: slugOrId }] },
     select: {
       imageUrl: true,
       caption: true,
       createdAt: true,
+      soundCloudTrackId: true,
       images: {
-        orderBy: { sortOrder: 'asc' },
+        orderBy: { sortOrder: "asc" },
         select: { imageUrl: true, sortOrder: true },
       },
     },
-  })
+  });
 }
 
 export async function ImageDetail({ id }: Readonly<{ id: string }>) {
-  const post = await getPostById(id)
+  const post = await getPostBySlugOrId(id);
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
-  const imageKeys = post.images.length > 0
-    ? post.images.map((img) => img.imageUrl)
-    : [post.imageUrl]
+  const imageKeys =
+    post.images.length > 0
+      ? post.images.map((img) => img.imageUrl)
+      : [post.imageUrl];
 
   const images = await Promise.all(
     imageKeys.map(async (imageKey) => ({
       key: imageKey,
       url: await getUrl(imageKey),
-    }))
-  )
-  const imageCountLabel = `${images.length} image${images.length === 1 ? '' : 's'}`
+    })),
+  );
+  const imageCountLabel = `${images.length} image${images.length === 1 ? "" : "s"}`;
+
 
   return (
     <article>
+      <SyncSoundCloudTrack trackId={post.soundCloudTrackId} />
       <Carousel
-        opts={{ align: 'start', loop: images.length > 1 }}
+        opts={{ align: "start", loop: images.length > 1 }}
         className="grid overflow-hidden bg-card lg:grid-cols-[minmax(0,1fr)_18rem] rounded-2xl"
       >
         <div className="relative min-w-0 ">
@@ -67,7 +71,7 @@ export async function ImageDetail({ id }: Readonly<{ id: string }>) {
                 <figure className="relative flex aspect-photo max-h-[80vh] min-h-[80vh] w-full items-center justify-center">
                   <LoadingPhoto
                     src={image.url}
-                    alt={`${post.caption ?? 'Uploaded image'} - ${index + 1}`}
+                    alt={`${post.caption ?? "Uploaded image"} - ${index + 1}`}
                   />
                 </figure>
               </CarouselItem>
@@ -87,21 +91,17 @@ export async function ImageDetail({ id }: Readonly<{ id: string }>) {
                   className="text-sm leading-6 text-foreground [&_*:first-child]:mt-0 [&_*:last-child]:mb-0"
                 />
               ) : (
-                <p className="text-sm leading-6 text-foreground">No caption was added.</p>
+                <p className="text-sm leading-6 text-foreground">
+                  No caption was added.
+                </p>
               )}
             </div>
           </div>
 
           <div className="flex items-center justify-between gap-3 lg:w-full">
-            <BackButtonWrapper>
-              <Link
-                href="/"
-                className="inline-flex text-sm font-medium text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
-              >
-                Back to gallery
-              </Link>
+            <BackButtonWrapper className="inline-flex text-sm font-medium text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground">
+              Back to gallery
             </BackButtonWrapper>
-
 
             <div className="flex shrink-0 items-center gap-2">
               <span className="text-xs font-medium text-muted-foreground">
@@ -118,5 +118,5 @@ export async function ImageDetail({ id }: Readonly<{ id: string }>) {
         </aside>
       </Carousel>
     </article>
-  )
+  );
 }

@@ -1,5 +1,18 @@
 import { z } from 'zod';
 
+const soundCloudUrlSchema = z
+  .string()
+  .trim()
+  .url('Must be a valid URL')
+  .refine((value) => {
+    try {
+      const hostname = new URL(value).hostname.replace(/^www\./, '');
+      return hostname === 'soundcloud.com' || hostname.endsWith('.soundcloud.com');
+    } catch {
+      return false;
+    }
+  }, 'Must be a SoundCloud track URL');
+
 const MIME_TYPE_TO_EXT: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/png': 'png',
@@ -20,6 +33,7 @@ export const uploadSchema = z.object({
   caption: z.string()
     .min(1, 'Caption is required')
     .max(500, 'Caption must be less than 500 characters'),
+  soundCloudUrl: soundCloudUrlSchema,
 })
 
 export type UploadInput = z.infer<typeof uploadSchema>

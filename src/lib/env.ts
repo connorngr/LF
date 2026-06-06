@@ -46,6 +46,7 @@ const envVarSchema = z.object({
   R2_BUCKET_NAME: z.string().min(1),
   R2_PUBLIC_URL: z.string().min(1),
   NEXT_PUBLIC_BASE_URL: z.string().min(1),
+  IFRAMELY_API_KEY: z.string().min(1),
 })
 
 type EnvSchema = z.infer<typeof envVarSchema>
@@ -82,6 +83,7 @@ export const {
   R2_BUCKET_NAME: r2BucketName,
   R2_PUBLIC_URL: r2PublicUrl,
   NEXT_PUBLIC_BASE_URL: nextPublicBaseUrl,
+  IFRAMELY_API_KEY: iframelyApiKey,
 } = env
 
 /** All env variables as object */

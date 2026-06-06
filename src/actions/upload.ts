@@ -3,7 +3,9 @@
 import { uploadSchema, generateSecureKey } from '@/schemas/upload'
 import { uploadToR2, uploadThumbnailToR2 } from '@/lib/r2'
 import { prisma } from '@/lib/prisma'
+import { generateUniqueSlug } from '@/lib/slug'
 import { isAuthenticated } from '@/lib/auth'
+import { resolveSoundCloudTrack } from '@/lib/iframely'
 import { revalidatePath } from 'next/cache'
 
 export async function uploadImage(formData: FormData) {
@@ -15,11 +17,13 @@ export async function uploadImage(formData: FormData) {
   const files = formData.getAll('files') as File[]
   const name = (formData.get('name') as string | null)?.trim() || undefined
   const caption = (formData.get('caption') as string | null) || undefined
+  const soundCloudUrl = (formData.get('soundCloudUrl') as string | null)?.trim() || undefined
 
   const validationResult = uploadSchema.safeParse({
     files,
     name,
     caption,
+    soundCloudUrl,
   })
 
   if (!validationResult.success) {
@@ -27,7 +31,20 @@ export async function uploadImage(formData: FormData) {
     return { error: errors }
   }
 
-  const { files: validFiles, name: validName, caption: validCaption } = validationResult.data
+  const {
+    files: validFiles,
+    name: validName,
+    caption: validCaption,
+    soundCloudUrl: validSoundCloudUrl,
+  } = validationResult.data
+
+  let soundCloudTrackId: string
+  try {
+    const resolved = await resolveSoundCloudTrack(validSoundCloudUrl)
+    soundCloudTrackId = resolved.trackId
+  } catch {
+    return { error: 'Could not resolve SoundCloud track. Check the URL and try again.' }
+  }
 
   const firstFile = validFiles[0]
   const firstKey = generateSecureKey(firstFile.type)
@@ -37,9 +54,17 @@ export async function uploadImage(formData: FormData) {
   const thumbnailKey = await uploadThumbnailToR2(firstBuffer, firstKey, firstFile.type)
   const savedFirstKey = await uploadToR2(firstBuffer, firstKey, firstFile.type)
 
+  const slug = await generateUniqueSlug(validName)
+
   // Create post with thumbnail as imageUrl (for gallery display)
   const post = await prisma.post.create({
-    data: { name: validName, imageUrl: thumbnailKey, caption: validCaption },
+    data: {
+      name: validName,
+      slug,
+      soundCloudTrackId,
+      imageUrl: thumbnailKey,
+      caption: validCaption,
+    },
   })
 
   // Create Image records: first image has both thumbnail + full-size reference
@@ -64,5 +89,6 @@ export async function uploadImage(formData: FormData) {
     await prisma.image.createMany({ data: remainingImages })
   }
   revalidatePath('/upload')
+  revalidatePath('/')
   return { success: true, postId: post.id }
 }

@@ -48,6 +48,7 @@ export function UploadForm() {
     })
     formData.append('name', data.name)
     formData.append('caption', data.caption)
+    formData.append('soundCloudUrl', data.soundCloudUrl)
 
     const result = await uploadImage(formData)
 
@@ -141,6 +142,23 @@ export function UploadForm() {
         />
         {errors.caption && (
           <p className="text-xs text-destructive">{errors.caption.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2.5">
+        <label htmlFor="soundCloudUrl" className="block text-sm font-medium">
+          SoundCloud track <span className="text-xs font-normal text-muted-foreground">(required)</span>
+        </label>
+        <input
+          {...register('soundCloudUrl')}
+          id="soundCloudUrl"
+          type="url"
+          className="block w-full rounded-md border border-input/50 bg-background/50 px-3 py-2.5 text-sm transition-colors placeholder:text-muted-foreground/60 hover:border-input focus:border-primary focus:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+          placeholder="https://soundcloud.com/artist/track-name"
+          disabled={isSubmitting}
+        />
+        {errors.soundCloudUrl && (
+          <p className="text-xs text-destructive">{errors.soundCloudUrl.message}</p>
         )}
       </div>
 

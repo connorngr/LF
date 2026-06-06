@@ -1,12 +1,12 @@
-import { Suspense } from 'react'
+import { Suspense } from "react";
 import {
   PersonalInfoHero,
   PersonalInfoHeroSkeleton,
-} from '@/components/organisms/PersonalInfoHero'
+} from "@/components/organisms/PersonalInfoHero";
 import {
   ImageGallery,
   ImageGallerySkeleton,
-} from '@/components/organisms/ImageGallery'
+} from "@/components/organisms/ImageGallery";
 
 export default function HomePage() {
   return (
@@ -18,5 +18,5 @@ export default function HomePage() {
         <ImageGallery />
       </Suspense>
     </main>
-  )
+  );
 }
