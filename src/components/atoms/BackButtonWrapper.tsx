@@ -1,12 +1,29 @@
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
-export function BackButtonWrapper({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
+type BackButtonWrapperProps = Readonly<{
+  href?: string;
+  className?: string;
+  children: React.ReactNode;
+}>;
+
+export function BackButtonWrapper({
+  href = "/",
+  className,
+  children,
+}: BackButtonWrapperProps) {
+  const router = useRouter();
+
   return (
-    <button onClick={() => router.back()} className=''>
+    <button
+      type="button"
+      className={className}
+      onClick={() => {
+        router.push(href, { scroll: false });
+      }}
+    >
       {children}
     </button>
-  )
+  );
 }
