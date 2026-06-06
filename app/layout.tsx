@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { SoundCloudPlayer } from "@/components/organisms/SoundCloudPlayer";
+import { SoundCloudTrackProvider } from "@/components/organisms/SoundCloudTrackProvider";
+import { getLatestPostTrackId } from "@/lib/posts";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -15,18 +18,23 @@ export const metadata: Metadata = {
   description: "A gallery of life moments",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   gallerymodal,
 }: Readonly<{
   children: React.ReactNode;
   gallerymodal: React.ReactNode;
 }>) {
+  const latestTrackId = await getLatestPostTrackId();
+
   return (
     <html lang="en" className={cn("dark:bg-background", "font-sans", geist.variable)}>
       <body className={`${spaceGrotesk.className} antialiased dark:bg-background dark:text-foreground`}>
-        {children}
-        {gallerymodal}
+        <SoundCloudTrackProvider initialTrackId={latestTrackId}>
+          {children}
+          {gallerymodal}
+          <SoundCloudPlayer />
+        </SoundCloudTrackProvider>
       </body>
     </html>
   );
