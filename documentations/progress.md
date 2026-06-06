@@ -1,6 +1,6 @@
 # MVP Progress Tracker
 
-> Last updated: 2026-05-02
+> Last updated: 2026-06-06
 
 ## Execution Plan: Eat the Frog First 🐸
 
@@ -28,6 +28,8 @@
 | LIF-34 | LF-013: Image Thumbnail Generation | ✅ Done | Optimized thumbnails for grid view |
 | LIF-36 | LF-014: Image Aspect Ratio Handling | ✅ Done | Square crop / object-fit: cover |
 | LIF-46 | LF-024: Multi-Image Posts & Thumbnail Optimization | ✅ Done | Prisma `Image` relation on `Post`, carousel detail, thumbnails, upload flow |
+| LIF-48 | LF-026: SEO Improvement - Slug-based URLs | ✅ Done | Post `slug` + migration; gallery links and detail resolve slug or id |
+| LIF-43 | LF-022: Music Integration - SoundCloud for Posts | ✅ Done | Per-post track via Iframely; global player with consent + crossfade |
 
 ## In Progress
 
@@ -40,28 +42,20 @@ None yet.
 |----------|--------|-------|--------|--------------|
 | High | LIF-46 | LF-024: Multi-Image Posts & Thumbnail Optimization | ✅ Done | LIF-31 |
 | High | LIF-45 | LF-025: Carousel View for Multi-Image Posts | Backlog | LIF-46 |
-| High | LIF-48 | LF-026: SEO Improvement - Slug-based URLs | Backlog | LIF-46 |
 
 ### 🎨 Phase 2: Polish & Sharing
 | Priority | Ticket | Title | Status | Dependencies |
 |----------|--------|-------|--------|--------------|
 | Low | LIF-47 | LF-027: Email Integration - Share via Mailto | Backlog | LIF-46 |
 | Low | LIF-44 | LF-023: Easy Share to Instagram/FB Stories | Backlog | LIF-27, LIF-28 |
-| Low | LIF-43 | LF-022: Music Integration - Spotify for Posts | Backlog | LIF-27 |
+| Low | LIF-43 | LF-022: Music Integration - SoundCloud for Posts | ✅ Done | LIF-27 |
 
-### 💬 Phase 3: Social Features
-| Priority | Ticket | Title | Status | Dependencies |
-|----------|--------|-------|--------|--------------|
-| High | LIF-39 | LF-017: Comments, Likes & Reactions | Backlog | LIF-30 |
-| High | LIF-37 | LF-016: Image Infinite Scroll / Pagination | Backlog | LIF-27 |
-| Medium | LIF-40 | LF-018: Image View Count Tracking | Backlog | LIF-27 |
-
-### 🚀 Phase 4: Ship It! (LAST - Easy Win)
+### 🚀 Phase 4: Ship It! (Deploy before SEO & Phase 3)
 **Workflow Order: LIF-50 FIRST → LIF-49 SECOND → Compare → LIF-33 LAST**
 
 | Priority | Ticket | Title | Status | Dependencies |
 |----------|--------|-------|--------|--------------|
-| Urgent | LIF-33 | LF-012: Vercel Deployment | Backlog | LIF-49, All above ✅ |
+| Urgent | LIF-33 | LF-012: Vercel Deployment | Backlog | LIF-49; Phase 1–2 + ship checklist as prioritized |
 | Medium | LIF-35 | LF-015: Storage Comparison - R2 vs Supabase | Backlog | LIF-25 |
 | High | LIF-50 | LF-029: Stress Testing (DO FIRST - Baseline) | ✅ Done | - |
 | High | LIF-49 | LF-028: Prisma Accelerate (DO SECOND - Compare) | ✅ Done | LIF-50 |
@@ -72,50 +66,39 @@ None yet.
 | High | LIF-51 | LF-030: Final Touches (Pre-Deploy Checks) | ✅ Done | LIF-33, LIF-50, LIF-49 |
 | Notes: Environment validation, last-mile SEO, error boundary checks, analytics setup, etc. |
 
+### ✅ Post-Deploy (after LIF-33 — Vercel live)
+
+Slug URLs and social scope ship **after** production deploy. **LIF-48:** adopt gradually — new posts can use slugs first; existing posts keep id-based URLs until migrated.
+
+| Priority | Ticket | Title | Status | Dependencies |
+|----------|--------|-------|--------|--------------|
+| High | LIF-48 | LF-026: SEO Improvement - Slug-based URLs | ✅ Done | LIF-46 |
+
+#### 💬 Phase 3: Social Features (same wave as post-deploy SEO)
+| Priority | Ticket | Title | Status | Dependencies |
+|----------|--------|-------|--------|--------------|
+| High | LIF-39 | LF-017: Comments, Likes & Reactions | Backlog | LIF-30, LIF-33 |
+| High | LIF-37 | LF-016: Image Infinite Scroll / Pagination | Backlog | LIF-27, LIF-33 |
+| Medium | LIF-40 | LF-018: Image View Count Tracking | Backlog | LIF-27, LIF-33 |
+
 ### 📦 Phase 5: Future Enhancements (Post-MVP)
 | Priority | Ticket | Title | Status | Dependencies |
 |----------|--------|-------|--------|--------------|
 | Low | LIF-41 | LF-020: Advanced Auth - NextAuth or JWT | Backlog | LIF-30 |
 | Low | LIF-42 | LF-021: Blog Engine Integration | Backlog | None |
 
-## Skipped / Cancelled
-
-| Priority | Ticket | Title | Reason |
-|----------|--------|-------|-------|
-| Urgent | LIF-29 | LF-008: Dark/Light Mode | Moved to post-MVP |
-| - | LIF-1 | Get familiar with Linear | Cancelled |
-| - | LIF-2 | Set up your teams | Cancelled |
-| - | LIF-3 | Connect your tools | Cancelled |
-| - | LIF-4 | Import your data | Cancelled |
-| - | LIF-6 | Initialize Next.js Project | Cancelled (replaced by LIF-22) |
-| - | LIF-7 | Create API Client Service | Cancelled |
-| - | LIF-8 | Create Homepage Component - UI Focus | Cancelled |
-| - | LIF-9 | Create Folder Grid View Component | Cancelled |
-| - | LIF-10 | Create Admin Login Component | Cancelled |
-| - | LIF-11 | Create Admin Upload Component | Cancelled |
-| - | LIF-12 | Create Navigation Component | Cancelled |
-| - | LIF-13 | Build Personal Info Section UI | Cancelled |
-| - | LIF-14 | Build Gallery Grid Section UI | Cancelled |
-| - | LIF-15 | Optimize code splitting | Cancelled |
-| - | LIF-16 | Create pagination for Gallery page | Cancelled |
-| - | LIF-17 | View image detail | Cancelled |
-| - | LIF-18 | [BE] Exploring Hono | Cancelled |
-| - | LIF-19 | Optimize state management using Zustand | Cancelled |
-| - | LIF-20 | Build modal with parallel routes | Cancelled |
-| - | LIF-21 | Build login form // new image form | Cancelled |
-
 ## Where We're Heading
 
 **Next up (Eat the Frog 🐸):** LIF-45 (Carousel for multi-image) — unblocks richer gallery UX now that LIF-46 is done.
 
 **Roadmap overview:**
-1. 🔥 **Phase 1** - Multi-Image (LIF-46) ✅ → Carousel (LIF-45) → SEO Slug (LIF-48)
+1. 🔥 **Phase 1** - Multi-Image (LIF-46) ✅ → Carousel (LIF-45)
 2. 🎨 **Phase 2** - Polish: Email (LIF-47) + Stories (LIF-44) + Music (LIF-43)
-3. 💬 **Phase 3** - Social: Comments (LIF-39) + Infinite Scroll (LIF-37) + View Count (LIF-40)
-4. 🚀 **Phase 4** - Ship: Deploy to Vercel (LIF-33) + Storage Comparison (LIF-35) — **LAST!**
+3. 🚀 **Phase 4** - Ship: Stress / Accelerate / Deploy to Vercel (LIF-33) + Storage Comparison (LIF-35) — **before** slug + social
+4. ✅ **Post-Deploy** - SEO slug (LIF-48, gradual: new posts → slug, legacy → id) + **Phase 3** Social: Comments (LIF-39) + Infinite Scroll (LIF-37) + View Count (LIF-40)
 5. 📦 **Phase 5** - Future: Advanced Auth (LIF-41) + Blog (LIF-42)
 
-**Philosophy:** Hardest foundations first (multi-image landed in LIF-46); ship / deploy stays later in Phase 4. Eat the frog! 🐸
+**Philosophy:** Hardest foundations first (multi-image landed in LIF-46); get Vercel (LIF-33) live, then SEO slugs and social features. Eat the frog! 🐸
 
 ## Notes
 
@@ -132,6 +115,8 @@ None yet.
 - **LIF-34 implementation**: Thumbnail generation for optimized grid display
 - **LIF-36 implementation**: Aspect ratio handling with object-fit: cover for square display
 - **LIF-46 implementation**: Multi-image posts via Prisma `Image` model (`images` on `Post`), `ImageDetail` carousel, thumbnail keys on post, related upload/query updates
+- **LIF-48 implementation**: `slug` on `Post`, unique constraint migration, `ImageGallery` slug links, `ImageDetail` resolves slug or legacy id
+- **LIF-43 implementation**: SoundCloud track per post (Iframely resolve on upload), `SoundCloudPlayer` with consent dialog and dual-slot crossfade
 - **LIF-41**: New ticket for advanced auth (NextAuth.js or JWT) - future enhancement, see LIF-30 for current basic auth
 
 ## Random thoughts
