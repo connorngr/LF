@@ -1,25 +1,60 @@
 import { prisma } from '@/lib/prisma'
 import { Skeleton } from '@/components/ui/skeleton'
+import { AdminPostTile } from '@/components/molecules/AdminPostTile'
 import Link from 'next/link'
 import { getUrl } from '@/lib/r2'
 
 type PostSummary = Readonly<{
+  id: string
+  slug: string
+  name: string
+  caption: string
+  imageUrl: string
+  _count: { images: number }
+}>
+
+type PublicPostSummary = Readonly<{
   slug: string
   name: string
   imageUrl: string
   _count: { images: number }
 }>
 
-async function getLatestPosts(limit: number): Promise<PostSummary[]> {
+async function getLatestPosts(limit: number, mode: 'public' | 'admin') {
+  if (mode === 'admin') {
+    return prisma.post.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        caption: true,
+        imageUrl: true,
+        _count: { select: { images: true } },
+      },
+    })
+  }
+
   return prisma.post.findMany({
     orderBy: { createdAt: 'desc' },
     take: limit,
-    select: { slug: true, name: true, imageUrl: true, _count: { select: { images: true } } },
+    select: {
+      slug: true,
+      name: true,
+      imageUrl: true,
+      _count: { select: { images: true } },
+    },
   })
 }
 
-export async function ImageGallery({ limit = 20 }: Readonly<{ limit?: number }>) {
-  const posts = await getLatestPosts(limit)
+type ImageGalleryProps = Readonly<{
+  limit?: number
+  mode?: 'public' | 'admin'
+}>
+
+export async function ImageGallery({ limit = 20, mode = 'public' }: ImageGalleryProps) {
+  const posts = await getLatestPosts(limit, mode)
 
   if (posts.length === 0) {
     return (
@@ -33,35 +68,47 @@ export async function ImageGallery({ limit = 20 }: Readonly<{ limit?: number }>)
   return (
     <section className="space-y-3">
       <div className="grid grid-cols-3 md:grid-cols-4 gap-1">
-        {posts.map(async (post) => (
-          <Link
-            key={post.slug}
-            href={`/photo/${post.slug}`}
-            className="bg-muted relative isolate block overflow-hidden rounded-lg"
-          >
-            <figure>
-              <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={await getUrl(post.imageUrl)}
-                  alt={post.name}
-                  className="block aspect-photo h-full w-full object-cover"
-                  loading="lazy"
-                />
-                <p
-                  className="pointer-events-none uppercase absolute bottom-2 left-2 max-w-[min(100%,12rem)] truncate text-left text-[0.75rem] font-bold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.95),0_0_12px_rgba(0,0,0,0.65)]"
-                >
-                  {post.name}
-                </p>
-                {post._count.images > 1 && (
-                  <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm">
-                    +{post._count.images}
-                  </span>
-                )}
-              </div>
-            </figure>
-          </Link>
-        ))}
+        {mode === 'admin'
+          ? (posts as PostSummary[]).map(async (post) => (
+              <AdminPostTile
+                key={post.slug}
+                postId={post.id}
+                slug={post.slug}
+                name={post.name}
+                caption={post.caption}
+                imageSrc={await getUrl(post.imageUrl)}
+                imageCount={post._count.images}
+              />
+            ))
+          : (posts as PublicPostSummary[]).map(async (post) => (
+              <Link
+                key={post.slug}
+                href={`/photo/${post.slug}`}
+                className="group bg-muted relative isolate block overflow-hidden rounded-lg"
+              >
+                <figure>
+                  <div className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={await getUrl(post.imageUrl)}
+                      alt={post.name}
+                      className="block aspect-photo h-full w-full object-cover transition-[filter] duration-300 [@media(hover:hover)]:grayscale [@media(hover:hover)]:group-hover:grayscale-0"
+                      loading="lazy"
+                    />
+                    <p
+                      className="pointer-events-none uppercase absolute bottom-2 left-2 max-w-[min(100%,12rem)] truncate text-left text-[0.75rem] font-bold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.95),0_0_12px_rgba(0,0,0,0.65)]"
+                    >
+                      {post.name}
+                    </p>
+                    {post._count.images > 1 && (
+                      <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm">
+                        +{post._count.images}
+                      </span>
+                    )}
+                  </div>
+                </figure>
+              </Link>
+            ))}
       </div>
     </section>
   )

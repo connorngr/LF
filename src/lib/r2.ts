@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import sharp from "sharp"
 import { r2AccessKeyId, r2AccountId, r2BucketName, r2SecretAccessKey } from "./env"
@@ -60,4 +60,17 @@ export async function getUrl(key: string): Promise<string> {
     new GetObjectCommand({ Bucket: BUCKET, Key: key }),
     { expiresIn: 3600 },
   )
+}
+
+export async function deleteFromR2(key: string): Promise<void> {
+  try {
+    await r2.send(
+      new DeleteObjectCommand({
+        Bucket: BUCKET,
+        Key: key,
+      })
+    )
+  } catch (error) {
+    console.error(`Failed to delete R2 object: ${key}`, error)
+  }
 }

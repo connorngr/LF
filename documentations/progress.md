@@ -1,125 +1,125 @@
 # MVP Progress Tracker
 
-> Last updated: 2026-06-06
+> Last updated: 2026-06-07
 
-## Execution Plan: Eat the Frog First 🐸
+## Execution Plan (current)
 
-1. **Core UI** - Profile Header (LIF-26) - using shadcn Card, Avatar, Skeleton ✅
-2. **Core UI** - Image Grid Desktop (LIF-27) - ImageGallery + ImageDetail ✅
-3. **Auth** - Admin Authentication (LIF-30) ✅
-4. **Phase 3** - Mobile Grid (LIF-28) ✅, Thumbnails (LIF-34) ✅, Aspect Ratio (LIF-36) ✅
-5. **Phase 4** - Upload (LIF-31) ✅, Upload Interface (LIF-32) ✅
-6. **Phase 1 (frog)** - Multi-image posts & thumbnails (LIF-46) ✅
+1. **Side quests** — grayscale hover, CRUD, web vitals ([LIF-53](https://linear.app/lifeframecn/issue/LIF-53), [LIF-54](https://linear.app/lifeframecn/issue/LIF-54), [LIF-55](https://linear.app/lifeframecn/issue/LIF-55))
+2. **Observability** — view counts + logging ([LIF-40](https://linear.app/lifeframecn/issue/LIF-40), [LIF-56](https://linear.app/lifeframecn/issue/LIF-56))
+3. **Deploy** — Vercel ([LIF-33](https://linear.app/lifeframecn/issue/LIF-33))
+4. **Research** — social share options ([LIF-44](https://linear.app/lifeframecn/issue/LIF-44))
+
+See `documentations/today_scope.md` for today's windows.
+
+---
 
 ## Completed Tickets
 
-| Ticket | Title | Status | Notes |
-|--------|-------|-------|-------|
-| LIF-22 | LF-001: Project Setup | ✅ Done | Next.js + TypeScript + Tailwind |
-| LIF-24 | LF-004: Environment Configuration | ✅ Done | .env + zod validation |
-| LIF-23 | LF-002: Database Schema | ✅ Done | Prisma + posts table |
-| LIF-25 | LF-003: Storage Setup | ✅ Done | Cloudflare R2 + @aws-sdk/client-s3 |
-| LIF-26 | LF-005: Profile Header | ✅ Done | shadcn Card, Avatar, Skeleton - PersonalInfoHero organism |
-| LIF-27 | LF-006: Image Grid - Desktop | ✅ Done | ImageGallery + ImageDetail organisms, responsive layout |
-| LIF-28 | LF-007: Image Grid - Mobile | ✅ Done | 3-column mobile, responsive breakpoints |
-| LIF-30 | LF-009: Admin Authentication | ✅ Done | bcrypt hash comparison, session management, /upload protected |
-| LIF-31 | LF-010: Image Upload | ✅ Done | R2 integration, file validation, Server Actions |
-| LIF-32 | LF-011: Upload Interface | ✅ Done | /upload page, UploadForm with improved UX |
-| LIF-34 | LF-013: Image Thumbnail Generation | ✅ Done | Optimized thumbnails for grid view |
-| LIF-36 | LF-014: Image Aspect Ratio Handling | ✅ Done | Square crop / object-fit: cover |
-| LIF-46 | LF-024: Multi-Image Posts & Thumbnail Optimization | ✅ Done | Prisma `Image` relation on `Post`, carousel detail, thumbnails, upload flow |
-| LIF-48 | LF-026: SEO Improvement - Slug-based URLs | ✅ Done | Post `slug` + migration; gallery links and detail resolve slug or id |
-| LIF-43 | LF-022: Music Integration - SoundCloud for Posts | ✅ Done | Per-post track via Iframely; global player with consent + crossfade |
+| Ticket | Linear | Title | Notes |
+|--------|--------|-------|-------|
+| LIF-22 | [Done](https://linear.app/lifeframecn/issue/LIF-22) | LF-001: Project Setup | Next.js + TypeScript + Tailwind |
+| LIF-24 | [Done](https://linear.app/lifeframecn/issue/LIF-24) | LF-004: Environment Configuration | .env + zod validation |
+| LIF-23 | [Done](https://linear.app/lifeframecn/issue/LIF-23) | LF-002: Database Schema | Prisma + posts table |
+| LIF-25 | [Done](https://linear.app/lifeframecn/issue/LIF-25) | LF-003: Storage Setup | Cloudflare R2 + @aws-sdk/client-s3 |
+| LIF-26 | [Done](https://linear.app/lifeframecn/issue/LIF-26) | LF-005: Profile Header | PersonalInfoHero organism |
+| LIF-27 | [Done](https://linear.app/lifeframecn/issue/LIF-27) | LF-006: Image Grid - Desktop | ImageGallery + ImageDetail |
+| LIF-28 | [Done](https://linear.app/lifeframecn/issue/LIF-28) | LF-007: Image Grid - Mobile | 3-column mobile grid |
+| LIF-30 | [Done](https://linear.app/lifeframecn/issue/LIF-30) | LF-009: Admin Authentication | bcrypt + session, /upload protected |
+| LIF-31 | [Done](https://linear.app/lifeframecn/issue/LIF-31) | LF-010: Image Upload | R2 + Server Actions |
+| LIF-32 | [Done](https://linear.app/lifeframecn/issue/LIF-32) | LF-011: Upload Interface | /upload + UploadForm |
+| LIF-34 | [Done](https://linear.app/lifeframecn/issue/LIF-34) | LF-013: Image Thumbnail Generation | Sharp 400×400 → `thumbnails/` |
+| LIF-36 | [Done](https://linear.app/lifeframecn/issue/LIF-36) | LF-014: Image Aspect Ratio Handling | 4∶5 `aspect-photo`, object-cover |
+| LIF-46 | [Done](https://linear.app/lifeframecn/issue/LIF-46) | LF-024: Multi-Image Posts & Thumbnail Optimization | `Image` model, upload flow |
+| LIF-45 | [Done](https://linear.app/lifeframecn/issue/LIF-45) | LF-025: Carousel View for Multi-Image Posts | embla Carousel in ImageDetail |
+| LIF-48 | [Done](https://linear.app/lifeframecn/issue/LIF-48) | LF-026: SEO Improvement - Slug-based URLs | `slug` + migration, legacy id fallback |
+| LIF-43 | [Done](https://linear.app/lifeframecn/issue/LIF-43) | LF-022: Music Integration - SoundCloud for Posts | Iframely + consent + crossfade |
+| LIF-53 | [Done](https://linear.app/lifeframecn/issue/LIF-53) | Side quest: Grayscale gallery hover | `[@media(hover:hover)]` grayscale + color on hover |
+| LIF-54 | [Done](https://linear.app/lifeframecn/issue/LIF-54) | Side quest: Admin post CRUD | `updatePost`/`deletePost`, dialog edit + alert delete on `/upload` |
 
-## In Progress
+---
 
-None yet.
+## In Progress / Today (Linear: Todo)
 
-## Upcoming (Execution Order: Frog First 🐸)
+| Ticket | Linear | Title | Status |
+|--------|--------|-------|--------|
+| LIF-55 | [Todo](https://linear.app/lifeframecn/issue/LIF-55) | Side quest: Web vitals audit | Today — Window 1 |
+| LIF-40 | [Todo](https://linear.app/lifeframecn/issue/LIF-40) | LF-018: Image View Count Tracking | Today — Window 2 |
+| LIF-56 | [Todo](https://linear.app/lifeframecn/issue/LIF-56) | Observability: server logging + analytics | Today — Window 2 |
+| LIF-33 | [Todo](https://linear.app/lifeframecn/issue/LIF-33) | LF-012: Vercel Deployment | Today — Window 3 |
 
-### 🔥 Phase 1: Multi-Image Architecture (Biggest Feature - DO FIRST)
-| Priority | Ticket | Title | Status | Dependencies |
-|----------|--------|-------|--------|--------------|
-| High | LIF-46 | LF-024: Multi-Image Posts & Thumbnail Optimization | ✅ Done | LIF-31 |
-| High | LIF-45 | LF-025: Carousel View for Multi-Image Posts | Backlog | LIF-46 |
+---
 
-### 🎨 Phase 2: Polish & Sharing
-| Priority | Ticket | Title | Status | Dependencies |
-|----------|--------|-------|--------|--------------|
-| Low | LIF-47 | LF-027: Email Integration - Share via Mailto | Backlog | LIF-46 |
-| Low | LIF-44 | LF-023: Easy Share to Instagram/FB Stories | Backlog | LIF-27, LIF-28 |
-| Low | LIF-43 | LF-022: Music Integration - SoundCloud for Posts | ✅ Done | LIF-27 |
+## Upcoming (Backlog)
 
-### 🚀 Phase 4: Ship It! (Deploy before SEO & Phase 3)
-**Workflow Order: LIF-50 FIRST → LIF-49 SECOND → Compare → LIF-33 LAST**
+### Phase 2: Polish & Sharing
+| Ticket | Linear | Title | Dependencies |
+|--------|--------|-------|--------------|
+| LIF-47 | [Backlog](https://linear.app/lifeframecn/issue/LIF-47) | LF-027: Email Integration - Share via Mailto | LIF-46 |
+| LIF-44 | [Todo](https://linear.app/lifeframecn/issue/LIF-44) | LF-023: Social share research (IG/FB, OG, Web Share) | Post-deploy |
 
-| Priority | Ticket | Title | Status | Dependencies |
-|----------|--------|-------|--------|--------------|
-| Urgent | LIF-33 | LF-012: Vercel Deployment | Backlog | LIF-49; Phase 1–2 + ship checklist as prioritized |
-| Medium | LIF-35 | LF-015: Storage Comparison - R2 vs Supabase | Backlog | LIF-25 |
-| High | LIF-50 | LF-029: Stress Testing (DO FIRST - Baseline) | ✅ Done | - |
-| High | LIF-49 | LF-028: Prisma Accelerate (DO SECOND - Compare) | ✅ Done | LIF-50 |
+### Phase 4: Ship prep (not yet implemented)
+| Ticket | Linear | Title | Notes |
+|--------|--------|-------|-------|
+| LIF-50 | [Backlog](https://linear.app/lifeframecn/issue/LIF-50) | LF-029: Stress Testing (baseline) | No code yet — was incorrectly marked done |
+| LIF-49 | [Backlog](https://linear.app/lifeframecn/issue/LIF-49) | LF-028: Prisma Accelerate | No code yet — was incorrectly marked done |
+| LIF-35 | [Backlog](https://linear.app/lifeframecn/issue/LIF-35) | LF-015: Storage Comparison - R2 vs Supabase | LIF-25 |
 
-### 🛠️ Final Touches Before Deploy
-| Priority | Ticket | Title | Status | Dependencies |
-|----------|--------|-------|--------|--------------|
-| High | LIF-51 | LF-030: Final Touches (Pre-Deploy Checks) | ✅ Done | LIF-33, LIF-50, LIF-49 |
-| Notes: Environment validation, last-mile SEO, error boundary checks, analytics setup, etc. |
+### Phase 3: Social (post-deploy)
+| Ticket | Linear | Title | Dependencies |
+|--------|--------|-------|--------------|
+| LIF-39 | [Backlog](https://linear.app/lifeframecn/issue/LIF-39) | LF-017: Comments, Likes & Reactions | LIF-30, LIF-33 |
+| LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Image Infinite Scroll / Pagination | LIF-27, LIF-33 |
+| LIF-38 | [Backlog](https://linear.app/lifeframecn/issue/LIF-38) | LF-019: CI/CD Pipeline & Automated Testing | — |
 
-### ✅ Post-Deploy (after LIF-33 — Vercel live)
+### Phase 5: Future / Security
+| Ticket | Linear | Title | Notes |
+|--------|--------|-------|-------|
+| LIF-41 | [Backlog](https://linear.app/lifeframecn/issue/LIF-41) | LF-020: Advanced Auth - NextAuth or JWT | Post-MVP |
+| LIF-42 | [Backlog](https://linear.app/lifeframecn/issue/LIF-42) | LF-021: Blog Engine Integration | Post-MVP |
+| LIF-51 | [Backlog](https://linear.app/lifeframecn/issue/LIF-51) | Rate limiting (bot abuse) | Security — not LF-030 |
+| LIF-52 | [Backlog](https://linear.app/lifeframecn/issue/LIF-52) | CAPTCHA verification | Security |
+| LIF-29 | [Backlog](https://linear.app/lifeframecn/issue/LIF-29) | LF-008: Dark/Light Mode | prefers-color-scheme |
 
-Slug URLs and social scope ship **after** production deploy. **LIF-48:** adopt gradually — new posts can use slugs first; existing posts keep id-based URLs until migrated.
-
-| Priority | Ticket | Title | Status | Dependencies |
-|----------|--------|-------|--------|--------------|
-| High | LIF-48 | LF-026: SEO Improvement - Slug-based URLs | ✅ Done | LIF-46 |
-
-#### 💬 Phase 3: Social Features (same wave as post-deploy SEO)
-| Priority | Ticket | Title | Status | Dependencies |
-|----------|--------|-------|--------|--------------|
-| High | LIF-39 | LF-017: Comments, Likes & Reactions | Backlog | LIF-30, LIF-33 |
-| High | LIF-37 | LF-016: Image Infinite Scroll / Pagination | Backlog | LIF-27, LIF-33 |
-| Medium | LIF-40 | LF-018: Image View Count Tracking | Backlog | LIF-27, LIF-33 |
-
-### 📦 Phase 5: Future Enhancements (Post-MVP)
-| Priority | Ticket | Title | Status | Dependencies |
-|----------|--------|-------|--------|--------------|
-| Low | LIF-41 | LF-020: Advanced Auth - NextAuth or JWT | Backlog | LIF-30 |
-| Low | LIF-42 | LF-021: Blog Engine Integration | Backlog | None |
+---
 
 ## Where We're Heading
 
-**Next up (Eat the Frog 🐸):** LIF-45 (Carousel for multi-image) — unblocks richer gallery UX now that LIF-46 is done.
+**This week:** Side quests → observability (LIF-40, LIF-56) → deploy (LIF-33) → social share research (LIF-44).
 
 **Roadmap overview:**
-1. 🔥 **Phase 1** - Multi-Image (LIF-46) ✅ → Carousel (LIF-45)
-2. 🎨 **Phase 2** - Polish: Email (LIF-47) + Stories (LIF-44) + Music (LIF-43)
-3. 🚀 **Phase 4** - Ship: Stress / Accelerate / Deploy to Vercel (LIF-33) + Storage Comparison (LIF-35) — **before** slug + social
-4. ✅ **Post-Deploy** - SEO slug (LIF-48, gradual: new posts → slug, legacy → id) + **Phase 3** Social: Comments (LIF-39) + Infinite Scroll (LIF-37) + View Count (LIF-40)
-5. 📦 **Phase 5** - Future: Advanced Auth (LIF-41) + Blog (LIF-42)
+1. ✅ **Core MVP** — Grid, upload, multi-image, carousel, slugs, SoundCloud
+2. 🎨 **Polish** — Side quests (LIF-53–55), email share (LIF-47)
+3. 📊 **Observability** — View counts + logging (LIF-40, LIF-56)
+4. 🚀 **Ship** — Vercel (LIF-33); optional stress/Accelerate (LIF-50, LIF-49) later
+5. 💬 **Post-deploy** — Social research (LIF-44) → comments/pagination (LIF-39, LIF-37)
 
-**Philosophy:** Hardest foundations first (multi-image landed in LIF-46); get Vercel (LIF-33) live, then SEO slugs and social features. Eat the frog! 🐸
+---
 
-## Notes
+## Linear Sync
 
-- LIF-23 (Database Schema) is done - Prisma client ready in src/lib/prisma.ts
-- **Linear sync**: Team name is "Lifeframecn" (not "LifeFrame"). Team ID: `de769793-61ec-44d2-b53e-88eb6b36f346`
-- **Context7**: Use `npx ctx7@latest` to fetch current docs for design patterns
-- **shadcn components**: Using Card, Avatar, AvatarImage, AvatarFallback, Skeleton from `src/components/ui/`
-- **LIF-26 implementation**: PersonalInfoHero with shadcn Card (size=sm), Avatar (size=lg), Skeleton for loading state
-- **LIF-27 implementation**: ImageGallery + ImageDetail organisms, responsive two-column desktop layout
-- **LIF-28 implementation**: 3-column mobile grid, responsive with Tailwind breakpoints
-- **LIF-31 implementation**: R2 upload via Server Actions, file type/size validation in `src/actions/upload.ts`
-- **LIF-32 implementation**: `/upload` page with UploadForm, gradient styling, improved error/success states
-- **LIF-30 implementation**: bcrypt hash comparison against .env ADMIN_USERNAME/ADMIN_PASSWORD, session management for admin access
-- **LIF-34 implementation**: Thumbnail generation for optimized grid display
-- **LIF-36 implementation**: Aspect ratio handling with object-fit: cover for square display
-- **LIF-46 implementation**: Multi-image posts via Prisma `Image` model (`images` on `Post`), `ImageDetail` carousel, thumbnail keys on post, related upload/query updates
-- **LIF-48 implementation**: `slug` on `Post`, unique constraint migration, `ImageGallery` slug links, `ImageDetail` resolves slug or legacy id
-- **LIF-43 implementation**: SoundCloud track per post (Iframely resolve on upload), `SoundCloudPlayer` with consent dialog and dual-slot crossfade
-- **LIF-41**: New ticket for advanced auth (NextAuth.js or JWT) - future enhancement, see LIF-30 for current basic auth
+- **Team:** Lifeframecn (ID: `de769793-61ec-44d2-b53e-88eb6b36f346`)
+- **Synced 2026-06-07:** Marked Done in Linear — LIF-43, LIF-45, LIF-48, LIF-53, LIF-54
+- **Created 2026-06-07:** LIF-53 (grayscale), LIF-54 (CRUD), LIF-55 (web vitals), LIF-56 (logging/analytics)
+- **ID note:** Linear LIF-51 = rate limiting (not “final touches”). No separate LF-030 ticket exists.
 
-## Random thoughts
-- All images to grayscale, revert the color as hovering
-- CRUD operation for posts
-- Documentation & narrative, web vital
+---
+
+## Implementation Notes
+
+- **LIF-34 / LIF-46 thumbnails:** First image only → Sharp resize 400×400 `fit: inside` → `thumbnails/`; gallery uses `Post.imageUrl`; detail uses full `Image.imageUrl` keys (`src/lib/r2.ts`, `src/actions/upload.ts`)
+- **LIF-45:** `ImageDetail` carousel with `CarouselPrevious` / `CarouselNext`, loop when `images.length > 1`
+- **LIF-48:** `generateUniqueSlug` from post name; `getPostBySlugOrId` OR query; migration `20260516080736_add_slug_sc_id`
+- **LIF-43:** `resolveSoundCloudTrack` via Iframely on upload; `SoundCloudTrackProvider` + crossfade engine; consent dialog in layout
+- **LIF-53:** Gallery tiles grayscale on hover-capable devices; full color on touch (`ImageGallery.tsx`)
+- **LIF-54:** `updatePost`/`deletePost` in `src/actions/posts.ts`; R2 cleanup via `deleteFromR2`; slug regen on rename; `AdminPostTile` with Dialog (edit) + AlertDialog (delete) on `/upload`
+- **LIF-30:** bcrypt against `ADMIN_USERNAME` / `ADMIN_PASSWORD` in env; protects `/upload`
+- **Context7:** `npx ctx7@latest` for current library docs
+- **shadcn:** Card, Avatar, Skeleton, Carousel, Dialog, AlertDialog from `src/components/ui/`
+
+## Random thoughts (mapped to Linear)
+
+| Idea | Ticket |
+|------|--------|
+| Grayscale hover on gallery | [LIF-53](https://linear.app/lifeframecn/issue/LIF-53) |
+| CRUD for posts | [LIF-54](https://linear.app/lifeframecn/issue/LIF-54) |
+| Web vitals / documentation | [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) |

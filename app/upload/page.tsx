@@ -42,7 +42,7 @@ export default function UploadPage() {
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Recent Uploads</h2>
               </div>
-              <ImageGallery />
+              <ImageGallery mode="admin" />
             </section>
           </div>
         </div>

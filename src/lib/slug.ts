@@ -10,12 +10,20 @@ export function slugify(text: string): string {
     .replace(/^-|-$/g, '')
 }
 
-export async function generateUniqueSlug(name: string): Promise<string> {
+export async function generateUniqueSlug(
+  name: string,
+  excludePostId?: string
+): Promise<string> {
   const base = slugify(name) || 'post'
   let slug = base
   let counter = 0
 
-  while (await prisma.post.findUnique({ where: { slug }, select: { id: true } })) {
+  while (true) {
+    const existing = await prisma.post.findUnique({
+      where: { slug },
+      select: { id: true },
+    })
+    if (!existing || existing.id === excludePostId) break
     counter += 1
     slug = `${base}-${counter}`
   }
