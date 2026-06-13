@@ -3,6 +3,7 @@ import { buildSoundCloudPlayerSrc } from "@/lib/soundcloud/player-url";
 import {
   bindLoopOnFinish,
   loadIframeSrc,
+  loadTrackInWidget,
   rampWidgetVolume,
   waitForWidgetReady,
 } from "@/lib/soundcloud/widget";
@@ -21,7 +22,6 @@ export type CrossfadeEngineState = Readonly<{
 }>;
 
 export type CrossfadeEngineCallbacks = Readonly<{
-  setSlotSrc: (slotIndex: number, src: string) => void;
   setState: (state: Partial<CrossfadeEngineState>) => void;
   isCancelled: () => boolean;
 }>;
@@ -33,13 +33,31 @@ async function prepareSlot(
   slotIndex: number,
   nextTrack: string,
 ): Promise<PlayerSlot | null> {
-  const nextSrc = buildSoundCloudPlayerSrc(nextTrack, false);
-  callbacks.setSlotSrc(slotIndex, nextSrc);
-
   const iframe = state.iframeRefs[slotIndex];
   if (!iframe) return null;
 
-  await loadIframeSrc(iframe, nextSrc);
+  const existing = state.slotWidgets[slotIndex];
+  if (existing) {
+    try {
+      existing.widget.pause();
+      existing.widget.setVolume(0);
+    } catch {
+      // Detached iframe; safe to ignore.
+    }
+
+    await loadTrackInWidget(
+      existing.widget,
+      api.Widget.Events.READY,
+      nextTrack,
+      callbacks.isCancelled,
+    );
+    if (callbacks.isCancelled()) return null;
+
+    return existing;
+  }
+
+  const bootstrapSrc = buildSoundCloudPlayerSrc(nextTrack, false);
+  await loadIframeSrc(iframe, bootstrapSrc);
   if (callbacks.isCancelled() || !iframe.isConnected) return null;
 
   try {

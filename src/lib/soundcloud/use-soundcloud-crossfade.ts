@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { loadSoundCloudApi } from "@/lib/soundcloud/api";
 import { SOUND_CLOUD_PLAYER_SLOT_COUNT } from "@/lib/soundcloud/constants";
 import {
   transitionToTrack,
   type CrossfadeEngineState,
 } from "@/lib/soundcloud/crossfade-engine";
+import { pauseAllSlotWidgets } from "@/lib/soundcloud/widget";
 import { SoundCloudConsent } from "@/types/soundcloud-consent";
 
 function createEmptySlotArray<T>(fill: T): T[] {
@@ -27,31 +28,30 @@ export function useSoundCloudCrossfade(
     unbindFinish: null,
   });
   const playingTrackRef = useRef<string | null>(null);
+  const inFlightTrackRef = useRef<string | null>(null);
   const transitionGenerationRef = useRef(0);
-  const [slotSrcs, setSlotSrcs] = useState<(string | null)[]>(
-    createEmptySlotArray(null),
-  );
 
   useEffect(() => {
     if (consent !== SoundCloudConsent.Granted || !trackId) return;
+    if (playingTrackRef.current === trackId) return;
+    if (inFlightTrackRef.current === trackId) return;
 
     const nextTrackId = trackId;
-    if (playingTrackRef.current === nextTrackId) return;
-
     const previousTrackId = playingTrackRef.current;
-    playingTrackRef.current = nextTrackId;
     const transitionGeneration = ++transitionGenerationRef.current;
+    inFlightTrackRef.current = nextTrackId;
+
+    engineStateRef.current.unbindFinish?.();
+    pauseAllSlotWidgets(engineStateRef.current.slotWidgets);
+    engineStateRef.current = {
+      ...engineStateRef.current,
+      unbindFinish: null,
+    };
+
     const isCancelled = () =>
       transitionGenerationRef.current !== transitionGeneration;
 
     const callbacks = {
-      setSlotSrc: (slotIndex: number, src: string) => {
-        setSlotSrcs((current) => {
-          const updated = [...current];
-          updated[slotIndex] = src;
-          return updated;
-        });
-      },
       setState: (partial: Partial<CrossfadeEngineState>) => {
         engineStateRef.current = {
           ...engineStateRef.current,
@@ -62,20 +62,30 @@ export function useSoundCloudCrossfade(
     };
 
     void (async () => {
-      const api = await loadSoundCloudApi();
-      if (isCancelled()) return;
+      try {
+        const api = await loadSoundCloudApi();
+        if (isCancelled()) return;
 
-      engineStateRef.current = {
-        ...engineStateRef.current,
-        iframeRefs: iframeRefs.current,
-      };
-      engineStateRef.current = await transitionToTrack(
-        api,
-        callbacks,
-        engineStateRef.current,
-        previousTrackId,
-        nextTrackId,
-      );
+        engineStateRef.current = {
+          ...engineStateRef.current,
+          iframeRefs: iframeRefs.current,
+        };
+        engineStateRef.current = await transitionToTrack(
+          api,
+          callbacks,
+          engineStateRef.current,
+          previousTrackId,
+          nextTrackId,
+        );
+
+        if (isCancelled()) return;
+
+        playingTrackRef.current = nextTrackId;
+      } finally {
+        if (inFlightTrackRef.current === nextTrackId) {
+          inFlightTrackRef.current = null;
+        }
+      }
     })();
   }, [consent, trackId]);
 
@@ -83,6 +93,7 @@ export function useSoundCloudCrossfade(
     return () => {
       transitionGenerationRef.current += 1;
       engineStateRef.current.unbindFinish?.();
+      pauseAllSlotWidgets(engineStateRef.current.slotWidgets);
       engineStateRef.current = {
         ...engineStateRef.current,
         unbindFinish: null,
@@ -91,7 +102,6 @@ export function useSoundCloudCrossfade(
   }, []);
 
   return {
-    slotSrcs,
     setIframeRef: (slotIndex: number, node: HTMLIFrameElement | null) => {
       iframeRefs.current[slotIndex] = node;
       const iframeRefsCopy = [...engineStateRef.current.iframeRefs];
