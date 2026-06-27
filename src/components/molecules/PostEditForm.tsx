@@ -15,6 +15,7 @@ type PostEditFormProps = Readonly<{
   postId: string
   name: string
   caption: string
+  hasExistingTrack: boolean
   onSuccess: () => void
 }>
 
@@ -31,6 +32,7 @@ export function PostEditForm({
   postId,
   name,
   caption,
+  hasExistingTrack,
   onSuccess,
 }: PostEditFormProps) {
   const [editState, setEditState] = useState<EditFormResult>(initialState)
@@ -38,15 +40,25 @@ export function PostEditForm({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<UpdatePostInput>({
     resolver: zodResolver(updatePostSchema),
-    defaultValues: { postId, name, caption },
+    defaultValues: {
+      postId,
+      name,
+      caption,
+      soundCloudUrl: undefined,
+      changeSoundtrack: false,
+    },
   })
+
+  const changeSoundtrack = watch('changeSoundtrack')
+  const showSoundCloudInput = hasExistingTrack ? changeSoundtrack : true
 
   const onSubmit = async (data: UpdatePostInput) => {
     setEditState(initialState)
-    const result = await updatePost(data.postId, data.name, data.caption)
+    const result = await updatePost(data)
 
     if ('error' in result) {
       setEditState({
@@ -95,6 +107,45 @@ export function PostEditForm({
           <p className="text-xs text-destructive">{errors.caption.message}</p>
         ) : null}
       </div>
+
+      {hasExistingTrack ? (
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              {...register('changeSoundtrack')}
+              type="checkbox"
+              className="size-4 rounded border-input"
+              disabled={isSubmitting}
+            />
+            Change soundtrack
+          </label>
+        </div>
+      ) : null}
+
+      {showSoundCloudInput ? (
+        <div className="space-y-2">
+          <label htmlFor={`edit-soundcloud-${postId}`} className="block text-sm font-medium">
+            SoundCloud track{' '}
+            <span className="text-xs font-normal text-muted-foreground">
+              ({hasExistingTrack ? 'required' : 'optional'})
+            </span>
+          </label>
+          <input
+            {...register('soundCloudUrl')}
+            id={`edit-soundcloud-${postId}`}
+            type="url"
+            className="block w-full rounded-md border border-input/50 bg-background/50 px-3 py-2.5 text-sm transition-colors placeholder:text-muted-foreground/60 hover:border-input focus:border-primary focus:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+            placeholder="https://soundcloud.com/artist/track-name"
+            disabled={isSubmitting}
+          />
+          <p className="text-xs text-muted-foreground">
+            Paste a SoundCloud track URL to {hasExistingTrack ? 'replace the current' : 'add a'} soundtrack.
+          </p>
+          {errors.soundCloudUrl ? (
+            <p className="text-xs text-destructive">{errors.soundCloudUrl.message}</p>
+          ) : null}
+        </div>
+      ) : null}
 
       {editState.status === 'error' ? (
         <p className="text-sm text-destructive">{editState.message}</p>

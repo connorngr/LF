@@ -38,12 +38,14 @@ export async function uploadImage(formData: FormData) {
     soundCloudUrl: validSoundCloudUrl,
   } = validationResult.data
 
-  let soundCloudTrackId: string
-  try {
-    const resolved = await resolveSoundCloudTrack(validSoundCloudUrl)
-    soundCloudTrackId = resolved.trackId
-  } catch {
-    return { error: 'Could not resolve SoundCloud track. Check the URL and try again.' }
+  let soundCloudTrackId: string | null = null
+  if (validSoundCloudUrl) {
+    try {
+      const resolved = await resolveSoundCloudTrack(validSoundCloudUrl)
+      soundCloudTrackId = resolved.trackId
+    } catch {
+      return { error: 'Could not resolve SoundCloud track. Check the URL and try again.' }
+    }
   }
 
   const firstFile = validFiles[0]

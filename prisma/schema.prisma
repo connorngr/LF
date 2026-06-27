@@ -10,7 +10,7 @@ model Post {
   id        String   @id @default(uuid())
   name      String   @default("Untitled")
   slug      String   @unique
-  soundCloudTrackId String   @map("sound_cloud_track_id")
+  soundCloudTrackId String?  @map("sound_cloud_track_id")
   imageUrl  String   @map("image_url") // thumbnail key (images/thumb-{same-key})
   caption   String
   createdAt DateTime @default(now()) @map("created_at")

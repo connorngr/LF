@@ -10,7 +10,11 @@ import { SoundCloudConsent } from "@/types/soundcloud-consent";
 export function SoundCloudPlayer() {
   const { trackId } = useSoundCloudTrack();
   const [consent, setConsent] = useState(SoundCloudConsent.Pending);
-  const { setIframeRef } = useSoundCloudCrossfade(consent, trackId);
+  const { mountTrackId, setIframeRef } = useSoundCloudCrossfade(consent, trackId);
+
+  if (!trackId) {
+    return null;
+  }
 
   return (
     <>
@@ -19,8 +23,11 @@ export function SoundCloudPlayer() {
         onConsentChange={setConsent}
       />
 
-      {consent === SoundCloudConsent.Granted ? (
-        <SoundCloudPlayerSlots setIframeRef={setIframeRef} />
+      {consent === SoundCloudConsent.Granted && mountTrackId ? (
+        <SoundCloudPlayerSlots
+          trackId={mountTrackId}
+          setIframeRef={setIframeRef}
+        />
       ) : null}
     </>
   );

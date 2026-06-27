@@ -2,6 +2,7 @@
 
 import { deletePost } from '@/actions/posts'
 import { PostEditForm } from '@/components/molecules/PostEditForm'
+import { GallerySoundBadge } from '@/components/atoms/GallerySoundBadge'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +32,7 @@ type AdminPostTileProps = Readonly<{
   caption: string
   imageSrc: string
   imageCount: number
+  hasSoundtrack: boolean
 }>
 
 export function AdminPostTile({
@@ -40,6 +42,7 @@ export function AdminPostTile({
   caption,
   imageSrc,
   imageCount,
+  hasSoundtrack,
 }: AdminPostTileProps) {
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
@@ -88,6 +91,7 @@ export function AdminPostTile({
                   +{imageCount}
                 </span>
               ) : null}
+              {hasSoundtrack ? <GallerySoundBadge /> : null}
             </div>
           </figure>
         </Link>
@@ -130,13 +134,14 @@ export function AdminPostTile({
           <DialogHeader>
             <DialogTitle>Edit post</DialogTitle>
             <DialogDescription>
-              Update the name or caption. Renaming changes the public URL slug.
+              Update the name, caption, or soundtrack. Renaming changes the public URL slug.
             </DialogDescription>
           </DialogHeader>
           <PostEditForm
             postId={postId}
             name={name}
             caption={caption}
+            hasExistingTrack={hasSoundtrack}
             onSuccess={() => {
               setEditOpen(false)
               router.refresh()

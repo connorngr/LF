@@ -1,31 +1,29 @@
 "use client";
 
-import { SOUND_CLOUD_PLAYER_SLOT_COUNT } from "@/lib/soundcloud/constants";
+import { buildSoundCloudPlayerSrc } from "@/lib/soundcloud/player-url";
 
 type SoundCloudPlayerSlotsProps = Readonly<{
-  setIframeRef: (slotIndex: number, node: HTMLIFrameElement | null) => void;
+  trackId: string;
+  setIframeRef: (node: HTMLIFrameElement | null) => void;
 }>;
 
-const SLOT_KEYS = Array.from(
-  { length: SOUND_CLOUD_PLAYER_SLOT_COUNT },
-  (_, index) => `soundcloud-slot-${index}`,
-);
-
 export function SoundCloudPlayerSlots({
+  trackId,
   setIframeRef,
 }: SoundCloudPlayerSlotsProps) {
   return (
     <div className="sr-only" aria-hidden="true">
-      {SLOT_KEYS.map((slotKey, slotIndex) => (
-        <iframe
-          key={slotKey}
-          ref={(node) => setIframeRef(slotIndex, node)}
-          title={`SoundCloud player ${slotIndex + 1}`}
-          width="100%"
-          height="166"
-          allow="autoplay; encrypted-media"
-        />
-      ))}
+      <iframe
+        key={trackId}
+        ref={setIframeRef}
+        src={buildSoundCloudPlayerSrc(trackId, false)}
+        title="SoundCloud player"
+        width="100%"
+        height="166"
+        allow="autoplay; encrypted-media"
+        className="pointer-events-none"
+        tabIndex={-1}
+      />
     </div>
   );
 }

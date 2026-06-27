@@ -10,7 +10,7 @@ import {
 
 type SoundCloudTrackContextValue = Readonly<{
   trackId: string | null;
-  setTrackId: (trackId: string) => void;
+  setTrackId: (trackId: string | null) => void;
 }>;
 
 const SoundCloudTrackContext = createContext<SoundCloudTrackContextValue | null>(

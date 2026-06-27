@@ -16,7 +16,7 @@ type PostDetail = Readonly<{
   imageUrl: string;
   caption: string | null;
   createdAt: Date;
-  soundCloudTrackId: string;
+  soundCloudTrackId: string | null;
   images: { imageUrl: string; sortOrder: number }[];
 }>;
 
@@ -59,7 +59,9 @@ export async function ImageDetail({ id }: Readonly<{ id: string }>) {
 
   return (
     <article>
-      <SyncSoundCloudTrack trackId={post.soundCloudTrackId} />
+      {post.soundCloudTrackId ? (
+        <SyncSoundCloudTrack trackId={post.soundCloudTrackId} />
+      ) : null}
       <Carousel
         opts={{ align: "start", loop: images.length > 1 }}
         className="grid overflow-hidden bg-card lg:grid-cols-[minmax(0,1fr)_18rem] rounded-2xl"

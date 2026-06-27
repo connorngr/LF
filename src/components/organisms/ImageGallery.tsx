@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AdminPostTile } from '@/components/molecules/AdminPostTile'
+import { GallerySoundBadge } from '@/components/atoms/GallerySoundBadge'
 import Link from 'next/link'
 import { getUrl } from '@/lib/r2'
 
@@ -10,6 +11,7 @@ type PostSummary = Readonly<{
   name: string
   caption: string
   imageUrl: string
+  soundCloudTrackId: string | null
   _count: { images: number }
 }>
 
@@ -17,6 +19,7 @@ type PublicPostSummary = Readonly<{
   slug: string
   name: string
   imageUrl: string
+  soundCloudTrackId: string | null
   _count: { images: number }
 }>
 
@@ -31,6 +34,7 @@ async function getLatestPosts(limit: number, mode: 'public' | 'admin') {
         name: true,
         caption: true,
         imageUrl: true,
+        soundCloudTrackId: true,
         _count: { select: { images: true } },
       },
     })
@@ -43,6 +47,7 @@ async function getLatestPosts(limit: number, mode: 'public' | 'admin') {
       slug: true,
       name: true,
       imageUrl: true,
+      soundCloudTrackId: true,
       _count: { select: { images: true } },
     },
   })
@@ -78,6 +83,7 @@ export async function ImageGallery({ limit = 20, mode = 'public' }: ImageGallery
                 caption={post.caption}
                 imageSrc={await getUrl(post.imageUrl)}
                 imageCount={post._count.images}
+                hasSoundtrack={Boolean(post.soundCloudTrackId)}
               />
             ))
           : (posts as PublicPostSummary[]).map(async (post) => (
@@ -105,6 +111,7 @@ export async function ImageGallery({ limit = 20, mode = 'public' }: ImageGallery
                         +{post._count.images}
                       </span>
                     )}
+                    {post.soundCloudTrackId ? <GallerySoundBadge /> : null}
                   </div>
                 </figure>
               </Link>

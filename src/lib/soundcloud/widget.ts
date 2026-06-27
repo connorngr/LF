@@ -1,24 +1,6 @@
 import { SOUND_CLOUD_WIDGET_READY_TIMEOUT_MS } from "@/lib/soundcloud/constants";
 import type { SoundCloudWidget } from "@/types/soundcloud";
 
-function trackApiUrl(trackId: string): string {
-  return `https://api.soundcloud.com/tracks/${trackId}`;
-}
-
-export function pauseAllSlotWidgets(
-  slotWidgets: (Readonly<{ widget: SoundCloudWidget }> | null)[],
-): void {
-  for (const slot of slotWidgets) {
-    if (!slot) continue;
-    try {
-      slot.widget.pause();
-      slot.widget.setVolume(0);
-    } catch {
-      // Detached iframe; safe to ignore.
-    }
-  }
-}
-
 export function bindLoopOnFinish(
   widget: SoundCloudWidget,
   finishEvent: string,
@@ -42,19 +24,49 @@ export function bindLoopOnFinish(
   };
 }
 
+export type VolumeRamp = Readonly<{
+  promise: Promise<void>;
+  abort: () => void;
+}>;
+
 export function rampWidgetVolume(
   widget: SoundCloudWidget,
   from: number,
   to: number,
   durationMs: number,
   isCancelled?: () => boolean,
-): Promise<void> {
-  return new Promise((resolve) => {
+  onAbortVolume?: number,
+): VolumeRamp {
+  let frameId = 0;
+  let settled = false;
+
+  const settle = (resolve: () => void) => {
+    if (settled) return;
+    settled = true;
+    cancelAnimationFrame(frameId);
+    resolve();
+  };
+
+  const abort = () => {
+    if (settled) return;
+    settled = true;
+    cancelAnimationFrame(frameId);
+
+    if (onAbortVolume !== undefined) {
+      try {
+        widget.setVolume(onAbortVolume);
+      } catch {
+        // Detached iframe; safe to ignore.
+      }
+    }
+  };
+
+  const promise = new Promise<void>((resolve) => {
     const start = performance.now();
 
     const step = (now: number) => {
-      if (isCancelled?.()) {
-        resolve();
+      if (settled || isCancelled?.()) {
+        settle(resolve);
         return;
       }
 
@@ -64,20 +76,22 @@ export function rampWidgetVolume(
       try {
         widget.setVolume(volume);
       } catch {
-        resolve();
+        settle(resolve);
         return;
       }
 
       if (progress < 1) {
-        requestAnimationFrame(step);
+        frameId = requestAnimationFrame(step);
         return;
       }
 
-      resolve();
+      settle(resolve);
     };
 
-    requestAnimationFrame(step);
+    frameId = requestAnimationFrame(step);
   });
+
+  return { promise, abort };
 }
 
 export function waitForWidgetReady(
@@ -116,71 +130,5 @@ export function waitForWidgetReady(
     if (isCancelled?.()) {
       settle();
     }
-  });
-}
-
-export function loadTrackInWidget(
-  widget: SoundCloudWidget,
-  readyEvent: string,
-  trackId: string,
-  isCancelled?: () => boolean,
-): Promise<void> {
-  return new Promise((resolve) => {
-    let settled = false;
-
-    const settle = () => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeoutId);
-
-      try {
-        widget.unbind(readyEvent);
-      } catch {
-        // Detached iframe; safe to ignore.
-      }
-
-      resolve();
-    };
-
-    const timeoutId = setTimeout(settle, SOUND_CLOUD_WIDGET_READY_TIMEOUT_MS);
-
-    widget.bind(readyEvent, () => {
-      if (isCancelled?.()) {
-        settle();
-        return;
-      }
-
-      settle();
-    });
-
-    try {
-      widget.load(trackApiUrl(trackId), { auto_play: false });
-    } catch {
-      settle();
-      return;
-    }
-
-    if (isCancelled?.()) {
-      settle();
-    }
-  });
-}
-
-export function loadIframeSrc(
-  iframe: HTMLIFrameElement,
-  nextSrc: string,
-): Promise<void> {
-  if (iframe.src === nextSrc) {
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve) => {
-    const handleLoad = () => {
-      iframe.removeEventListener("load", handleLoad);
-      resolve();
-    };
-
-    iframe.addEventListener("load", handleLoad);
-    iframe.src = nextSrc;
   });
 }

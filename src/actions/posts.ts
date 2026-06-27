@@ -1,30 +1,39 @@
 'use server'
 
 import { isAuthenticated } from '@/lib/auth'
+import { resolveSoundCloudTrack } from '@/lib/iframely'
 import { prisma } from '@/lib/prisma'
 import { deleteFromR2 } from '@/lib/r2'
 import { generateUniqueSlug } from '@/lib/slug'
 import { deletePostSchema, updatePostSchema } from '@/schemas/post'
+import type { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 
-export async function updatePost(postId: string, name: string, caption: string) {
+type UpdatePostPayload = z.input<typeof updatePostSchema>
+
+export async function updatePost(input: UpdatePostPayload) {
   const authenticated = await isAuthenticated()
   if (!authenticated) {
     return { error: 'Unauthorized: Admin authentication required' }
   }
 
-  const validationResult = updatePostSchema.safeParse({ postId, name, caption })
+  const validationResult = updatePostSchema.safeParse(input)
   if (!validationResult.success) {
     const errors = validationResult.error.issues.map((err) => err.message).join('; ')
     return { error: errors }
   }
 
-  const { postId: validPostId, name: validName, caption: validCaption } =
-    validationResult.data
+  const {
+    postId: validPostId,
+    name: validName,
+    caption: validCaption,
+    soundCloudUrl: validSoundCloudUrl,
+    changeSoundtrack,
+  } = validationResult.data
 
   const existing = await prisma.post.findUnique({
     where: { id: validPostId },
-    select: { id: true, name: true, slug: true },
+    select: { id: true, name: true, slug: true, soundCloudTrackId: true },
   })
 
   if (!existing) {
@@ -36,12 +45,28 @@ export async function updatePost(postId: string, name: string, caption: string) 
     ? await generateUniqueSlug(validName, validPostId)
     : existing.slug
 
+  let soundCloudTrackId: string | null | undefined = undefined
+  const hasExistingTrack = Boolean(existing.soundCloudTrackId)
+  const shouldUpdateSoundtrack =
+    validSoundCloudUrl &&
+    (!hasExistingTrack || changeSoundtrack === true)
+
+  if (shouldUpdateSoundtrack) {
+    try {
+      const resolved = await resolveSoundCloudTrack(validSoundCloudUrl)
+      soundCloudTrackId = resolved.trackId
+    } catch {
+      return { error: 'Could not resolve SoundCloud track. Check the URL and try again.' }
+    }
+  }
+
   await prisma.post.update({
     where: { id: validPostId },
     data: {
       name: validName,
       caption: validCaption,
       ...(nameChanged ? { slug } : {}),
+      ...(soundCloudTrackId !== undefined ? { soundCloudTrackId } : {}),
     },
   })
 

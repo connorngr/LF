@@ -48,7 +48,9 @@ export function UploadForm() {
     })
     formData.append('name', data.name)
     formData.append('caption', data.caption)
-    formData.append('soundCloudUrl', data.soundCloudUrl)
+    if (data.soundCloudUrl?.trim()) {
+      formData.append('soundCloudUrl', data.soundCloudUrl.trim())
+    }
 
     const result = await uploadImage(formData)
 
@@ -147,7 +149,7 @@ export function UploadForm() {
 
       <div className="space-y-2.5">
         <label htmlFor="soundCloudUrl" className="block text-sm font-medium">
-          SoundCloud track <span className="text-xs font-normal text-muted-foreground">(required)</span>
+          SoundCloud track <span className="text-xs font-normal text-muted-foreground">(optional)</span>
         </label>
         <input
           {...register('soundCloudUrl')}
