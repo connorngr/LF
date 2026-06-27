@@ -111,7 +111,7 @@ export async function deletePost(postId: string) {
 
   const keysToDelete = [
     post.imageUrl,
-    ...post.images.map((image) => image.imageUrl),
+    ...post.images.map((image: { imageUrl: string }) => image.imageUrl),
   ]
 
   await Promise.all(keysToDelete.map((key) => deleteFromR2(key)))
