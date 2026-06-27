@@ -1,10 +1,11 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { uploadImage } from '@/actions/upload'
 import { uploadSchema, type UploadInput } from '@/schemas/upload'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 import { useState } from 'react'
 
 type UploadFormResult =
@@ -26,12 +27,12 @@ export function UploadForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    watch,
+    control,
   } = useForm<UploadInput>({
     resolver: zodResolver(uploadSchema),
   })
 
-  const files = watch('files')
+  const files = useWatch({ control, name: 'files' })
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files
@@ -101,10 +102,13 @@ export function UploadForm() {
           <p className="text-xs text-muted-foreground">Selected: {previews.length} image(s)</p>
           <div className="grid grid-cols-4 gap-2">
             {previews.map((src, i) => (
-              <img
-                key={i}
+              <Image
+                key={src}
                 src={src}
-                alt=""
+                alt={`Selected image ${i + 1}`}
+                width={80}
+                height={80}
+                unoptimized
                 className="aspect-square w-full rounded-md object-cover border border-border/30"
               />
             ))}

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -31,13 +32,16 @@ export function LoadingPhoto({ src, alt, className }: LoadingPhotoProps) {
         </div>
       ) : null}
 
-      <img
+      <Image
         src={src}
         alt={alt}
+        fill
+        unoptimized
+        sizes="100vw"
         onLoad={() => setStatus('loaded')}
         onError={() => setStatus('error')}
         className={cn(
-          'block h-full w-full select-none object-contain transition-opacity duration-300',
+          'object-contain transition-opacity duration-300',
           status === 'loaded' ? 'opacity-100' : 'opacity-0',
           className
         )}

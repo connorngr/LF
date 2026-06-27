@@ -1,4 +1,5 @@
 import * as React from "react"
+import Image from "next/image"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -34,10 +35,18 @@ function Avatar({
   )
 }
 
-function AvatarImage({ className, ...props }: React.ComponentProps<"img">) {
+function AvatarImage({
+  className,
+  alt = "",
+  ...props
+}: Omit<React.ComponentProps<typeof Image>, "alt"> & { alt?: string }) {
   return (
-    <img
+    <Image
       data-slot="avatar-image"
+      alt={alt}
+      fill
+      unoptimized
+      sizes="160px"
       className={cn(
         "aspect-square size-full object-cover",
         className

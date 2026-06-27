@@ -1,6 +1,6 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updatePost } from '@/actions/posts'
 import { updatePostSchema, type UpdatePostInput } from '@/schemas/post'
@@ -40,7 +40,7 @@ export function PostEditForm({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<UpdatePostInput>({
     resolver: zodResolver(updatePostSchema),
@@ -53,7 +53,7 @@ export function PostEditForm({
     },
   })
 
-  const changeSoundtrack = watch('changeSoundtrack')
+  const changeSoundtrack = useWatch({ control, name: 'changeSoundtrack' })
   const showSoundCloudInput = hasExistingTrack ? changeSoundtrack : true
 
   const onSubmit = async (data: UpdatePostInput) => {

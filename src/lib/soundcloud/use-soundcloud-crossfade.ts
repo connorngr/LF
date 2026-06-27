@@ -37,6 +37,7 @@ export function useSoundCloudCrossfade(
     ((iframe: HTMLIFrameElement) => void) | null
   >(null);
   const isDrainingRef = useRef(false);
+  const drainTransitionsRef = useRef<() => Promise<void>>(() => Promise.resolve());
 
   useEffect(() => {
     latestTrackRef.current = trackId;
@@ -181,10 +182,14 @@ export function useSoundCloudCrossfade(
         latestTrackRef.current &&
         playingTrackRef.current !== latestTrackRef.current
       ) {
-        void drainTransitions();
+        void drainTransitionsRef.current();
       }
     }
   };
+
+  useEffect(() => {
+    drainTransitionsRef.current = drainTransitions;
+  });
 
   useEffect(() => {
     if (consent !== SoundCloudConsent.Granted || !trackId) return;
@@ -193,7 +198,7 @@ export function useSoundCloudCrossfade(
     transitionGenerationRef.current += 1;
     abortActiveRamp();
 
-    void drainTransitions();
+    void drainTransitionsRef.current();
   }, [consent, trackId]);
 
   useEffect(() => {
