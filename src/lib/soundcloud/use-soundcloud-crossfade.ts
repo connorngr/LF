@@ -38,7 +38,9 @@ export function useSoundCloudCrossfade(
   >(null);
   const isDrainingRef = useRef(false);
 
-  latestTrackRef.current = trackId;
+  useEffect(() => {
+    latestTrackRef.current = trackId;
+  }, [trackId]);
 
   const abortActiveRamp = () => {
     activeRampAbortRef.current?.();

@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "build": "npm run typecheck && npm run lint && next build",
     "start": "next start",
-    "lint": "eslint",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run"
