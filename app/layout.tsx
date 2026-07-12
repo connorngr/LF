@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { SoundCloudPlayer } from "@/components/organisms/SoundCloudPlayer";
 import { SoundCloudTrackProvider } from "@/components/organisms/SoundCloudTrackProvider";
 import { getLatestPostTrackId } from "@/lib/posts";
+import { UmamiScript } from "@/components/organisms/UmamiScript";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -30,6 +31,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={cn("dark:bg-background", "font-sans", geist.variable)}>
       <body className={`${spaceGrotesk.className} antialiased dark:bg-background dark:text-foreground`}>
+        <UmamiScript />
         <SoundCloudTrackProvider initialTrackId={latestTrackId}>
           {children}
           {gallerymodal}

@@ -6,6 +6,7 @@ import { SoundCloudPlayerSlots } from "@/components/molecules/SoundCloudPlayerSl
 import { useSoundCloudTrack } from "@/components/organisms/SoundCloudTrackProvider";
 import { useSoundCloudCrossfade } from "@/lib/soundcloud/use-soundcloud-crossfade";
 import { SoundCloudConsent } from "@/types/soundcloud-consent";
+import { trackEvent } from "@/lib/analytics/track";
 
 export function SoundCloudPlayer() {
   const { trackId } = useSoundCloudTrack();
@@ -16,11 +17,23 @@ export function SoundCloudPlayer() {
     return null;
   }
 
+  const handleConsentChange = (nextConsent: SoundCloudConsent) => {
+    if (
+      nextConsent === SoundCloudConsent.Granted ||
+      nextConsent === SoundCloudConsent.Denied
+    ) {
+      trackEvent("soundcloud_consent", {
+        choice: nextConsent === SoundCloudConsent.Granted ? "granted" : "denied",
+      });
+    }
+    setConsent(nextConsent);
+  };
+
   return (
     <>
       <SoundCloudConsentDialog
         consent={consent}
-        onConsentChange={setConsent}
+        onConsentChange={handleConsentChange}
       />
 
       {consent === SoundCloudConsent.Granted && mountTrackId ? (

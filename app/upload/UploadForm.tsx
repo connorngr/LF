@@ -6,6 +6,7 @@ import { finalizeImageUpload, prepareImageUploads } from '@/actions/upload'
 import { uploadSchema, type UploadInput } from '@/schemas/upload'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 type UploadFormResult =
@@ -19,6 +20,7 @@ const initialState: UploadFormResult = {
 }
 
 export function UploadForm() {
+  const router = useRouter()
   const [uploadState, setUploadState] = useState<UploadFormResult>(initialState)
   const [previews, setPreviews] = useState<string[]>([])
 
@@ -100,6 +102,7 @@ export function UploadForm() {
       })
       setPreviews([])
       reset()
+      router.refresh()
     } catch {
       setUploadState({
         status: 'error',

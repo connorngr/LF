@@ -90,6 +90,8 @@ export async function ImageGallery({ limit = 20, mode = 'public' }: ImageGallery
               <Link
                 key={post.slug}
                 href={`/photo/${post.slug}`}
+                data-umami-event="gallery_click"
+                data-umami-event-slug={post.slug}
                 className="group bg-muted relative isolate block overflow-hidden rounded-lg"
               >
                 <figure>

@@ -12,7 +12,10 @@ import { MarkdownContent } from "@/components/molecules/MarkdownContent";
 import { BackButtonWrapper } from "../atoms/BackButtonWrapper";
 import { LoadingPhoto } from "./LoadingPhoto";
 import { SyncSoundCloudTrack } from "./SyncSoundCloudTrack";
+import { TrackPostView } from "@/components/molecules/TrackPostView";
+import { TrackCarouselNav } from "@/components/molecules/TrackCarouselNav";
 type PostDetail = Readonly<{
+  slug: string;
   imageUrl: string;
   caption: string | null;
   createdAt: Date;
@@ -24,6 +27,7 @@ async function getPostBySlugOrId(slugOrId: string): Promise<PostDetail | null> {
   return prisma.post.findFirst({
     where: { OR: [{ id: slugOrId }, { slug: slugOrId }] },
     select: {
+      slug: true,
       imageUrl: true,
       caption: true,
       createdAt: true,
@@ -59,13 +63,15 @@ export async function ImageDetail({ id }: Readonly<{ id: string }>) {
 
   return (
     <article>
+      <TrackPostView slug={post.slug} imageCount={images.length} />
       {post.soundCloudTrackId ? (
-        <SyncSoundCloudTrack trackId={post.soundCloudTrackId} />
+        <SyncSoundCloudTrack trackId={post.soundCloudTrackId} slug={post.slug} />
       ) : null}
       <Carousel
         opts={{ align: "start", loop: images.length > 1 }}
         className="grid overflow-hidden bg-card lg:grid-cols-[minmax(0,1fr)_18rem] rounded-2xl"
       >
+        <TrackCarouselNav slug={post.slug} />
         <div className="relative min-w-0 ">
           <CarouselContent className="ml-0">
             {images.map((image, index) => (
@@ -101,7 +107,10 @@ export async function ImageDetail({ id }: Readonly<{ id: string }>) {
           </div>
 
           <div className="flex items-center justify-between gap-3 lg:w-full">
-            <BackButtonWrapper className="inline-flex text-sm font-medium text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground">
+            <BackButtonWrapper
+              analyticsSlug={post.slug}
+              className="inline-flex text-sm font-medium text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+            >
               Back to gallery
             </BackButtonWrapper>
 
