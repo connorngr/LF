@@ -2,7 +2,7 @@
 
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { uploadImage } from '@/actions/upload'
+import { finalizeImageUpload, prepareImageUploads } from '@/actions/upload'
 import { uploadSchema, type UploadInput } from '@/schemas/upload'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
@@ -43,31 +43,69 @@ export function UploadForm() {
   }
 
   const onSubmit = async (data: UploadInput) => {
-    const formData = new FormData()
-    Array.from(data.files as FileList).forEach((file: File) => {
-      formData.append('files', file)
-    })
-    formData.append('name', data.name)
-    formData.append('caption', data.caption)
-    if (data.soundCloudUrl?.trim()) {
-      formData.append('soundCloudUrl', data.soundCloudUrl.trim())
-    }
+    const fileArray = Array.from(data.files as FileList)
 
-    const result = await uploadImage(formData)
+    const prepareResult = await prepareImageUploads(
+      fileArray.map((file) => ({
+        contentType: file.type,
+        size: file.size,
+      })),
+    )
 
-    if ('error' in result) {
+    if ('error' in prepareResult) {
       setUploadState({
         status: 'error',
-        message: result.error || 'Upload failed',
+        message: prepareResult.error || 'Upload failed',
       })
-    } else {
+      return
+    }
+
+    try {
+      await Promise.all(
+        prepareResult.uploads.map(async (upload, index) => {
+          const file = fileArray[index]
+          const response = await fetch(upload.uploadUrl, {
+            method: 'PUT',
+            body: file,
+            headers: {
+              'Content-Type': file.type,
+            },
+          })
+
+          if (!response.ok) {
+            throw new Error(`Failed to upload ${file.name}`)
+          }
+        }),
+      )
+
+      const finalizeResult = await finalizeImageUpload({
+        name: data.name,
+        caption: data.caption,
+        soundCloudUrl: data.soundCloudUrl,
+        imageKeys: prepareResult.uploads.map((upload) => upload.key),
+      })
+
+      if ('error' in finalizeResult) {
+        setUploadState({
+          status: 'error',
+          message: finalizeResult.error || 'Upload failed',
+        })
+        return
+      }
+
       setUploadState({
         status: 'success',
         message: 'Upload successful',
-        postId: result.postId,
+        postId: finalizeResult.postId,
       })
       setPreviews([])
       reset()
+    } catch {
+      setUploadState({
+        status: 'error',
+        message:
+          'Failed to upload images to storage. If this persists, check R2 CORS allows PUT from your site origin.',
+      })
     }
   }
 
