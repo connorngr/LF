@@ -1,19 +1,12 @@
 # MVP Progress Tracker
 
-> Last updated: 2026-06-13
+> Last updated: 2026-07-12
 
-## North Star — Ship by June 30, 2026
+## North Star — Ship by June 30, 2026 ✅
 
 **Goal:** Functional LifeFrame I can use daily starting **July 2026**.
 
-**Cadence:** Weekend-only work (~3 weeks left: Jun 7, 14, 21, 28).
-
-**Two pillars to ship:**
-
-1. **Analytics & observability** — who watches each post, where they come from, view counts
-2. **Social media integration** — share UX + rich link previews
-
-Everything else is defer until post-July unless it blocks deploy.
+**Status:** Shipped — deployed to Vercel with Umami analytics. Daily-usable.
 
 ---
 
@@ -25,21 +18,9 @@ Everything else is defer until post-July unless it blocks deploy.
 | **Database** | Supabase Postgres | **Neon** Postgres |
 | **Storage** | Cloudflare R2 | Cloudflare R2 |
 | **ORM** | Prisma (`DATABASE_URL` + `DIRECT_URL`) | Same schema; Neon URLs in Vercel env |
+| **Analytics** | Disabled (dev) | Umami Cloud |
 
 **Rule:** Supabase is dev-only. On deploy, provision Neon, run migrations there, and set Vercel `DATABASE_URL` / `DIRECT_URL` to Neon — never the Supabase dev instance.
-
----
-
-## 3-Week Execution Plan
-
-| Week | Dates | Focus | Linear |
-|------|-------|-------|--------|
-| **1** | Jun 7–8 | Analytics research → view counts + logging → deploy | [LIF-57](https://linear.app/lifeframecn/issue/LIF-57), [LIF-40](https://linear.app/lifeframecn/issue/LIF-40), [LIF-56](https://linear.app/lifeframecn/issue/LIF-56), [LIF-33](https://linear.app/lifeframecn/issue/LIF-33) |
-| **2** | Jun 14–15 | Finish analytics implementation from research; prod smoke-test | LIF-40, LIF-56 (+ any tickets spawned from LIF-57) |
-| **3** | Jun 21–22 | Social research → social integration | [LIF-44](https://linear.app/lifeframecn/issue/LIF-44), [LIF-58](https://linear.app/lifeframecn/issue/LIF-58) |
-| **Buffer** | Jun 28–29 | Polish, fix gaps, confirm daily-usable in prod | LIF-58, LIF-33 hardening |
-
-See `documentations/today_scope.md` for this weekend's windows.
 
 ---
 
@@ -65,32 +46,28 @@ See `documentations/today_scope.md` for this weekend's windows.
 | LIF-43 | [Done](https://linear.app/lifeframecn/issue/LIF-43) | LF-022: Music Integration - SoundCloud for Posts | Iframely + consent + crossfade |
 | LIF-53 | [Done](https://linear.app/lifeframecn/issue/LIF-53) | Side quest: Grayscale gallery hover | `[@media(hover:hover)]` grayscale + color on hover |
 | LIF-54 | [Done](https://linear.app/lifeframecn/issue/LIF-54) | Side quest: Admin post CRUD | `updatePost`/`deletePost`, dialog edit + alert delete on `/upload` |
+| LIF-57 | [Done](https://linear.app/lifeframecn/issue/LIF-57) | LF-030: Analytics research — visitor tracking & traffic sources | Umami Cloud chosen; no DB view-count column |
+| LIF-56 | [Done](https://linear.app/lifeframecn/issue/LIF-56) | Observability: server logging + analytics hook | Umami script + Tier 2 custom events |
+| LIF-33 | [Done](https://linear.app/lifeframecn/issue/LIF-33) | LF-012: Vercel Deployment | Vercel + Neon Postgres + R2 |
 
 ---
 
-## In Progress — June Ship Track (Linear: Todo)
+## Canceled (June ship track)
 
-### Pillar 1: Analytics & observability
+| Ticket | Linear | Title | Why canceled |
+|--------|--------|-------|--------------|
+| LIF-40 | [Canceled](https://linear.app/lifeframecn/issue/LIF-40) | LF-018: Image View Count Tracking | Superseded by Umami pageviews + `post_view` events |
+| LIF-44 | [Canceled](https://linear.app/lifeframecn/issue/LIF-44) | LF-023: Social share research (IG/FB, OG, Web Share) | Not feasible for personal accounts |
+| LIF-58 | [Canceled](https://linear.app/lifeframecn/issue/LIF-58) | LF-031: Social media integration — share UX & OG cards | Deprioritized; Umami covers traffic source tracking |
 
-| Ticket | Linear | Title | Week |
-|--------|--------|-------|------|
-| LIF-57 | [Todo](https://linear.app/lifeframecn/issue/LIF-57) | LF-030: Analytics research — visitor tracking & traffic sources | 1 (research first) |
-| LIF-40 | [Todo](https://linear.app/lifeframecn/issue/LIF-40) | LF-018: Image View Count Tracking | 1–2 |
-| LIF-56 | [Todo](https://linear.app/lifeframecn/issue/LIF-56) | Observability: server logging + analytics hook | 1–2 |
+---
 
-### Pillar 2: Social media integration
+## Next Up — July 2026 (Linear: Todo)
 
-| Ticket | Linear | Title | Week |
-|--------|--------|-------|------|
-| LIF-44 | [Todo](https://linear.app/lifeframecn/issue/LIF-44) | LF-023: Social share research (IG/FB, OG, Web Share) | 3 (research first) |
-| LIF-58 | [Todo](https://linear.app/lifeframecn/issue/LIF-58) | LF-031: Social media integration — share UX & OG cards | 3–buffer |
-
-### Ship
-
-| Ticket | Linear | Title | Week |
-|--------|--------|-------|------|
-| LIF-33 | [Todo](https://linear.app/lifeframecn/issue/LIF-33) | LF-012: Vercel Deployment | 1 (after analytics MVP) |
-| LIF-55 | [Todo](https://linear.app/lifeframecn/issue/LIF-55) | Side quest: Web vitals audit | 1 (optional polish) |
+| Ticket | Linear | Title | Priority |
+|--------|--------|-------|----------|
+| LIF-59 | [Todo](https://linear.app/lifeframecn/issue/LIF-59) | LF-032: Private posts — hide from public gallery | High |
+| LIF-60 | [Todo](https://linear.app/lifeframecn/issue/LIF-60) | LF-033: Pinned posts — highlight at top of gallery | High |
 
 ---
 
@@ -98,9 +75,10 @@ See `documentations/today_scope.md` for this weekend's windows.
 
 | Ticket | Linear | Title | Why deferred |
 |--------|--------|-------|--------------|
+| LIF-55 | [Todo](https://linear.app/lifeframecn/issue/LIF-55) | Side quest: Web vitals audit | Optional polish — Lighthouse pass on gallery + detail |
 | LIF-39 | [Backlog](https://linear.app/lifeframecn/issue/LIF-39) | Comments, Likes & Reactions | Not needed for daily personal use |
 | LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | Infinite scroll / pagination | Grid works for current volume |
-| LIF-47 | [Backlog](https://linear.app/lifeframecn/issue/LIF-47) | Email share via mailto | May fold into LIF-58 |
+| LIF-47 | [Backlog](https://linear.app/lifeframecn/issue/LIF-47) | Email share via mailto | May fold into future share work |
 | LIF-50 | [Backlog](https://linear.app/lifeframecn/issue/LIF-50) | Stress testing baseline | Post-ship hardening |
 | LIF-49 | [Backlog](https://linear.app/lifeframecn/issue/LIF-49) | Prisma Accelerate | Post-ship if needed |
 | LIF-35 | [Backlog](https://linear.app/lifeframecn/issue/LIF-35) | Storage comparison R2 vs Supabase | R2 already chosen |
@@ -113,23 +91,21 @@ See `documentations/today_scope.md` for this weekend's windows.
 
 ## Where We're Heading
 
-**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD.
+**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy.
 
-**Next 3 weeks:**
+**Next priorities:**
 
-1. 📊 **Research + build analytics** — LIF-57 → LIF-40 + LIF-56
-2. 🚀 **Deploy** — LIF-33 (Vercel + Neon; Supabase stays local dev)
-3. 📱 **Research + build social sharing** — LIF-44 → LIF-58
-4. ✅ **Daily-usable by July** — upload, browse, track views, share links
+1. 🔒 **Private posts** — [LIF-59](https://linear.app/lifeframecn/issue/LIF-59): hide from public gallery, admin-only visibility
+2. 📌 **Pinned posts** — [LIF-60](https://linear.app/lifeframecn/issue/LIF-60): pin to top of gallery (Instagram Highlights-style)
 
 ---
 
 ## Linear Sync
 
 - **Team:** Lifeframecn (ID: `de769793-61ec-44d2-b53e-88eb6b36f346`)
-- **Synced 2026-06-07:** Created LIF-57 (analytics research), LIF-58 (social integration)
-- **Existing kept:** LIF-40, LIF-44, LIF-56 (no duplicates)
-- **ID note:** LIF-57 = LF-030 analytics research; LIF-51 = rate limiting
+- **Synced 2026-07-12:** Marked LIF-33, LIF-56, LIF-57 Done; synced LIF-54 Done; created LIF-59 (private posts), LIF-60 (pinned posts)
+- **Canceled (unchanged):** LIF-40, LIF-44, LIF-58 — superseded by Umami / not feasible
+- **ID note:** LIF-59 = LF-032 private posts; LIF-60 = LF-033 pinned posts
 
 ---
 
@@ -142,6 +118,7 @@ See `documentations/today_scope.md` for this weekend's windows.
 - **LIF-53:** Gallery tiles grayscale on hover-capable devices; full color on touch (`ImageGallery.tsx`)
 - **LIF-54:** `updatePost`/`deletePost` in `src/actions/posts.ts`; R2 cleanup via `deleteFromR2`; slug regen on rename; `AdminPostTile` with Dialog (edit) + AlertDialog (delete) on `/upload`
 - **LIF-30:** bcrypt against `ADMIN_USERNAME` / `ADMIN_PASSWORD` in env; protects `/upload`
+- **LIF-56 / LIF-57:** Umami Cloud in prod only (`isUmamiEnabled()`); `UmamiScript` filters `/upload` + `/auth`; custom events via `trackEvent()` — `post_view`, `gallery_click`, `carousel_navigate`, `back_to_gallery`, `soundcloud_*`
 - **Deploy (LIF-33):** Dev DB = Supabase; prod DB = Neon on Vercel; images = R2 everywhere; run `prisma migrate deploy` against Neon before first prod deploy
 - **Context7:** `npx ctx7@latest` for current library docs
 - **shadcn:** Card, Avatar, Skeleton, Carousel, Dialog, AlertDialog from `src/components/ui/`
@@ -150,11 +127,10 @@ See `documentations/today_scope.md` for this weekend's windows.
 
 | Idea | Ticket |
 |------|--------|
+| Private posts | [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) |
+| Pinned posts | [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) |
 | Who watches / traffic source research | [LIF-57](https://linear.app/lifeframecn/issue/LIF-57) |
-| View counts | [LIF-40](https://linear.app/lifeframecn/issue/LIF-40) |
 | Server logging + analytics | [LIF-56](https://linear.app/lifeframecn/issue/LIF-56) |
-| Social share research | [LIF-44](https://linear.app/lifeframecn/issue/LIF-44) |
-| Social integration (OG, Web Share) | [LIF-58](https://linear.app/lifeframecn/issue/LIF-58) |
 | Grayscale hover on gallery | [LIF-53](https://linear.app/lifeframecn/issue/LIF-53) |
 | CRUD for posts | [LIF-54](https://linear.app/lifeframecn/issue/LIF-54) |
 | Web vitals / documentation | [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) |
