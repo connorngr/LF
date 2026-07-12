@@ -6,6 +6,7 @@ import {
   HeadObjectCommand,
 } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+import { unstable_noStore as noStore } from "next/cache"
 import sharp from "sharp"
 import { r2AccessKeyId, r2AccountId, r2BucketName, r2SecretAccessKey } from "./env"
 
@@ -108,6 +109,7 @@ export async function uploadThumbnailToR2(
 }
 
 export async function getUrl(key: string): Promise<string> {
+  noStore()
   return await getSignedUrl(
     r2,
     new GetObjectCommand({ Bucket: BUCKET, Key: key }),
