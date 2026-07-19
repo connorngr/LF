@@ -16,6 +16,7 @@ type PostEditFormProps = Readonly<{
   name: string
   caption: string
   hasExistingTrack: boolean
+  isPrivate: boolean
   onSuccess: () => void
 }>
 
@@ -33,6 +34,7 @@ export function PostEditForm({
   name,
   caption,
   hasExistingTrack,
+  isPrivate,
   onSuccess,
 }: PostEditFormProps) {
   const [editState, setEditState] = useState<EditFormResult>(initialState)
@@ -50,6 +52,7 @@ export function PostEditForm({
       caption,
       soundCloudUrl: undefined,
       changeSoundtrack: false,
+      isPrivate,
     },
   })
 
@@ -106,6 +109,21 @@ export function PostEditForm({
         {errors.caption ? (
           <p className="text-xs text-destructive">{errors.caption.message}</p>
         ) : null}
+      </div>
+
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            {...register('isPrivate')}
+            type="checkbox"
+            className="size-4 rounded border-input"
+            disabled={isSubmitting}
+          />
+          Private
+        </label>
+        <p className="text-xs text-muted-foreground">
+          Hidden from the public gallery and photo URLs unless you are logged in as admin.
+        </p>
       </div>
 
       {hasExistingTrack ? (

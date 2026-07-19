@@ -1,31 +1,44 @@
 import { prisma } from '@/lib/prisma'
+import { isAuthenticated } from '@/lib/auth'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AdminPostTile } from '@/components/molecules/AdminPostTile'
 import { GallerySoundBadge } from '@/components/atoms/GallerySoundBadge'
+import { GalleryPrivateBadge } from '@/components/atoms/GalleryPrivateBadge'
 import Link from 'next/link'
 import { getUrl } from '@/lib/r2'
 
-type PostSummary = Readonly<{
+type GalleryMode = 'view' | 'edit'
+
+type EditPostSummary = Readonly<{
   id: string
   slug: string
   name: string
   caption: string
   imageUrl: string
   soundCloudTrackId: string | null
+  isPrivate: boolean
   _count: { images: number }
 }>
 
-type PublicPostSummary = Readonly<{
+type ViewPostSummary = Readonly<{
   slug: string
   name: string
   imageUrl: string
   soundCloudTrackId: string | null
+  isPrivate: boolean
   _count: { images: number }
 }>
 
-async function getLatestPosts(limit: number, mode: 'public' | 'admin') {
-  if (mode === 'admin') {
+async function getLatestPosts(
+  limit: number,
+  mode: GalleryMode,
+  includePrivate: boolean,
+) {
+  const where = includePrivate ? undefined : { isPrivate: false }
+
+  if (mode === 'edit') {
     return prisma.post.findMany({
+      where,
       orderBy: { createdAt: 'desc' },
       take: limit,
       select: {
@@ -35,12 +48,14 @@ async function getLatestPosts(limit: number, mode: 'public' | 'admin') {
         caption: true,
         imageUrl: true,
         soundCloudTrackId: true,
+        isPrivate: true,
         _count: { select: { images: true } },
       },
     })
   }
 
   return prisma.post.findMany({
+    where,
     orderBy: { createdAt: 'desc' },
     take: limit,
     select: {
@@ -48,6 +63,7 @@ async function getLatestPosts(limit: number, mode: 'public' | 'admin') {
       name: true,
       imageUrl: true,
       soundCloudTrackId: true,
+      isPrivate: true,
       _count: { select: { images: true } },
     },
   })
@@ -55,11 +71,12 @@ async function getLatestPosts(limit: number, mode: 'public' | 'admin') {
 
 type ImageGalleryProps = Readonly<{
   limit?: number
-  mode?: 'public' | 'admin'
+  mode?: GalleryMode
 }>
 
-export async function ImageGallery({ limit = 20, mode = 'public' }: ImageGalleryProps) {
-  const posts = await getLatestPosts(limit, mode)
+export async function ImageGallery({ limit = 20, mode = 'view' }: ImageGalleryProps) {
+  const includePrivate = await isAuthenticated()
+  const posts = await getLatestPosts(limit, mode, includePrivate)
 
   if (posts.length === 0) {
     return (
@@ -73,8 +90,8 @@ export async function ImageGallery({ limit = 20, mode = 'public' }: ImageGallery
   return (
     <section className="space-y-3">
       <div className="grid grid-cols-3 md:grid-cols-4 gap-1">
-        {mode === 'admin'
-          ? (posts as PostSummary[]).map(async (post) => (
+        {mode === 'edit'
+          ? (posts as EditPostSummary[]).map(async (post) => (
               <AdminPostTile
                 key={post.slug}
                 postId={post.id}
@@ -84,9 +101,10 @@ export async function ImageGallery({ limit = 20, mode = 'public' }: ImageGallery
                 imageSrc={await getUrl(post.imageUrl)}
                 imageCount={post._count.images}
                 hasSoundtrack={Boolean(post.soundCloudTrackId)}
+                isPrivate={post.isPrivate}
               />
             ))
-          : (posts as PublicPostSummary[]).map(async (post) => (
+          : (posts as ViewPostSummary[]).map(async (post) => (
               <Link
                 key={post.slug}
                 href={`/photo/${post.slug}`}
@@ -108,6 +126,7 @@ export async function ImageGallery({ limit = 20, mode = 'public' }: ImageGallery
                     >
                       {post.name}
                     </p>
+                    {post.isPrivate ? <GalleryPrivateBadge /> : null}
                     {post._count.images > 1 && (
                       <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm">
                         +{post._count.images}

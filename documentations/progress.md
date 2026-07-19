@@ -1,6 +1,6 @@
 # MVP Progress Tracker
 
-> Last updated: 2026-07-12
+> Last updated: 2026-07-19
 
 ## North Star — Ship by June 30, 2026 ✅
 
@@ -49,6 +49,7 @@
 | LIF-57 | [Done](https://linear.app/lifeframecn/issue/LIF-57) | LF-030: Analytics research — visitor tracking & traffic sources | Umami Cloud chosen; no DB view-count column |
 | LIF-56 | [Done](https://linear.app/lifeframecn/issue/LIF-56) | Observability: server logging + analytics hook | Umami script + Tier 2 custom events |
 | LIF-33 | [Done](https://linear.app/lifeframecn/issue/LIF-33) | LF-012: Vercel Deployment | Vercel + Neon Postgres + R2 |
+| LIF-59 | [Done](https://linear.app/lifeframecn/issue/LIF-59) | LF-032: Private posts — hide from public gallery | `isPrivate` + admin-only visibility |
 
 ---
 
@@ -62,12 +63,21 @@
 
 ---
 
-## Next Up — July 2026 (Linear: Todo)
+## In progress today — see `documentations/today_scope.md`
 
 | Ticket | Linear | Title | Priority |
 |--------|--------|-------|----------|
-| LIF-59 | [Todo](https://linear.app/lifeframecn/issue/LIF-59) | LF-032: Private posts — hide from public gallery | High |
 | LIF-60 | [Todo](https://linear.app/lifeframecn/issue/LIF-60) | LF-033: Pinned posts — highlight at top of gallery | High |
+
+---
+
+## Next Up — July 2026 (Linear: Backlog)
+
+| Ticket | Linear | Title | Priority |
+|--------|--------|-------|----------|
+| LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Image Infinite Scroll / Pagination | High |
+
+Cursor-based pagination: as the user scrolls the gallery, fetch and append more posts (IntersectionObserver + loading skeleton + end state).
 
 ---
 
@@ -77,7 +87,6 @@
 |--------|--------|-------|--------------|
 | LIF-55 | [Todo](https://linear.app/lifeframecn/issue/LIF-55) | Side quest: Web vitals audit | Optional polish — Lighthouse pass on gallery + detail |
 | LIF-39 | [Backlog](https://linear.app/lifeframecn/issue/LIF-39) | Comments, Likes & Reactions | Not needed for daily personal use |
-| LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | Infinite scroll / pagination | Grid works for current volume |
 | LIF-47 | [Backlog](https://linear.app/lifeframecn/issue/LIF-47) | Email share via mailto | May fold into future share work |
 | LIF-50 | [Backlog](https://linear.app/lifeframecn/issue/LIF-50) | Stress testing baseline | Post-ship hardening |
 | LIF-49 | [Backlog](https://linear.app/lifeframecn/issue/LIF-49) | Prisma Accelerate | Post-ship if needed |
@@ -91,12 +100,15 @@
 
 ## Where We're Heading
 
-**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy.
+**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts.
 
-**Next priorities:**
+**Remaining today:**
 
-1. 🔒 **Private posts** — [LIF-59](https://linear.app/lifeframecn/issue/LIF-59): hide from public gallery, admin-only visibility
-2. 📌 **Pinned posts** — [LIF-60](https://linear.app/lifeframecn/issue/LIF-60): pin to top of gallery (Instagram Highlights-style)
+1. 📌 **Pinned posts** — [LIF-60](https://linear.app/lifeframecn/issue/LIF-60): pin to top of gallery (Instagram Highlights-style)
+
+**Next after today:**
+
+2. ∞ **Infinite scroll** — [LIF-37](https://linear.app/lifeframecn/issue/LIF-37): on-demand fetch as user scrolls the gallery
 
 ---
 
@@ -104,8 +116,9 @@
 
 - **Team:** Lifeframecn (ID: `de769793-61ec-44d2-b53e-88eb6b36f346`)
 - **Synced 2026-07-12:** Marked LIF-33, LIF-56, LIF-57 Done; synced LIF-54 Done; created LIF-59 (private posts), LIF-60 (pinned posts)
+- **Synced 2026-07-19:** Marked LIF-59 Done (private posts shipped); LIF-60 remains today; LIF-37 stays Next Up
 - **Canceled (unchanged):** LIF-40, LIF-44, LIF-58 — superseded by Umami / not feasible
-- **ID note:** LIF-59 = LF-032 private posts; LIF-60 = LF-033 pinned posts
+- **ID note:** LIF-59 = LF-032 private posts; LIF-60 = LF-033 pinned posts; LIF-37 = LF-016 infinite scroll / pagination
 
 ---
 
@@ -117,6 +130,7 @@
 - **LIF-43:** `resolveSoundCloudTrack` via Iframely on upload; `SoundCloudTrackProvider` + crossfade engine; consent dialog in layout
 - **LIF-53:** Gallery tiles grayscale on hover-capable devices; full color on touch (`ImageGallery.tsx`)
 - **LIF-54:** `updatePost`/`deletePost` in `src/actions/posts.ts`; R2 cleanup via `deleteFromR2`; slug regen on rename; `AdminPostTile` with Dialog (edit) + AlertDialog (delete) on `/upload`
+- **LIF-59:** `Post.isPrivate` + migration `20260719130000_add_is_private`; public queries filter `isPrivate: false`; detail returns `notFound()` for non-admin; upload/edit checkbox + `GalleryPrivateBadge`; gallery `mode` is `view` | `edit` (UI only — private visibility always from `isAuthenticated()`)
 - **LIF-30:** bcrypt against `ADMIN_USERNAME` / `ADMIN_PASSWORD` in env; protects `/upload`
 - **LIF-56 / LIF-57:** Umami Cloud in prod only (`isUmamiEnabled()`); `UmamiScript` filters `/upload` + `/auth`; custom events via `trackEvent()` — `post_view`, `gallery_click`, `carousel_navigate`, `back_to_gallery`, `soundcloud_*`
 - **Deploy (LIF-33):** Dev DB = Supabase; prod DB = Neon on Vercel; images = R2 everywhere; run `prisma migrate deploy` against Neon before first prod deploy
@@ -127,8 +141,9 @@
 
 | Idea | Ticket |
 |------|--------|
-| Private posts | [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) |
+| Private posts | [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) ✅ |
 | Pinned posts | [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) |
+| Infinite scroll / fetch on scroll | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) |
 | Who watches / traffic source research | [LIF-57](https://linear.app/lifeframecn/issue/LIF-57) |
 | Server logging + analytics | [LIF-56](https://linear.app/lifeframecn/issue/LIF-56) |
 | Grayscale hover on gallery | [LIF-53](https://linear.app/lifeframecn/issue/LIF-53) |

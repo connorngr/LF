@@ -1,85 +1,77 @@
-# Today’s Scope — Saturday, June 13, 2026
+# Today’s Scope — Sunday, July 19, 2026
 
-**Part of:** 3-week ship plan → functional by **June 30**, daily use in **July 2026**  
-**Cadence:** Weekends only (Jun 7 · 14 · 21 · 28)  
+**Part of:** July polish after June ship → daily use in **July 2026**  
 **Full plan:** `documentations/progress.md`
 
 ---
 
-## Today = Analytics research integration
+## Today = Private + pinned posts
 
-**Single focus:** [LIF-57](https://linear.app/lifeframecn/issue/LIF-57) — research visitor tracking, traffic sources, and pick the analytics stack before building.
+**Focus:** [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) private posts ✅, then [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) pinned posts.
 
-**Priority order:** Analytics research → recommendation doc → spawn implementation tickets  
-**Defer today:** View counts (LIF-40), logging hook (LIF-56), deploy (LIF-33) — start only if research is done early.
+**Priority order:** Private posts → pinned posts  
+**Defer today:** Infinite scroll (LIF-37) — Next Up in `progress.md` after this session.
 
-**Already live in code:** Slug URLs (LIF-48), SoundCloud (LIF-43), multi-image carousel (LIF-45), admin CRUD (LIF-54), grayscale hover (LIF-53)
-
----
-
-## Main window — Analytics research ([LIF-57](https://linear.app/lifeframecn/issue/LIF-57))
-
-Research first; no implementation until the approach is chosen.
-
-### Questions to answer
-
-- [ ] **Who watches:** anonymous session vs fingerprint vs nothing — privacy trade-offs for a personal photo site
-- [ ] **Where they come from:** referrer, UTM, Vercel Analytics vs custom `PostView` table
-- [ ] **Tool vs roll-your-own:** Plausible / Umami / PostHog / Vercel Analytics vs Prisma events table
-- [ ] **Per-post view counts:** counter on `Post` vs event log — what LIF-40 should implement
-- [ ] **Observability:** what server logs belong in LIF-56 vs the analytics tool
-
-### Deliverables
-
-- [ ] Written recommendation (Linear comment on LIF-57 or short doc in `documentations/`)
-- [ ] Decision matrix: privacy, cost, Vercel/Neon compatibility, per-post granularity
-- [ ] Updated or new Linear tickets for LIF-40 + LIF-56 based on research
-- [ ] Clear “build next session” checklist
-
-**Done when:** Approach is chosen with rationale; LIF-40 and LIF-56 have concrete acceptance criteria from research.
+**Already live in code:** Slug URLs (LIF-48), SoundCloud (LIF-43), multi-image carousel (LIF-45), admin CRUD (LIF-54), grayscale hover (LIF-53), Umami analytics (LIF-56 / LIF-57), Vercel + Neon deploy (LIF-33), private posts (LIF-59)
 
 ---
 
-## Stretch goals (only if research finishes early)
+## Main window — Private posts ([LIF-59](https://linear.app/lifeframecn/issue/LIF-59)) ✅
 
-### Build ([LIF-40](https://linear.app/lifeframecn/issue/LIF-40), [LIF-56](https://linear.app/lifeframecn/issue/LIF-56))
+Hide admin-marked posts from the public gallery and photo detail routes.
 
-- [ ] View counts — increment on photo detail view per research decision
-- [ ] Logging + analytics hook — wire chosen tool or custom table
-- [ ] Smoke-test locally
+### Tasks
 
-### Deploy ([LIF-33](https://linear.app/lifeframecn/issue/LIF-33))
+- [x] Add `isPrivate` boolean to `Post` schema + migration
+- [x] Filter private posts from public gallery query
+- [x] Return 404 for private post detail URLs (non-admin)
+- [x] Show private posts in admin `/upload` grid with visual indicator
+- [x] Toggle private/public in upload form + edit dialog
 
-**Database split:** Supabase Postgres for **local dev only**; **Neon** Postgres for **production** on Vercel. Images stay on **Cloudflare R2** in both environments.
-
-- [ ] Neon project + migrations + Vercel env vars
-- [ ] Deploy; smoke-test homepage, `/photo/{slug}`, upload, SoundCloud consent
-
----
-
-## Upcoming weekends (reserved)
-
-| Weekend | Focus | Tickets |
-|---------|-------|---------|
-| **Jun 14–15** | Build analytics from LIF-57 research; prod hardening | LIF-40, LIF-56, LIF-33 |
-| **Jun 21–22** | Social research → implementation | LIF-44 → LIF-58 |
-| **Jun 28–29** | Buffer: polish, share smoke-tests, confirm daily-usable | LIF-58, LIF-33 |
+**Done when:** Public visitors never see private posts; admin still sees and can toggle them on `/upload`. ✅
 
 ---
 
-## Defer until after July
+## Second window — Pinned posts ([LIF-60](https://linear.app/lifeframecn/issue/LIF-60))
+
+Pin posts to the top of the gallery (Instagram Highlights-style).
+
+### Tasks
+
+- [ ] Add `isPinned` boolean (or `pinnedAt` timestamp) to `Post` schema + migration
+- [ ] Sort gallery: pinned first, then `createdAt desc`
+- [ ] Pin/unpin toggle in admin `/upload` UI
+- [ ] Optional: visual pin indicator on gallery tiles
+
+**Done when:** Pinned public posts appear first in the gallery; pin/unpin works from admin.
+
+---
+
+## Stretch goals (only if pinned finishes early)
+
+### Smoke / polish
+
+- [x] Regression: public gallery hides private; admin still sees them
+- [ ] Regression: pin order + unpin restores chronological sort
+- [ ] Deploy if schema migrations need prod (`is_private` migration)
+
+---
+
+## Next up (after today)
+
+| Focus | Ticket |
+|-------|--------|
+| Infinite scroll / on-demand fetch as user scrolls | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) |
+
+---
+
+## Defer until later
 
 - Comments, likes (LIF-39)
-- Infinite scroll (LIF-37)
-- Email share alone (LIF-47 — may merge into LIF-58)
+- Email share alone (LIF-47)
 - Storage comparison (LIF-35)
 - Advanced auth (LIF-41)
 - Stress test / Prisma Accelerate (LIF-50, LIF-49)
 - Web vitals audit (LIF-55)
-
----
-
-## Carry-over (if blocked)
-
-- [ ] Run `add_slug_sc_id` locally; confirm slug + `sound_cloud_track_id` backfill
-- [ ] Regression: grid slugs, legacy `/photo/{id}`, carousel, upload, admin, SoundCloud crossfade
+- Rate limiting / CAPTCHA (LIF-51, LIF-52)
+- Dark/Light mode (LIF-29)

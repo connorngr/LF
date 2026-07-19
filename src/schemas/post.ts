@@ -14,6 +14,7 @@ export const updatePostSchema = z
       .max(500, 'Caption must be less than 500 characters'),
     soundCloudUrl: optionalSoundCloudUrlSchema,
     changeSoundtrack: z.boolean().optional(),
+    isPrivate: z.boolean().default(false),
   })
   .superRefine((data, ctx) => {
     if (data.changeSoundtrack && !data.soundCloudUrl) {

@@ -3,6 +3,7 @@
 import { deletePost } from '@/actions/posts'
 import { PostEditForm } from '@/components/molecules/PostEditForm'
 import { GallerySoundBadge } from '@/components/atoms/GallerySoundBadge'
+import { GalleryPrivateBadge } from '@/components/atoms/GalleryPrivateBadge'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +34,7 @@ type AdminPostTileProps = Readonly<{
   imageSrc: string
   imageCount: number
   hasSoundtrack: boolean
+  isPrivate: boolean
 }>
 
 export function AdminPostTile({
@@ -43,6 +45,7 @@ export function AdminPostTile({
   imageSrc,
   imageCount,
   hasSoundtrack,
+  isPrivate,
 }: AdminPostTileProps) {
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
@@ -86,8 +89,13 @@ export function AdminPostTile({
               >
                 {name}
               </p>
+              {isPrivate ? <GalleryPrivateBadge /> : null}
               {imageCount > 1 ? (
-                <span className="absolute left-1.5 top-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm">
+                <span
+                  className={`absolute top-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm ${
+                    isPrivate ? 'left-8' : 'left-1.5'
+                  }`}
+                >
                   +{imageCount}
                 </span>
               ) : null}
@@ -134,7 +142,7 @@ export function AdminPostTile({
           <DialogHeader>
             <DialogTitle>Edit post</DialogTitle>
             <DialogDescription>
-              Update the name, caption, or soundtrack. Renaming changes the public URL slug.
+              Update the name, caption, privacy, or soundtrack. Renaming changes the public URL slug.
             </DialogDescription>
           </DialogHeader>
           <PostEditForm
@@ -142,6 +150,7 @@ export function AdminPostTile({
             name={name}
             caption={caption}
             hasExistingTrack={hasSoundtrack}
+            isPrivate={isPrivate}
             onSuccess={() => {
               setEditOpen(false)
               router.refresh()

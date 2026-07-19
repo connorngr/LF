@@ -46,6 +46,7 @@ export const postMetadataSchema = z.object({
     .min(1, 'Caption is required')
     .max(500, 'Caption must be less than 500 characters'),
   soundCloudUrl: optionalSoundCloudUrlSchema,
+  isPrivate: z.boolean().default(false),
 })
 
 function fileListToDescriptors(fileList: FileList) {

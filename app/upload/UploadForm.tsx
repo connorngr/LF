@@ -32,6 +32,9 @@ export function UploadForm() {
     control,
   } = useForm<UploadInput>({
     resolver: zodResolver(uploadSchema),
+    defaultValues: {
+      isPrivate: false,
+    },
   })
 
   const files = useWatch({ control, name: 'files' })
@@ -84,6 +87,7 @@ export function UploadForm() {
         name: data.name,
         caption: data.caption,
         soundCloudUrl: data.soundCloudUrl,
+        isPrivate: data.isPrivate === true,
         imageKeys: prepareResult.uploads.map((upload) => upload.key),
       })
 
@@ -207,6 +211,21 @@ export function UploadForm() {
         {errors.soundCloudUrl && (
           <p className="text-xs text-destructive">{errors.soundCloudUrl.message}</p>
         )}
+      </div>
+
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            {...register('isPrivate')}
+            type="checkbox"
+            className="size-4 rounded border-input"
+            disabled={isSubmitting}
+          />
+          Private
+        </label>
+        <p className="text-xs text-muted-foreground">
+          Hidden from the public gallery and photo URLs unless you are logged in as admin.
+        </p>
       </div>
 
       <Button type="submit" size="sm" disabled={isSubmitting} className="w-full">

@@ -10,10 +10,14 @@ import {
   profileMottoMarkdown,
 } from '@/lib/env'
 import { prisma } from '@/lib/prisma'
+import { isAuthenticated } from '@/lib/auth'
 import { getUrl } from '@/lib/r2'
 
 export async function PersonalInfoHero() {
-  const postCount = await prisma.post.count()
+  const isAdmin = await isAuthenticated()
+  const postCount = await prisma.post.count({
+    where: isAdmin ? undefined : { isPrivate: false },
+  })
 
   return (
     <div className="mx-auto max-w-4xl border-0 bg-transparent shadow-none">

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { isAuthenticated } from "@/lib/auth";
 import { getUrl } from "@/lib/r2";
 import {
   Carousel,
@@ -20,6 +21,7 @@ type PostDetail = Readonly<{
   caption: string | null;
   createdAt: Date;
   soundCloudTrackId: string | null;
+  isPrivate: boolean;
   images: { imageUrl: string; sortOrder: number }[];
 }>;
 
@@ -32,6 +34,7 @@ async function getPostBySlugOrId(slugOrId: string): Promise<PostDetail | null> {
       caption: true,
       createdAt: true,
       soundCloudTrackId: true,
+      isPrivate: true,
       images: {
         orderBy: { sortOrder: "asc" },
         select: { imageUrl: true, sortOrder: true },
@@ -44,6 +47,10 @@ export async function ImageDetail({ id }: Readonly<{ id: string }>) {
   const post = await getPostBySlugOrId(id);
 
   if (!post) {
+    notFound();
+  }
+
+  if (post.isPrivate && !(await isAuthenticated())) {
     notFound();
   }
 
