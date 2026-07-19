@@ -30,14 +30,18 @@ export function UploadForm() {
     formState: { errors, isSubmitting },
     reset,
     control,
+    setValue,
   } = useForm<UploadInput>({
     resolver: zodResolver(uploadSchema),
     defaultValues: {
       isPrivate: false,
+      isPinned: false,
     },
   })
 
   const files = useWatch({ control, name: 'files' })
+  const isPrivate = useWatch({ control, name: 'isPrivate' })
+  const isPinned = useWatch({ control, name: 'isPinned' })
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files
@@ -88,6 +92,7 @@ export function UploadForm() {
         caption: data.caption,
         soundCloudUrl: data.soundCloudUrl,
         isPrivate: data.isPrivate === true,
+        isPinned: data.isPinned === true,
         imageKeys: prepareResult.uploads.map((upload) => upload.key),
       })
 
@@ -216,16 +221,50 @@ export function UploadForm() {
       <div className="space-y-2">
         <label className="flex items-center gap-2 text-sm">
           <input
-            {...register('isPrivate')}
+            {...register('isPrivate', {
+              onChange: (event) => {
+                if (event.target.checked) {
+                  setValue('isPinned', false)
+                }
+              },
+            })}
             type="checkbox"
             className="size-4 rounded border-input"
-            disabled={isSubmitting}
+            disabled={isSubmitting || Boolean(isPinned)}
           />
           Private
         </label>
         <p className="text-xs text-muted-foreground">
-          Hidden from the public gallery and photo URLs unless you are logged in as admin.
+          {isPinned
+            ? 'Unpin the post before making it private.'
+            : 'Hidden from the public gallery and photo URLs unless you are logged in as admin.'}
         </p>
+      </div>
+
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            {...register('isPinned', {
+              onChange: (event) => {
+                if (event.target.checked) {
+                  setValue('isPrivate', false)
+                }
+              },
+            })}
+            type="checkbox"
+            className="size-4 rounded border-input"
+            disabled={isSubmitting || Boolean(isPrivate)}
+          />
+          Pin to top
+        </label>
+        <p className="text-xs text-muted-foreground">
+          {isPrivate
+            ? 'Private posts cannot be pinned.'
+            : 'Pinned posts appear first in the gallery.'}
+        </p>
+        {errors.isPinned ? (
+          <p className="text-xs text-destructive">{errors.isPinned.message}</p>
+        ) : null}
       </div>
 
       <Button type="submit" size="sm" disabled={isSubmitting} className="w-full">

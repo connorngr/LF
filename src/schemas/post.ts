@@ -15,6 +15,7 @@ export const updatePostSchema = z
     soundCloudUrl: optionalSoundCloudUrlSchema,
     changeSoundtrack: z.boolean().optional(),
     isPrivate: z.boolean().default(false),
+    isPinned: z.boolean().default(false),
   })
   .superRefine((data, ctx) => {
     if (data.changeSoundtrack && !data.soundCloudUrl) {
@@ -22,6 +23,13 @@ export const updatePostSchema = z
         code: 'custom',
         message: 'SoundCloud URL is required when changing soundtrack',
         path: ['soundCloudUrl'],
+      })
+    }
+    if (data.isPrivate && data.isPinned) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Private posts cannot be pinned',
+        path: ['isPinned'],
       })
     }
   })

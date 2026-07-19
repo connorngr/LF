@@ -17,6 +17,7 @@ type PostEditFormProps = Readonly<{
   caption: string
   hasExistingTrack: boolean
   isPrivate: boolean
+  isPinned: boolean
   onSuccess: () => void
 }>
 
@@ -35,6 +36,7 @@ export function PostEditForm({
   caption,
   hasExistingTrack,
   isPrivate,
+  isPinned,
   onSuccess,
 }: PostEditFormProps) {
   const [editState, setEditState] = useState<EditFormResult>(initialState)
@@ -43,6 +45,7 @@ export function PostEditForm({
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<UpdatePostInput>({
     resolver: zodResolver(updatePostSchema),
@@ -53,10 +56,13 @@ export function PostEditForm({
       soundCloudUrl: undefined,
       changeSoundtrack: false,
       isPrivate,
+      isPinned,
     },
   })
 
   const changeSoundtrack = useWatch({ control, name: 'changeSoundtrack' })
+  const watchedIsPrivate = useWatch({ control, name: 'isPrivate' })
+  const watchedIsPinned = useWatch({ control, name: 'isPinned' })
   const showSoundCloudInput = hasExistingTrack ? changeSoundtrack : true
 
   const onSubmit = async (data: UpdatePostInput) => {
@@ -114,16 +120,50 @@ export function PostEditForm({
       <div className="space-y-2">
         <label className="flex items-center gap-2 text-sm">
           <input
-            {...register('isPrivate')}
+            {...register('isPrivate', {
+              onChange: (event) => {
+                if (event.target.checked) {
+                  setValue('isPinned', false)
+                }
+              },
+            })}
             type="checkbox"
             className="size-4 rounded border-input"
-            disabled={isSubmitting}
+            disabled={isSubmitting || Boolean(watchedIsPinned)}
           />
           Private
         </label>
         <p className="text-xs text-muted-foreground">
-          Hidden from the public gallery and photo URLs unless you are logged in as admin.
+          {watchedIsPinned
+            ? 'Unpin the post before making it private.'
+            : 'Hidden from the public gallery and photo URLs unless you are logged in as admin.'}
         </p>
+      </div>
+
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            {...register('isPinned', {
+              onChange: (event) => {
+                if (event.target.checked) {
+                  setValue('isPrivate', false)
+                }
+              },
+            })}
+            type="checkbox"
+            className="size-4 rounded border-input"
+            disabled={isSubmitting || Boolean(watchedIsPrivate)}
+          />
+          Pin to top
+        </label>
+        <p className="text-xs text-muted-foreground">
+          {watchedIsPrivate
+            ? 'Private posts cannot be pinned.'
+            : 'Pinned posts appear first in the gallery.'}
+        </p>
+        {errors.isPinned ? (
+          <p className="text-xs text-destructive">{errors.isPinned.message}</p>
+        ) : null}
       </div>
 
       {hasExistingTrack ? (

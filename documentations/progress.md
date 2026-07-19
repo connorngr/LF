@@ -50,6 +50,7 @@
 | LIF-56 | [Done](https://linear.app/lifeframecn/issue/LIF-56) | Observability: server logging + analytics hook | Umami script + Tier 2 custom events |
 | LIF-33 | [Done](https://linear.app/lifeframecn/issue/LIF-33) | LF-012: Vercel Deployment | Vercel + Neon Postgres + R2 |
 | LIF-59 | [Done](https://linear.app/lifeframecn/issue/LIF-59) | LF-032: Private posts — hide from public gallery | `isPrivate` + admin-only visibility |
+| LIF-60 | [Done](https://linear.app/lifeframecn/issue/LIF-60) | LF-033: Pinned posts — highlight at top of gallery | `isPinned` + sort; cannot pin private |
 
 ---
 
@@ -67,7 +68,7 @@
 
 | Ticket | Linear | Title | Priority |
 |--------|--------|-------|----------|
-| LIF-60 | [Todo](https://linear.app/lifeframecn/issue/LIF-60) | LF-033: Pinned posts — highlight at top of gallery | High |
+| — | — | Session focus complete (LIF-59 + LIF-60) | — |
 
 ---
 
@@ -100,15 +101,15 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 
 ## Where We're Heading
 
-**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts.
+**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts.
 
 **Remaining today:**
 
-1. 📌 **Pinned posts** — [LIF-60](https://linear.app/lifeframecn/issue/LIF-60): pin to top of gallery (Instagram Highlights-style)
+_(none — LIF-60 shipped)_
 
 **Next after today:**
 
-2. ∞ **Infinite scroll** — [LIF-37](https://linear.app/lifeframecn/issue/LIF-37): on-demand fetch as user scrolls the gallery
+1. ∞ **Infinite scroll** — [LIF-37](https://linear.app/lifeframecn/issue/LIF-37): on-demand fetch as user scrolls the gallery
 
 ---
 
@@ -116,7 +117,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 
 - **Team:** Lifeframecn (ID: `de769793-61ec-44d2-b53e-88eb6b36f346`)
 - **Synced 2026-07-12:** Marked LIF-33, LIF-56, LIF-57 Done; synced LIF-54 Done; created LIF-59 (private posts), LIF-60 (pinned posts)
-- **Synced 2026-07-19:** Marked LIF-59 Done (private posts shipped); LIF-60 remains today; LIF-37 stays Next Up
+- **Synced 2026-07-19:** Marked LIF-59 Done (private posts shipped); marked LIF-60 Done (pinned posts); LIF-37 stays Next Up
 - **Canceled (unchanged):** LIF-40, LIF-44, LIF-58 — superseded by Umami / not feasible
 - **ID note:** LIF-59 = LF-032 private posts; LIF-60 = LF-033 pinned posts; LIF-37 = LF-016 infinite scroll / pagination
 
@@ -131,6 +132,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **LIF-53:** Gallery tiles grayscale on hover-capable devices; full color on touch (`ImageGallery.tsx`)
 - **LIF-54:** `updatePost`/`deletePost` in `src/actions/posts.ts`; R2 cleanup via `deleteFromR2`; slug regen on rename; `AdminPostTile` with Dialog (edit) + AlertDialog (delete) on `/upload`
 - **LIF-59:** `Post.isPrivate` + migration `20260719130000_add_is_private`; public queries filter `isPrivate: false`; detail returns `notFound()` for non-admin; upload/edit checkbox + `GalleryPrivateBadge`; gallery `mode` is `view` | `edit` (UI only — private visibility always from `isAuthenticated()`)
+- **LIF-60:** `Post.isPinned` + migration `20260719140000_add_is_pinned`; gallery `orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }]`; upload/edit pin checkbox mutually exclusive with private (Zod + UI disable); `GalleryPinBadge`
 - **LIF-30:** bcrypt against `ADMIN_USERNAME` / `ADMIN_PASSWORD` in env; protects `/upload`
 - **LIF-56 / LIF-57:** Umami Cloud in prod only (`isUmamiEnabled()`); `UmamiScript` filters `/upload` + `/auth`; custom events via `trackEvent()` — `post_view`, `gallery_click`, `carousel_navigate`, `back_to_gallery`, `soundcloud_*`
 - **Deploy (LIF-33):** Dev DB = Supabase; prod DB = Neon on Vercel; images = R2 everywhere; run `prisma migrate deploy` against Neon before first prod deploy
@@ -142,7 +144,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 | Idea | Ticket |
 |------|--------|
 | Private posts | [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) ✅ |
-| Pinned posts | [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) |
+| Pinned posts | [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) ✅ |
 | Infinite scroll / fetch on scroll | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) |
 | Who watches / traffic source research | [LIF-57](https://linear.app/lifeframecn/issue/LIF-57) |
 | Server logging + analytics | [LIF-56](https://linear.app/lifeframecn/issue/LIF-56) |

@@ -7,12 +7,12 @@
 
 ## Today = Private + pinned posts
 
-**Focus:** [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) private posts ✅, then [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) pinned posts.
+**Focus:** [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) private posts ✅, then [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) pinned posts ✅.
 
 **Priority order:** Private posts → pinned posts  
 **Defer today:** Infinite scroll (LIF-37) — Next Up in `progress.md` after this session.
 
-**Already live in code:** Slug URLs (LIF-48), SoundCloud (LIF-43), multi-image carousel (LIF-45), admin CRUD (LIF-54), grayscale hover (LIF-53), Umami analytics (LIF-56 / LIF-57), Vercel + Neon deploy (LIF-33), private posts (LIF-59)
+**Already live in code:** Slug URLs (LIF-48), SoundCloud (LIF-43), multi-image carousel (LIF-45), admin CRUD (LIF-54), grayscale hover (LIF-53), Umami analytics (LIF-56 / LIF-57), Vercel + Neon deploy (LIF-33), private posts (LIF-59), pinned posts (LIF-60)
 
 ---
 
@@ -32,18 +32,19 @@ Hide admin-marked posts from the public gallery and photo detail routes.
 
 ---
 
-## Second window — Pinned posts ([LIF-60](https://linear.app/lifeframecn/issue/LIF-60))
+## Second window — Pinned posts ([LIF-60](https://linear.app/lifeframecn/issue/LIF-60)) ✅
 
 Pin posts to the top of the gallery (Instagram Highlights-style).
 
 ### Tasks
 
-- [ ] Add `isPinned` boolean (or `pinnedAt` timestamp) to `Post` schema + migration
-- [ ] Sort gallery: pinned first, then `createdAt desc`
-- [ ] Pin/unpin toggle in admin `/upload` UI
-- [ ] Optional: visual pin indicator on gallery tiles
+- [x] Add `isPinned` boolean to `Post` schema + migration
+- [x] Sort gallery: pinned first, then `createdAt desc`
+- [x] Pin/unpin toggle in admin `/upload` UI (disabled when private)
+- [x] Visual pin indicator on gallery tiles
+- [x] Rule: private posts cannot be pinned (Zod + UI mutual exclusion)
 
-**Done when:** Pinned public posts appear first in the gallery; pin/unpin works from admin.
+**Done when:** Pinned public posts appear first in the gallery; pin/unpin works from admin; private posts cannot be pinned. ✅
 
 ---
 
@@ -53,7 +54,7 @@ Pin posts to the top of the gallery (Instagram Highlights-style).
 
 - [x] Regression: public gallery hides private; admin still sees them
 - [ ] Regression: pin order + unpin restores chronological sort
-- [ ] Deploy if schema migrations need prod (`is_private` migration)
+- [ ] Deploy if schema migrations need prod (`is_private` + `is_pinned`)
 
 ---
 

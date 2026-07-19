@@ -30,6 +30,7 @@ export async function updatePost(input: UpdatePostPayload) {
     soundCloudUrl: validSoundCloudUrl,
     changeSoundtrack,
     isPrivate: validIsPrivate,
+    isPinned: validIsPinned,
   } = validationResult.data
 
   const existing = await prisma.post.findUnique({
@@ -67,6 +68,7 @@ export async function updatePost(input: UpdatePostPayload) {
       name: validName,
       caption: validCaption,
       isPrivate: validIsPrivate,
+      isPinned: validIsPinned,
       ...(nameChanged ? { slug } : {}),
       ...(soundCloudTrackId !== undefined ? { soundCloudTrackId } : {}),
     },

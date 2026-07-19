@@ -14,6 +14,7 @@ model Post {
   imageUrl  String   @map("image_url") // thumbnail key (images/thumb-{same-key})
   caption   String
   isPrivate Boolean  @default(false) @map("is_private")
+  isPinned  Boolean  @default(false) @map("is_pinned")
   createdAt DateTime @default(now()) @map("created_at")
   images    Image[]
 

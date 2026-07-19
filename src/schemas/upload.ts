@@ -47,6 +47,7 @@ export const postMetadataSchema = z.object({
     .max(500, 'Caption must be less than 500 characters'),
   soundCloudUrl: optionalSoundCloudUrlSchema,
   isPrivate: z.boolean().default(false),
+  isPinned: z.boolean().default(false),
 })
 
 function fileListToDescriptors(fileList: FileList) {
@@ -57,22 +58,32 @@ function fileListToDescriptors(fileList: FileList) {
 }
 
 /** All upload validation lives here (client form only). */
-export const uploadSchema = postMetadataSchema.extend({
-  files:
-    globalThis.window === undefined
-      ? z.any()
-      : z.instanceof(FileList).superRefine((fileList, ctx) => {
-          const result = prepareUploadSchema.safeParse({
-            files: fileListToDescriptors(fileList),
-          })
-          if (!result.success) {
-            ctx.addIssue({
-              code: 'custom',
-              message: result.error.issues.map((issue) => issue.message).join('; '),
+export const uploadSchema = postMetadataSchema
+  .extend({
+    files:
+      globalThis.window === undefined
+        ? z.any()
+        : z.instanceof(FileList).superRefine((fileList, ctx) => {
+            const result = prepareUploadSchema.safeParse({
+              files: fileListToDescriptors(fileList),
             })
-          }
-        }),
-})
+            if (!result.success) {
+              ctx.addIssue({
+                code: 'custom',
+                message: result.error.issues.map((issue) => issue.message).join('; '),
+              })
+            }
+          }),
+  })
+  .superRefine((data, ctx) => {
+    if (data.isPrivate && data.isPinned) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Private posts cannot be pinned',
+        path: ['isPinned'],
+      })
+    }
+  })
 
 export type UploadInput = z.input<typeof uploadSchema>
 export type FileDescriptor = z.infer<typeof fileDescriptorSchema>
