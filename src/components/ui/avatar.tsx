@@ -38,6 +38,7 @@ function Avatar({
 function AvatarImage({
   className,
   alt = "",
+  priority = false,
   ...props
 }: Omit<React.ComponentProps<typeof Image>, "alt"> & { alt?: string }) {
   return (
@@ -47,6 +48,7 @@ function AvatarImage({
       fill
       unoptimized
       sizes="160px"
+      priority={priority}
       className={cn(
         "aspect-square size-full object-cover",
         className

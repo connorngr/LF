@@ -145,7 +145,7 @@ Values are validated at startup via `src/lib/env.ts` (except `DATABASE_URL` / `D
 | `R2_ACCESS_KEY_ID` | R2 access key | Yes |
 | `R2_SECRET_ACCESS_KEY` | R2 secret key | Yes |
 | `R2_BUCKET_NAME` | R2 bucket name | Yes |
-| `R2_PUBLIC_URL` | Public R2 hostname (validated at startup; image URLs currently use signed GETs — see `src/lib/r2.ts`) | Yes |
+| `R2_PUBLIC_URL` | Public R2 hostname (reserved for future CDN; reads still use signed GETs via `getUrl` in `src/lib/r2.ts`) | Yes |
 | `DATABASE_URL` | PostgreSQL connection | Yes (Prisma) |
 | `DIRECT_URL` | Direct PostgreSQL URL for migrations | Yes (Prisma) |
 

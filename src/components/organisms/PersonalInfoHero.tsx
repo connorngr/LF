@@ -25,7 +25,11 @@ export async function PersonalInfoHero() {
         <div className="flex flex-row items-start gap-4 md:items-center md:gap-8">
           <Link href="/upload" className="group cursor-pointer">
             <Avatar className="size-35 shrink-0 border-4 border-background transition-opacity group-hover:opacity-80 md:size-40">
-              <AvatarImage src={await getUrl(avatarUrl)} alt={profileName} />
+              <AvatarImage
+                src={await getUrl(avatarUrl)}
+                alt={profileName}
+                priority
+              />
             </Avatar>
           </Link>
           <div className="min-w-0 flex-1 space-y-2 md:space-y-3">

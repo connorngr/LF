@@ -1,78 +1,76 @@
-# Today’s Scope — Sunday, July 19, 2026
+# Today’s Scope — Sunday, August 9, 2026
 
-**Part of:** July polish after June ship → daily use in **July 2026**  
+**Part of:** Aug polish after June ship  
 **Full plan:** `documentations/progress.md`
 
 ---
 
-## Today = Private + pinned posts
+## Today = Web vitals → dark/light mode
 
-**Focus:** [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) private posts ✅, then [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) pinned posts ✅.
+**Focus:** [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) web vitals, then [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) dark/light mode.
 
-**Priority order:** Private posts → pinned posts  
-**Defer today:** Infinite scroll (LIF-37) — Next Up in `progress.md` after this session.
+**Priority order:** Web vitals → dark/light mode  
+**Defer today:** Infinite scroll (LIF-37) — when posts grow.
 
-**Already live in code:** Slug URLs (LIF-48), SoundCloud (LIF-43), multi-image carousel (LIF-45), admin CRUD (LIF-54), grayscale hover (LIF-53), Umami analytics (LIF-56 / LIF-57), Vercel + Neon deploy (LIF-33), private posts (LIF-59), pinned posts (LIF-60)
+**Already live:** Core MVP, private/pinned, grayscale hover, Umami, Vercel + Neon.
 
 ---
 
-## Main window — Private posts ([LIF-59](https://linear.app/lifeframecn/issue/LIF-59)) ✅
+## Main window — Web vitals ([LIF-55](https://linear.app/lifeframecn/issue/LIF-55))
 
-Hide admin-marked posts from the public gallery and photo detail routes.
+Lighthouse pass on gallery + detail (LCP / CLS / INP).
+
+### Baseline (mobile `/`, Aug 9)
+
+| Metric | Before |
+|--------|--------|
+| Performance | 87 |
+| LCP | 3.6s |
+| CLS | 0 |
+| FCP | 1.7s |
 
 ### Tasks
 
-- [x] Add `isPrivate` boolean to `Post` schema + migration
-- [x] Filter private posts from public gallery query
-- [x] Return 404 for private post detail URLs (non-admin)
-- [x] Show private posts in admin `/upload` grid with visual indicator
-- [x] Toggle private/public in upload form + edit dialog
+- [x] Baseline Lighthouse (mobile) on `/` and a post detail URL
+- [x] Fix top LCP issues (priority images, avatar downsize ~3MB→15KB WebP, WebP thumbs going forward)
+- [x] CLS already 0 — no layout work needed
+- [x] Note remaining medium/low items for a follow-up pass
 
-**Done when:** Public visitors never see private posts; admin still sees and can toggle them on `/upload`. ✅
+**Kept signed R2 URLs** via `getUrl()` (bucket not publicly readable; `R2_PUBLIC_URL` / r2.dev TLS fails).
+
+**Vercel env:** `NEXT_PUBLIC_AVATAR_URL=avatars/profile-320.webp` set — redeploy / re-Lighthouse.
+
+**LCP priority:** avatar only on `/`; gallery tiles stay lazy. Detail first slide keeps `priority`.
+
+**Follow-up (not today):** real public CDN URL for R2 (correct `pub-*.r2.dev` or custom domain) → `Cache-Control`, `remotePatterns`, Next Image optimizer; legacy JPEG thumb backfill to WebP.
+
+**Done when:** Clear before/after numbers; no obvious red LCP/CLS on gallery or detail.
 
 ---
 
-## Second window — Pinned posts ([LIF-60](https://linear.app/lifeframecn/issue/LIF-60)) ✅
-
-Pin posts to the top of the gallery (Instagram Highlights-style).
+## Second window — Dark/Light mode ([LIF-29](https://linear.app/lifeframecn/issue/LIF-29))
 
 ### Tasks
 
-- [x] Add `isPinned` boolean to `Post` schema + migration
-- [x] Sort gallery: pinned first, then `createdAt desc`
-- [x] Pin/unpin toggle in admin `/upload` UI (disabled when private)
-- [x] Visual pin indicator on gallery tiles
-- [x] Rule: private posts cannot be pinned (Zod + UI mutual exclusion)
+- [ ] Theme tokens (CSS variables) for light + dark
+- [ ] Persist preference (localStorage + no-flicker script pattern)
+- [ ] Toggle in UI (header/profile area)
+- [ ] Spot-check gallery, detail, upload, auth
 
-**Done when:** Pinned public posts appear first in the gallery; pin/unpin works from admin; private posts cannot be pinned. ✅
-
----
-
-## Stretch goals (only if pinned finishes early)
-
-### Smoke / polish
-
-- [x] Regression: public gallery hides private; admin still sees them
-- [ ] Regression: pin order + unpin restores chronological sort
-- [ ] Deploy if schema migrations need prod (`is_private` + `is_pinned`)
+**Done when:** Toggle works without flash; both themes look intentional on main surfaces.
 
 ---
 
-## Next up (after today)
+## Stretch (only if both finish early)
 
-| Focus | Ticket |
-|-------|--------|
-| Infinite scroll / on-demand fetch as user scrolls | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) |
+- [ ] Deploy if theme assets need prod verify
+- [ ] Quick Umami sanity check after deploy
 
 ---
 
-## Defer until later
+## Next / defer
 
-- Comments, likes (LIF-39)
-- Email share alone (LIF-47)
-- Storage comparison (LIF-35)
-- Advanced auth (LIF-41)
-- Stress test / Prisma Accelerate (LIF-50, LIF-49)
-- Web vitals audit (LIF-55)
-- Rate limiting / CAPTCHA (LIF-51, LIF-52)
-- Dark/Light mode (LIF-29)
+| Focus | Ticket | Status |
+|-------|--------|--------|
+| Infinite scroll | LIF-37 | Deferred |
+| CI/CD, rate limit, CAPTCHA, etc. | LIF-38+ | Backlog |
