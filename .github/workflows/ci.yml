@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Placeholder values only: the build validates env with zod at import time,
+# and nothing here talks to a real database or bucket.
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+  DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+  NEXT_PUBLIC_BASE_URL: http://localhost:3000
+  NEXT_PUBLIC_PROFILE_NAME: CI
+  NEXT_PUBLIC_PROFILE_HANDLE: ci
+  NEXT_PUBLIC_AVATAR_URL: avatar.png
+  ADMIN_USERNAME: ci-admin
+  ADMIN_PASSWORD: ci-placeholder-admin-password
+  R2_ACCOUNT_ID: ci-placeholder-account-id
+  R2_ACCESS_KEY_ID: ci-placeholder-access-key-id
+  R2_SECRET_ACCESS_KEY: ci-placeholder-secret-access-key
+  R2_BUCKET_NAME: ci-bucket
+  R2_PUBLIC_URL: https://ci.example.com
+  IFRAMELY_API_KEY: ci-placeholder-iframely-key
+
+jobs:
+  check:
+    name: Typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      # --passWithNoTests until the first tests land (LF-040).
+      - name: Test
+        run: pnpm test:run --passWithNoTests
+
+      - name: Build
+        run: pnpm exec next build
+
+      # Regression check for LF-038: server-only values must never reach client JS.
+      - name: Check client bundle for server secrets
+        run: |
+          leaks=$(grep -rlE "ci-placeholder-|ci:ci@127\.0\.0\.1|ADMIN_PASSWORD|R2_SECRET_ACCESS_KEY|DATABASE_URL|IFRAMELY_API_KEY" .next/static || true)
+          if [ -n "$leaks" ]; then
+            echo "Server-only env value or name found in client bundle:"
+            echo "$leaks"
+            exit 1
+          fi
+
+  audit:
+    name: Dependency audit (report only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Report-only until existing transitive advisories are cleaned up.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level=high

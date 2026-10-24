@@ -87,6 +87,7 @@
 | LIF-63 | [Backlog](https://linear.app/lifeframecn/issue/LIF-63) | LF-036: Gallery by year — breadcrumbs + pinned per year | Design picked: **A — sticky year dividers** (year = upload date) |
 | LIF-64 | [Backlog](https://linear.app/lifeframecn/issue/LIF-64) | LF-037: Business mode — `isBusiness` posts + contact icon/dialog (Gmail + Outlook) | No first-visit prompt; not blocked |
 | LIF-66 | [Backlog](https://linear.app/lifeframecn/issue/LIF-66) | LF-039: Add images to an existing post (keep 10 limit) | `MAX_IMAGES_PER_POST` only enforced on create today |
+| LIF-67 | [Backlog](https://linear.app/lifeframecn/issue/LIF-67) | LF-040: Test suite mapping + first unit tests (Vitest) | High; no tests or `vitest.config` yet; related to LIF-38 (CI) |
 
 ---
 
@@ -137,6 +138,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **Synced 2026-08-09:** Marked LIF-55 Done (avatar/WebP/display path; Lighthouse score little changed — stop chasing LCP); LIF-29 remains next
 - **Synced 2026-10-24:** Feature mapping — created LIF-61 (modal intercept bug), LIF-62 (persist dialog prefs), LIF-63 (gallery by year), LIF-64 (business mode, blocked by LIF-62), LIF-65 (env audit), LIF-66 (add images to post); appended year-grouping note to LIF-37
 - **Synced 2026-10-24 (2):** Ordering confirmed — LIF-61, LIF-65, LIF-62 → Todo; LIF-65 → Urgent (Next 16.4.1 security upgrade); LIF-61 adds loading animation; LIF-63 picked option A; LIF-64 rescoped to `isBusiness` + contact dialog, unblocked
+- **Synced 2026-10-24 (3):** Created LIF-67 (LF-040 test mapping, Backlog, High, related LIF-38 / LIF-65); appended CI progress note to LIF-38 (GitHub Actions workflow added in PR #16)
 - **Canceled (unchanged prior):** LIF-40, LIF-44, LIF-47, LIF-58
 
 ---
@@ -178,3 +180,5 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 | Is our env safe? | [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) |
 | Add more images (to existing post, keep 10 limit) | [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) |
 | Pagination handling | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) (existing) |
+| Map tests for the repo | [LIF-67](https://linear.app/lifeframecn/issue/LIF-67) |
+| Improve CI (lint, tests, build) | [LIF-38](https://linear.app/lifeframecn/issue/LIF-38) (existing; workflow in PR #16) |

@@ -80,5 +80,6 @@ Detail (`/photo/...`) still hurts if full originals are LCP; display WebP path +
 | Gallery by year | LIF-63 | Option A picked (sticky year dividers) |
 | Business mode | LIF-64 | `isBusiness` + contact dialog; ready |
 | Add images to post | LIF-66 | Backlog |
+| Test mapping + first unit tests | LIF-67 | Backlog (High); CI workflow already runs tests from PR #16 |
 | Infinite scroll | LIF-37 | Deferred (align with LIF-63) |
 | CI/CD, rate limit, CAPTCHA, etc. | LIF-38+ | Backlog |
