@@ -7,44 +7,45 @@
 
 ## Today = Web vitals → dark/light mode
 
-**Focus:** [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) web vitals, then [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) dark/light mode.
+**Focus:** [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) web vitals ✅, then [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) dark/light mode.
 
-**Priority order:** Web vitals → dark/light mode  
+**Priority order:** Web vitals (done) → dark/light mode  
 **Defer today:** Infinite scroll (LIF-37) — when posts grow.
 
 **Already live:** Core MVP, private/pinned, grayscale hover, Umami, Vercel + Neon.
 
 ---
 
-## Main window — Web vitals ([LIF-55](https://linear.app/lifeframecn/issue/LIF-55))
+## Main window — Web vitals ([LIF-55](https://linear.app/lifeframecn/issue/LIF-55)) ✅
 
-Lighthouse pass on gallery + detail (LCP / CLS / INP).
+Lighthouse pass on gallery + detail (LCP / CLS / INP). **Closed** — payload/avatar wins landed; scored LCP barely moved, not worth more polish now.
 
-### Baseline (mobile `/`, Aug 9)
+### Baseline vs after (mobile prod `/`, Aug 9)
 
-| Metric | Before |
-|--------|--------|
-| Performance | 87 |
-| LCP | 3.6s |
-| CLS | 0 |
-| FCP | 1.7s |
+| Metric | Before | After |
+|--------|--------|-------|
+| Performance | 87 | ~85 (noise) |
+| LCP | 3.6s | ~3.6s |
+| CLS | 0 | 0 |
+| FCP | 1.7s | ~2.0s |
+| Avatar / payload | ~3MB PNG | ~15KB WebP; cache insight ~3MB → ~169KB |
+
+Detail (`/photo/...`) still hurts if full originals are LCP; display WebP path + backfill script added (`displays/`, `scripts/backfill-display-images.ts`) — ship when ready, not blocking close.
 
 ### Tasks
 
 - [x] Baseline Lighthouse (mobile) on `/` and a post detail URL
-- [x] Fix top LCP issues (priority images, avatar downsize ~3MB→15KB WebP, WebP thumbs going forward)
+- [x] Fix top LCP issues (avatar downsize, WebP thumbs, display derivatives on upload, detail `getViewUrl`)
 - [x] CLS already 0 — no layout work needed
 - [x] Note remaining medium/low items for a follow-up pass
 
-**Kept signed R2 URLs** via `getUrl()` (bucket not publicly readable; `R2_PUBLIC_URL` / r2.dev TLS fails).
+**Kept signed R2 URLs** via `getUrl()` / `getViewUrl()`.
 
-**Vercel env:** `NEXT_PUBLIC_AVATAR_URL=avatars/profile-320.webp` set — redeploy / re-Lighthouse.
+**Vercel env:** `NEXT_PUBLIC_AVATAR_URL=avatars/profile-320.webp`.
 
-**LCP priority:** avatar only on `/`; gallery tiles stay lazy. Detail first slide keeps `priority`.
+**Follow-up (backlog, not blocking):** public R2 CDN; gallery above-fold eager; finish display backfill + re-Lighthouse detail; JPEG→WebP thumb backfill.
 
-**Follow-up (not today):** real public CDN URL for R2 (correct `pub-*.r2.dev` or custom domain) → `Cache-Control`, `remotePatterns`, Next Image optimizer; legacy JPEG thumb backfill to WebP.
-
-**Done when:** Clear before/after numbers; no obvious red LCP/CLS on gallery or detail.
+**Done when:** ✅ Called done — clear before/after; CLS green; no further LCP chase today.
 
 ---
 
@@ -72,5 +73,12 @@ Lighthouse pass on gallery + detail (LCP / CLS / INP).
 
 | Focus | Ticket | Status |
 |-------|--------|--------|
-| Infinite scroll | LIF-37 | Deferred |
+| Photo modal intercept bug + loading animation | LIF-61 | **Next** (bug — before features) |
+| Env audit + Next.js 16.4.1 security upgrade | LIF-65 | **Urgent** (on 16.1.7, affected) |
+| Dark/Light mode | LIF-29 | **Next** |
+| Persist dialog prefs | LIF-62 | Todo |
+| Gallery by year | LIF-63 | Option A picked (sticky year dividers) |
+| Business mode | LIF-64 | `isBusiness` + contact dialog; ready |
+| Add images to post | LIF-66 | Backlog |
+| Infinite scroll | LIF-37 | Deferred (align with LIF-63) |
 | CI/CD, rate limit, CAPTCHA, etc. | LIF-38+ | Backlog |

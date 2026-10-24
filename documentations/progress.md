@@ -1,6 +1,6 @@
 # MVP Progress Tracker
 
-> Last updated: 2026-08-08
+> Last updated: 2026-10-24
 
 ## North Star — Ship by June 30, 2026 ✅
 
@@ -51,6 +51,7 @@
 | LIF-33 | [Done](https://linear.app/lifeframecn/issue/LIF-33) | LF-012: Vercel Deployment | Vercel + Neon Postgres + R2 |
 | LIF-59 | [Done](https://linear.app/lifeframecn/issue/LIF-59) | LF-032: Private posts — hide from public gallery | `isPrivate` + admin-only visibility |
 | LIF-60 | [Done](https://linear.app/lifeframecn/issue/LIF-60) | LF-033: Pinned posts — highlight at top of gallery | `isPinned` + sort; cannot pin private |
+| LIF-55 | [Done](https://linear.app/lifeframecn/issue/LIF-55) | Web vitals optimization (LCP/CLS) | Avatar ~3MB→15KB; WebP thumbs/displays; CLS 0. Lighthouse score barely moved (~87→85); closed without further LCP chase |
 
 ---
 
@@ -72,8 +73,20 @@
 
 | Ticket | Linear | Title | Priority |
 |--------|--------|-------|----------|
-| LIF-55 | [Todo](https://linear.app/lifeframecn/issue/LIF-55) | Web vitals optimization (LCP/CLS) | High |
 | LIF-29 | [Todo](https://linear.app/lifeframecn/issue/LIF-29) | Dark/Light mode | High |
+| LIF-61 | [Todo](https://linear.app/lifeframecn/issue/LIF-61) | LF-034: Fix photo modal — intercepting route often misses + loading animation | High (bug) |
+| LIF-65 | [Todo](https://linear.app/lifeframecn/issue/LIF-65) | LF-038: Env safety audit + Next.js 16.4.1 security upgrade | Urgent |
+| LIF-62 | [Todo](https://linear.app/lifeframecn/issue/LIF-62) | LF-035: Persist visitor dialog choices (SoundCloud consent) | Medium |
+
+---
+
+## Feature backlog — mapped 2026-10-24
+
+| Ticket | Linear | Title | Notes |
+|--------|--------|-------|-------|
+| LIF-63 | [Backlog](https://linear.app/lifeframecn/issue/LIF-63) | LF-036: Gallery by year — breadcrumbs + pinned per year | Design picked: **A — sticky year dividers** (year = upload date) |
+| LIF-64 | [Backlog](https://linear.app/lifeframecn/issue/LIF-64) | LF-037: Business mode — `isBusiness` posts + contact icon/dialog (Gmail + Outlook) | No first-visit prompt; not blocked |
+| LIF-66 | [Backlog](https://linear.app/lifeframecn/issue/LIF-66) | LF-039: Add images to an existing post (keep 10 limit) | `MAX_IMAGES_PER_POST` only enforced on create today |
 
 ---
 
@@ -81,7 +94,7 @@
 
 | Ticket | Linear | Title | Why deferred |
 |--------|--------|-------|--------------|
-| LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Image Infinite Scroll / Pagination | Implement when gallery size warrants it |
+| LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Image Infinite Scroll / Pagination | Implement when gallery size warrants it; cursor must respect year grouping (LIF-63) |
 
 Cursor-based pagination: as the user scrolls the gallery, fetch and append more posts (IntersectionObserver + loading skeleton + end state).
 
@@ -102,12 +115,14 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 
 ## Where We're Heading
 
-**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts, grayscale hover.
+**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts, grayscale hover, web vitals pass (LIF-55).
 
 **Next focus:**
 
-1. **Web vitals** — [LIF-55](https://linear.app/lifeframecn/issue/LIF-55): Lighthouse pass on gallery + detail
-2. **Dark/Light mode** — [LIF-29](https://linear.app/lifeframecn/issue/LIF-29)
+1. **Photo modal bug** — [LIF-61](https://linear.app/lifeframecn/issue/LIF-61)
+2. **Env safety audit + Next.js 16.4.1 upgrade** — [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) (we're on 16.1.7, affected by Oct 14 advisories)
+3. **Dark/Light mode** — [LIF-29](https://linear.app/lifeframecn/issue/LIF-29)
+4. **Persist dialog prefs** — [LIF-62](https://linear.app/lifeframecn/issue/LIF-62)
 
 **Deferred:** Infinite scroll ([LIF-37](https://linear.app/lifeframecn/issue/LIF-37)) when post count grows.
 
@@ -119,13 +134,17 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **Synced 2026-07-12:** Marked LIF-33, LIF-56, LIF-57 Done; synced LIF-54 Done; created LIF-59 (private posts), LIF-60 (pinned posts)
 - **Synced 2026-07-19:** Marked LIF-59 Done (private posts shipped); marked LIF-60 Done (pinned posts); LIF-37 stays Next Up
 - **Synced 2026-08-08:** Marked LIF-53 Done; promoted LIF-55 + LIF-29 to Todo (next focus); deferred LIF-37 to Backlog; canceled LIF-35 (R2 chosen), LIF-39 (no comments), LIF-49 (Neon pooling)
+- **Synced 2026-08-09:** Marked LIF-55 Done (avatar/WebP/display path; Lighthouse score little changed — stop chasing LCP); LIF-29 remains next
+- **Synced 2026-10-24:** Feature mapping — created LIF-61 (modal intercept bug), LIF-62 (persist dialog prefs), LIF-63 (gallery by year), LIF-64 (business mode, blocked by LIF-62), LIF-65 (env audit), LIF-66 (add images to post); appended year-grouping note to LIF-37
+- **Synced 2026-10-24 (2):** Ordering confirmed — LIF-61, LIF-65, LIF-62 → Todo; LIF-65 → Urgent (Next 16.4.1 security upgrade); LIF-61 adds loading animation; LIF-63 picked option A; LIF-64 rescoped to `isBusiness` + contact dialog, unblocked
 - **Canceled (unchanged prior):** LIF-40, LIF-44, LIF-47, LIF-58
 
 ---
 
 ## Implementation Notes
 
-- **LIF-34 / LIF-46 thumbnails:** First image only → Sharp resize 400×400 `fit: inside` → `thumbnails/`; gallery uses `Post.imageUrl`; detail uses full `Image.imageUrl` keys (`src/lib/r2.ts`, `src/actions/upload.ts`)
+- **LIF-34 / LIF-46 thumbnails:** First image only → Sharp resize 400×400 `fit: inside` → `thumbnails/`; gallery uses `Post.imageUrl`; originals stay on `Image.imageUrl`
+- **LIF-55:** Avatar compressed to `avatars/profile-320.webp`; upload builds WebP thumb + `displays/{base}.webp` (~1600px) for detail via `getViewUrl`; backfill script `scripts/backfill-display-images.ts`. Prod `/` Performance ~85–87, CLS 0 — closed without further score chasing
 - **LIF-45:** `ImageDetail` carousel with `CarouselPrevious` / `CarouselNext`, loop when `images.length > 1`
 - **LIF-48:** `generateUniqueSlug` from post name; `getPostBySlugOrId` OR query; migration `20260516080736_add_slug_sc_id`
 - **LIF-43:** `resolveSoundCloudTrack` via Iframely on upload; `SoundCloudTrackProvider` + crossfade engine; consent dialog in layout
@@ -146,9 +165,16 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 | Private posts | [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) ✅ |
 | Pinned posts | [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) ✅ |
 | Grayscale hover on gallery | [LIF-53](https://linear.app/lifeframecn/issue/LIF-53) ✅ |
-| Web vitals / documentation | [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) ← next |
+| Web vitals / documentation | [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) ✅ |
 | Dark/Light mode | [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) ← next |
 | Infinite scroll / fetch on scroll | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) (deferred) |
 | Who watches / traffic source research | [LIF-57](https://linear.app/lifeframecn/issue/LIF-57) ✅ |
 | Server logging + analytics | [LIF-56](https://linear.app/lifeframecn/issue/LIF-56) ✅ |
 | CRUD for posts | [LIF-54](https://linear.app/lifeframecn/issue/LIF-54) ✅ |
+| Parallel route break (modal not intercepting) | [LIF-61](https://linear.app/lifeframecn/issue/LIF-61) |
+| Save dialog preference in localStorage | [LIF-62](https://linear.app/lifeframecn/issue/LIF-62) |
+| By year separation | [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) |
+| Business mode | [LIF-64](https://linear.app/lifeframecn/issue/LIF-64) |
+| Is our env safe? | [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) |
+| Add more images (to existing post, keep 10 limit) | [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) |
+| Pagination handling | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) (existing) |
