@@ -51,7 +51,7 @@
 | LIF-33 | [Done](https://linear.app/lifeframecn/issue/LIF-33) | LF-012: Vercel Deployment | Vercel + Neon Postgres + R2 |
 | LIF-59 | [Done](https://linear.app/lifeframecn/issue/LIF-59) | LF-032: Private posts — hide from public gallery | `isPrivate` + admin-only visibility |
 | LIF-60 | [Done](https://linear.app/lifeframecn/issue/LIF-60) | LF-033: Pinned posts — highlight at top of gallery | `isPinned` + sort; cannot pin private |
-| LIF-55 | [Done](https://linear.app/lifeframecn/issue/LIF-55) | Web vitals optimization (LCP/CLS) | Avatar ~3MB→15KB; WebP thumbs/displays; CLS 0. Lighthouse score barely moved (~87→85); closed without further LCP chase |
+| LIF-55 | [Done](https://linear.app/lifeframecn/issue/LIF-55) | Web vitals optimization (LCP/CLS) | Avatar ~3MB→15KB; WebP thumbs; CLS 0 (`displays/` derivatives not in the code, see follow-ups). Lighthouse score barely moved (~87→85); closed without further LCP chase |
 
 ---
 
@@ -77,10 +77,12 @@
 | LIF-61 | [Done](https://linear.app/lifeframecn/issue/LIF-61) | LF-034: Fix photo modal intercept + loading state | [#17](https://github.com/connorngr/LF/pull/17) |
 | LIF-29 | [Done](https://linear.app/lifeframecn/issue/LIF-29) | LF-008: Dark/Light mode | [#15](https://github.com/connorngr/LF/pull/15) |
 | LIF-62 | [Done](https://linear.app/lifeframecn/issue/LIF-62) | LF-035: Persist SoundCloud consent in localStorage | [#18](https://github.com/connorngr/LF/pull/18) |
+| LIF-63 | [Done](https://linear.app/lifeframecn/issue/LIF-63) | LF-036: Gallery by year — sticky year nav, pinned per year (wave 1) | [#21](https://github.com/connorngr/LF/pull/21) |
+| LIF-66 | [Done](https://linear.app/lifeframecn/issue/LIF-66) | LF-039: Add, remove, reorder images on an existing post (wave 1) | [#20](https://github.com/connorngr/LF/pull/20) |
 
 Also merged: Dependabot #9–#12, web vitals #14. Version pins for #9–#11 (they were lockfile no-ops) are in [#19](https://github.com/connorngr/LF/pull/19).
 
-**Before deploy (manual):** `prisma migrate status` / `migrate deploy` on Neon (`is_private`, `is_pinned`); multi-image upload on real R2 (#16 removed the `1000mb` body limits); modal + Umami `gallery_click` on prod; SoundCloud autoplay after a stored "Play music"; Safari + Firefox.
+**Before deploy (manual):** `prisma migrate status` / `migrate deploy` on Neon (`is_private`, `is_pinned`); multi-image upload on real R2 (#16 removed the `1000mb` body limits); modal + Umami `gallery_click` on prod; SoundCloud autoplay after a stored "Play music"; Safari + Firefox; edit a post with real R2 (add to 10, remove the first image, reorder, check the gallery cover and that removed objects are gone from the bucket); year nav on a real phone.
 
 ---
 
@@ -90,21 +92,18 @@ Run with the `parallel-tickets` skill. Waves are split by file ownership, not pr
 
 | Wave | Ticket | Linear | Title | Owns (files) | Ready? |
 |------|--------|--------|-------|--------------|--------|
-| 1 | LIF-63 | [Backlog](https://linear.app/lifeframecn/issue/LIF-63) | LF-036: Gallery by year — sticky year dividers + pinned per year | `ImageGallery.tsx` (`galleryOrderBy`, grouping), new year-nav component | Yes — option A, year = `createdAt` |
-| 1 | LIF-66 | [Backlog](https://linear.app/lifeframecn/issue/LIF-66) | LF-039: Add images to an existing post (keep 10 limit) | `PostEditForm.tsx`, `AdminPostTile.tsx`, `updatePost` in `src/actions/posts.ts`, `src/schemas/post.ts` | Yes — assume up/down buttons for reorder |
-| 2 | LIF-64 | [Backlog](https://linear.app/lifeframecn/issue/LIF-64) | LF-037: Business mode — `isBusiness` + contact dialog | `schema.prisma` + migration, `src/schemas/*`, upload/edit forms, gallery badge, `PersonalInfoHero`, `src/lib/env.ts` | After wave 1 — overlaps LIF-63 (gallery) and LIF-66 (edit form, schemas, actions) |
-| deferred | LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Infinite scroll / pagination | `ImageGallery.tsx` query | No — deferred until post count grows; after LIF-63 and LIF-64 (both edit `ImageGallery.tsx`); cursor `(year, isPinned, createdAt, id)` |
+| 1 | LIF-63, LIF-66 | Done | Shipped — see above | — | — |
+| 2 | LIF-64 | [Backlog](https://linear.app/lifeframecn/issue/LIF-64) | LF-037: Business mode — `isBusiness` + contact dialog | `schema.prisma` + migration, `src/schemas/*`, upload/edit forms, gallery badge, `PersonalInfoHero`, `src/lib/env.ts` | Yes — wave 1 merged |
+| deferred | LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Infinite scroll / pagination | `ImageGallery.tsx` query | No — deferred until post count grows; after LIF-64; cursor `(year, isPinned, createdAt, id)` (see comment at the gallery query) |
 
 **Plan notes**
-- LIF-63: the gallery query lives in `ImageGallery.tsx` (`galleryOrderBy`), not `src/lib/posts.ts` as the ticket says. Assumption: admin `/upload` grid uses the same grouping.
-- LIF-66: load a post's images inside the edit flow (action or loader), not by widening the gallery query, so it stays out of LIF-63's file. Reuse the upload path for WebP thumb + `displays/` derivatives.
-- LIF-64: needs a new Vercel env var (`NEXT_PUBLIC_CONTACT_EMAILS`) and a Neon migration — both manual. Defaults from the ticket: business + pinned allowed, business + private allowed. No dependency on LIF-62.
+- LIF-64: needs a Vercel env var for the contact emails and a Neon migration — both manual. Make the env var optional and hide the contact icon when it is unset, so builds without it do not fail. Defaults from the ticket: business + pinned allowed, business + private allowed. No dependency on LIF-62. `PersonalInfoHero` is a server component, so read env there and pass the emails to the client dialog.
 
 **Follow-ups found 2026-10-24 (not ticketed yet)**
 - CI on PRs (`typecheck`, `lint`, `test:run`, `build`) — slice of LIF-38; would have caught the duplicate vitest configs.
 - Admin auth: plaintext password compare; sessions only revocable by changing the password (from LIF-65 audit).
 - Theme preference could reuse `src/lib/visitor-prefs.ts` (left out of LIF-62 to avoid touching LIF-29).
-- Run `scripts/backfill-display-images.ts` (LIF-55 follow-up).
+- Display-size WebP derivatives (`displays/`) and `scripts/backfill-display-images.ts` described for LIF-55 were never committed (no commit on any branch contains them). Detail and the LIF-66 edit dialog load full-size originals through signed URLs. Re-ticket if wanted.
 
 ---
 
@@ -133,13 +132,12 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 
 ## Where We're Heading
 
-**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts, grayscale hover, web vitals pass (LIF-55), Next.js 16.4.1 + env hardening (LIF-65), photo modal fix (LIF-61), dark/light mode (LIF-29), persisted consent (LIF-62).
+**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts, grayscale hover, web vitals pass (LIF-55), Next.js 16.4.1 + env hardening (LIF-65), photo modal fix (LIF-61), dark/light mode (LIF-29), persisted consent (LIF-62), gallery by year (LIF-63), edit post images (LIF-66).
 
 **Next focus:**
 
 1. **Deploy what shipped** — Neon migrations + manual checks (see "Shipped 2026-10-24")
-2. **Wave 1, in parallel** — gallery by year [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) + add images to post [LIF-66](https://linear.app/lifeframecn/issue/LIF-66)
-3. **Wave 2** — business mode [LIF-64](https://linear.app/lifeframecn/issue/LIF-64)
+2. **Wave 2 (in progress)** — business mode [LIF-64](https://linear.app/lifeframecn/issue/LIF-64)
 
 **Deferred:** Infinite scroll ([LIF-37](https://linear.app/lifeframecn/issue/LIF-37)) after LIF-63, when post count grows.
 
@@ -154,6 +152,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **Synced 2026-08-09:** Marked LIF-55 Done (avatar/WebP/display path; Lighthouse score little changed — stop chasing LCP); LIF-29 remains next
 - **Synced 2026-10-24:** Feature mapping — created LIF-61 (modal intercept bug), LIF-62 (persist dialog prefs), LIF-63 (gallery by year), LIF-64 (business mode, blocked by LIF-62), LIF-65 (env audit), LIF-66 (add images to post); appended year-grouping note to LIF-37
 - **Synced 2026-10-24 (2):** Ordering confirmed — LIF-61, LIF-65, LIF-62 → Todo; LIF-65 → Urgent (Next 16.4.1 security upgrade); LIF-61 adds loading animation; LIF-63 picked option A; LIF-64 rescoped to `isBusiness` + contact dialog, unblocked
+- **Synced 2026-10-24 (4):** Wave 1 merged (#21 LIF-63, #20 LIF-66) and marked Done in Linear with PR links. LIF-64 is next (wave 2); LIF-37 stays deferred.
 - **Synced 2026-10-24 (3):** LIF-61, LIF-29, LIF-62 merged (#17, #15, #18) and Done in Linear; LIF-65 merged (#16) but In Progress in Linear (Vercel preview env vars still failing builds). Next round mapped: wave 1 LIF-63 + LIF-66 (started via `parallel-tickets`), wave 2 LIF-64 after wave 1 merges, LIF-37 stays deferred.
 - **Canceled (unchanged prior):** LIF-40, LIF-44, LIF-47, LIF-58
 
@@ -162,7 +161,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 ## Implementation Notes
 
 - **LIF-34 / LIF-46 thumbnails:** First image only → Sharp resize 400×400 `fit: inside` → `thumbnails/`; gallery uses `Post.imageUrl`; originals stay on `Image.imageUrl`
-- **LIF-55:** Avatar compressed to `avatars/profile-320.webp`; upload builds WebP thumb + `displays/{base}.webp` (~1600px) for detail via `getViewUrl`; backfill script `scripts/backfill-display-images.ts`. Prod `/` Performance ~85–87, CLS 0 — closed without further score chasing
+- **LIF-55:** Avatar compressed to `avatars/profile-320.webp`; upload builds a WebP thumbnail; gallery/detail use `next/image` with reserved aspect boxes. The `displays/{base}.webp` derivatives, `getViewUrl` and the backfill script mentioned earlier are not in the code (checked 2026-10-24). Prod `/` Performance ~85–87, CLS 0 — closed without further score chasing
 - **LIF-45:** `ImageDetail` carousel with `CarouselPrevious` / `CarouselNext`, loop when `images.length > 1`
 - **LIF-48:** `generateUniqueSlug` from post name; `getPostBySlugOrId` OR query; migration `20260516080736_add_slug_sc_id`
 - **LIF-43:** `resolveSoundCloudTrack` via Iframely on upload; `SoundCloudTrackProvider` + crossfade engine; consent dialog in layout
@@ -177,6 +176,8 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **LIF-61:** Root cause: `data-umami-event` on gallery `<Link>`s — Umami's capture-phase click handler calls `preventDefault()` and sets `location.href`, so the intercept never ran (prod only). `GalleryTileLink` tracks `gallery_click` via `trackEvent()` in `onClick`; modal `layout.tsx` + `loading.tsx` with `ImageDetailSkeleton`. No `loading.tsx` in `app/photo/[id]` — it turns `notFound()` into HTTP 200
 - **LIF-29:** `src/lib/theme.ts` (`lifeframe:theme:v1` = light | dark | system), inline no-flash script in `app/layout.tsx`, `ThemeToggle` cycles light → dark → system
 - **LIF-62:** `src/lib/visitor-prefs.ts` (`lifeframe:prefs:v1`, typed, try/catch, cross-tab); only Granted/Denied stored, Denied expires after 30 days; `SoundCloudPlayer` reads via `useSyncExternalStore`; `SoundCloudMusicToggle` to change the choice
+- **LIF-63:** `src/lib/gallery-years.ts` (pure grouping/sort, UTC year of `createdAt`); raw SQL picks the first N post ids ordered by year desc, isPinned desc, createdAt desc, then `findMany` loads them (private filtered in both); `GalleryYearNav` (scroll-tracked `aria-current`, anchor links, hidden for a single year); year headings h2 on `/`, h3 on `/upload`. LIF-37 cursor comment sits next to the query
+- **LIF-66:** `getPostImages` / `updatePostImages` in `src/actions/posts.ts`; planning + limit math in `src/lib/post-images.ts` (1..10 images, ids must belong to the post); DB changes in one transaction, R2 deletes only after commit; thumbnail rebuilt when the first image changes; `PostImageManager` with N / 10 counter and up/down buttons. Post and image ids must be UUIDs (existing Zod rule)
 - **Tests:** vitest + jsdom, single `vitest.config.ts` with `vitest.setup.ts`; tests live in `src/**/*.test.{ts,tsx}`
 - **Context7:** `npx ctx7@latest` for current library docs
 - **shadcn:** Card, Avatar, Skeleton, Carousel, Dialog, AlertDialog from `src/components/ui/`
