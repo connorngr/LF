@@ -145,11 +145,11 @@ export function AdminPostTile({
       </div>
 
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent showCloseButton>
+        <DialogContent showCloseButton className="max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit post</DialogTitle>
             <DialogDescription>
-              Update the name, caption, privacy, pin, or soundtrack. Renaming changes the public URL slug.
+              Update the name, caption, images, privacy, pin, or soundtrack. Renaming changes the public URL slug.
             </DialogDescription>
           </DialogHeader>
           <PostEditForm
