@@ -4,6 +4,7 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ProfileMottoMarkdown } from '@/components/molecules/ProfileMottoMarkdown'
 import { ContactDialog } from '@/components/molecules/ContactDialog'
+import { BusinessModeToggle } from '@/components/molecules/BusinessModeToggle'
 import {
   profileName,
   profileHandle,
@@ -15,11 +16,21 @@ import { prisma } from '@/lib/prisma'
 import { isAuthenticated } from '@/lib/auth'
 import { getUrl } from '@/lib/r2'
 
-export async function PersonalInfoHero() {
+type PersonalInfoHeroProps = Readonly<{
+  businessOnly?: boolean
+}>
+
+export async function PersonalInfoHero({ businessOnly = false }: PersonalInfoHeroProps) {
   const isAdmin = await isAuthenticated()
-  const postCount = await prisma.post.count({
-    where: isAdmin ? undefined : { isPrivate: false },
-  })
+  const visible = isAdmin ? {} : { isPrivate: false }
+  const [totalCount, businessCount] = await Promise.all([
+    prisma.post.count({ where: visible }),
+    prisma.post.count({ where: { ...visible, isBusiness: true } }),
+  ])
+  // The count follows the gallery: business posts only while business mode is on.
+  const postCount = businessOnly ? businessCount : totalCount
+  // Stay visible while on, so an empty business view can still be switched off.
+  const showBusinessToggle = businessCount > 0 || businessOnly
 
   return (
     <div className="mx-auto max-w-4xl border-0 bg-transparent shadow-none">
@@ -52,6 +63,14 @@ export async function PersonalInfoHero() {
                   {postCount === 1 ? 'post' : 'posts'}
                 </span>
               </p>
+              {showBusinessToggle ? (
+                <>
+                  <span aria-hidden className="text-muted-foreground/60">
+                    ·
+                  </span>
+                  <BusinessModeToggle enabled={businessOnly} />
+                </>
+              ) : null}
             </div>
             <ProfileMottoMarkdown source={profileMottoMarkdown} />
           </div>
