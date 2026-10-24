@@ -1,3 +1,4 @@
+import 'server-only'
 import { createHash } from 'crypto'
 import { adminUsername, adminPassword } from '@/lib/env'
 import { cookies } from 'next/headers'
