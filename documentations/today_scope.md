@@ -1,71 +1,38 @@
-# Today’s Scope — Sunday, August 9, 2026
+# Today’s Scope — Saturday, October 24, 2026
 
-**Part of:** Aug polish after June ship  
+**Part of:** Oct polish after Aug fixes  
 **Full plan:** `documentations/progress.md`
 
 ---
 
-## Today = Web vitals → dark/light mode
+## Today = Finish LIF-65 auth hardening, then LIF-63 + LIF-66 in parallel
 
-**Focus:** [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) web vitals ✅, then [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) dark/light mode.
+**Already merged (synced to Linear today):** LIF-29 dark mode (#15), LIF-61 photo modal (#17), LIF-62 consent prefs (#18), LIF-65 part 1, Next 16.4.1 + `server-only` (#16).
 
-**Priority order:** Web vitals (done) → dark/light mode  
-**Defer today:** Infinite scroll (LIF-37) — when posts grow.
-
-**Already live:** Core MVP, private/pinned, grayscale hover, Umami, Vercel + Neon.
+**Priority order:** LIF-65 auth → LIF-63 + LIF-66 (parallel) → LIF-64  
+**Defer:** Infinite scroll (LIF-37) — when posts grow; align cursor with year grouping.
 
 ---
 
-## Main window — Web vitals ([LIF-55](https://linear.app/lifeframecn/issue/LIF-55)) ✅
-
-Lighthouse pass on gallery + detail (LCP / CLS / INP). **Closed** — payload/avatar wins landed; scored LCP barely moved, not worth more polish now.
-
-### Baseline vs after (mobile prod `/`, Aug 9)
-
-| Metric | Before | After |
-|--------|--------|-------|
-| Performance | 87 | ~85 (noise) |
-| LCP | 3.6s | ~3.6s |
-| CLS | 0 | 0 |
-| FCP | 1.7s | ~2.0s |
-| Avatar / payload | ~3MB PNG | ~15KB WebP; cache insight ~3MB → ~169KB |
-
-Detail (`/photo/...`) still hurts if full originals are LCP; display WebP path + backfill script added (`displays/`, `scripts/backfill-display-images.ts`) — ship when ready, not blocking close.
+## Main window — Env audit, auth hardening ([LIF-65](https://linear.app/lifeframecn/issue/LIF-65))
 
 ### Tasks
 
-- [x] Baseline Lighthouse (mobile) on `/` and a post detail URL
-- [x] Fix top LCP issues (avatar downsize, WebP thumbs, display derivatives on upload, detail `getViewUrl`)
-- [x] CLS already 0 — no layout work needed
-- [x] Note remaining medium/low items for a follow-up pass
+- [ ] `ADMIN_PASSWORD` as a bcrypt hash; `validateCredentials` uses `bcrypt.compare` (today: plaintext `===` in `src/lib/auth.ts`)
+- [ ] Session cookie: random/signed token with a separate `SESSION_SECRET`, not a fixed hash of the credentials; logout invalidates it
+- [ ] Update `.env.example` + `src/lib/env.ts` for the new vars
+- [ ] Manual: grep `.next/static` for secrets after build; Vercel per-env secrets; R2 token scope; rotate anything shared
 
-**Kept signed R2 URLs** via `getUrl()` / `getViewUrl()`.
-
-**Vercel env:** `NEXT_PUBLIC_AVATAR_URL=avatars/profile-320.webp`.
-
-**Follow-up (backlog, not blocking):** public R2 CDN; gallery above-fold eager; finish display backfill + re-Lighthouse detail; JPEG→WebP thumb backfill.
-
-**Done when:** ✅ Called done — clear before/after; CLS green; no further LCP chase today.
+**Done when:** login works with a hashed password, the cookie can't be derived from the credentials, and the manual checks are ticked.
 
 ---
 
-## Second window — Dark/Light mode ([LIF-29](https://linear.app/lifeframecn/issue/LIF-29))
+## Parallel windows — Gallery by year ([LIF-63](https://linear.app/lifeframecn/issue/LIF-63)) + Add images to post ([LIF-66](https://linear.app/lifeframecn/issue/LIF-66))
 
-### Tasks
+- **LIF-63:** sticky year dividers (option A, year = upload date); pinned per year. Touches gallery query + `ImageGallery`.
+- **LIF-66:** add images to an existing post with the 10-image limit enforced on edit (`MAX_IMAGES_PER_POST`). Touches `src/actions/posts.ts` + admin edit dialog.
 
-- [ ] Theme tokens (CSS variables) for light + dark
-- [ ] Persist preference (localStorage + no-flicker script pattern)
-- [ ] Toggle in UI (header/profile area)
-- [ ] Spot-check gallery, detail, upload, auth
-
-**Done when:** Toggle works without flash; both themes look intentional on main surfaces.
-
----
-
-## Stretch (only if both finish early)
-
-- [ ] Deploy if theme assets need prod verify
-- [ ] Quick Umami sanity check after deploy
+The two have little file overlap, so they can run in separate branches.
 
 ---
 
@@ -73,12 +40,9 @@ Detail (`/photo/...`) still hurts if full originals are LCP; display WebP path +
 
 | Focus | Ticket | Status |
 |-------|--------|--------|
-| Photo modal intercept bug + loading animation | LIF-61 | **Next** (bug — before features) |
-| Env audit + Next.js 16.4.1 security upgrade | LIF-65 | **Urgent** (on 16.1.7, affected) |
-| Dark/Light mode | LIF-29 | **Next** |
-| Persist dialog prefs | LIF-62 | Todo |
-| Gallery by year | LIF-63 | Option A picked (sticky year dividers) |
-| Business mode | LIF-64 | `isBusiness` + contact dialog; ready |
-| Add images to post | LIF-66 | Backlog |
+| Env audit — auth hardening | LIF-65 | **In Progress** (Urgent) |
+| Gallery by year | LIF-63 | Next (parallel) |
+| Add images to post | LIF-66 | Next (parallel) |
+| Business mode | LIF-64 | After LIF-66 (shared schema/edit dialog) |
 | Infinite scroll | LIF-37 | Deferred (align with LIF-63) |
 | CI/CD, rate limit, CAPTCHA, etc. | LIF-38+ | Backlog |
