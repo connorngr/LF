@@ -31,12 +31,13 @@ On check-in: `get_session` each (status_bucket), then `list_events` with `kinds:
 ### 2a. Dependabot first
 - List open PRs; take `dependabot/*` ones first.
 - **Check each one actually bumps something**: `git show <sha> | grep '^[-+]  <pkg>@'`. Dependabot lockfile-only PRs here have been no-ops that only strip `libc:` lines. If so, apply the intended versions with `overrides:` in `pnpm-workspace.yaml` (selector form `pkg@<x.y.z: x.y.z`) and `pnpm install --no-frozen-lockfile`; avoid `pnpm update --depth Infinity`, which drags in unrelated bumps.
-- Try `merge_pull_request`. `main` is protected by a ruleset (405 "Cannot update this protected ref"), so merging usually needs the user. If refused, merge the branches locally into the integration branch and tell the user which PRs to merge on GitHub.
+- Merge with `merge_pull_request` (pass `expectedHeadSha`). GitHub MCP calls act as the user's account (`get_me` = `connorngr`), not as a separate bot, so the `main` ruleset must have **Repository admin** on its bypass list (set to "For pull requests only"); adding only the Claude app does not help. A 405 "Cannot update this protected ref" means that bypass is missing: merge locally into the integration branch and tell the user how to grant it.
 
 ### 2b. Build the integration branch
 - Start from `origin/main` + Dependabot merges, then merge the base branch from step 0, then each ticket branch (dependency/framework upgrade first).
 - `package.json` / `pnpm-lock.yaml` conflicts: take the newer `package.json` side, start from the integration side's lockfile, run `pnpm install --no-frozen-lockfile`. Never hand-edit the lockfile.
-- Known collision: several branches may each add a first vitest config (`vitest.config.ts` vs `.mts`). Keep one with `environment: "jsdom"`, `include: ["src/**/*.test.{ts,tsx}"]`, `setupFiles: ["./vitest.setup.ts"]`.
+- Known collision: several branches may each add a first vitest config (`vitest.config.ts` vs `.mts`). Git merges them without a conflict, but vitest loads only the `.ts` one and the other branch's tests fail. Keep one with `environment: "jsdom"`, `include: ["src/**/*.test.{ts,tsx}"]`, `setupFiles: ["./vitest.setup.ts"]`.
+- When merging the PRs into `main` for real, check each one against the current `main` first (`git merge` into a scratch branch, then `pnpm test:run`). Fix conflicts or collisions on the PR branch itself (merge `main` into it, never rebase), push, then merge the PR.
 
 ### 2c. Verify
 1. `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm lint`, `pnpm test:run`, `pnpm build` (copy `.env.example` to `.env`; placeholders are enough to build).
