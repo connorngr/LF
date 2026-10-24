@@ -52,6 +52,9 @@
 | LIF-59 | [Done](https://linear.app/lifeframecn/issue/LIF-59) | LF-032: Private posts — hide from public gallery | `isPrivate` + admin-only visibility |
 | LIF-60 | [Done](https://linear.app/lifeframecn/issue/LIF-60) | LF-033: Pinned posts — highlight at top of gallery | `isPinned` + sort; cannot pin private |
 | LIF-55 | [Done](https://linear.app/lifeframecn/issue/LIF-55) | Web vitals optimization (LCP/CLS) | Avatar ~3MB→15KB; WebP thumbs/displays; CLS 0. Lighthouse score barely moved (~87→85); closed without further LCP chase |
+| LIF-29 | [Done](https://linear.app/lifeframecn/issue/LIF-29) | LF-008: Dark/Light mode | connorngr/lf#15 — theme tokens, `ThemeToggle`, no-flash script (`src/lib/theme.ts`) |
+| LIF-61 | [Done](https://linear.app/lifeframecn/issue/LIF-61) | LF-034: Fix photo modal intercept + loading animation | connorngr/lf#17 — async params, `GalleryTileLink` pending state, modal `loading.tsx`, `ImageDetailSkeleton` |
+| LIF-62 | [Done](https://linear.app/lifeframecn/issue/LIF-62) | LF-035: Persist visitor dialog choices | connorngr/lf#18 — `src/lib/visitor-prefs.ts` + music on/off toggle (theme does not reuse the helper) |
 
 ---
 
@@ -69,14 +72,14 @@
 
 ---
 
-## Next Up — Aug 2026 focus
+## Next Up — Oct 2026 focus
 
 | Ticket | Linear | Title | Priority |
 |--------|--------|-------|----------|
-| LIF-29 | [Todo](https://linear.app/lifeframecn/issue/LIF-29) | Dark/Light mode | High |
-| LIF-61 | [Todo](https://linear.app/lifeframecn/issue/LIF-61) | LF-034: Fix photo modal — intercepting route often misses + loading animation | High (bug) |
-| LIF-65 | [Todo](https://linear.app/lifeframecn/issue/LIF-65) | LF-038: Env safety audit + Next.js 16.4.1 security upgrade | Urgent |
-| LIF-62 | [Todo](https://linear.app/lifeframecn/issue/LIF-62) | LF-035: Persist visitor dialog choices (SoundCloud consent) | Medium |
+| LIF-65 | [In Progress](https://linear.app/lifeframecn/issue/LIF-65) | LF-038: Env safety audit | Urgent — Next 16.4.1 + `server-only` shipped (connorngr/lf#16); **auth hardening left**: plaintext password compare, static non-rotating session cookie; plus manual Vercel/R2 checks |
+| LIF-63 | [Backlog](https://linear.app/lifeframecn/issue/LIF-63) | LF-036: Gallery by year (sticky year dividers) | Medium — can run in parallel with LIF-66 |
+| LIF-66 | [Backlog](https://linear.app/lifeframecn/issue/LIF-66) | LF-039: Add images to an existing post | Medium — can run in parallel with LIF-63 |
+| LIF-64 | [Backlog](https://linear.app/lifeframecn/issue/LIF-64) | LF-037: Business mode | Medium — after LIF-66 (likely shares schema + edit dialog) |
 
 ---
 
@@ -115,14 +118,13 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 
 ## Where We're Heading
 
-**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts, grayscale hover, web vitals pass (LIF-55).
+**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts, grayscale hover, web vitals pass (LIF-55), dark/light mode (LIF-29), photo modal fix (LIF-61), persisted consent (LIF-62), Next 16.4.1 upgrade (LIF-65 part 1).
 
 **Next focus:**
 
-1. **Photo modal bug** — [LIF-61](https://linear.app/lifeframecn/issue/LIF-61)
-2. **Env safety audit + Next.js 16.4.1 upgrade** — [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) (we're on 16.1.7, affected by Oct 14 advisories)
-3. **Dark/Light mode** — [LIF-29](https://linear.app/lifeframecn/issue/LIF-29)
-4. **Persist dialog prefs** — [LIF-62](https://linear.app/lifeframecn/issue/LIF-62)
+1. **Finish env audit: auth hardening** — [LIF-65](https://linear.app/lifeframecn/issue/LIF-65)
+2. **Gallery by year** — [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) and **Add images to post** — [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) (parallel)
+3. **Business mode** — [LIF-64](https://linear.app/lifeframecn/issue/LIF-64) after LIF-66
 
 **Deferred:** Infinite scroll ([LIF-37](https://linear.app/lifeframecn/issue/LIF-37)) when post count grows.
 
@@ -137,6 +139,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **Synced 2026-08-09:** Marked LIF-55 Done (avatar/WebP/display path; Lighthouse score little changed — stop chasing LCP); LIF-29 remains next
 - **Synced 2026-10-24:** Feature mapping — created LIF-61 (modal intercept bug), LIF-62 (persist dialog prefs), LIF-63 (gallery by year), LIF-64 (business mode, blocked by LIF-62), LIF-65 (env audit), LIF-66 (add images to post); appended year-grouping note to LIF-37
 - **Synced 2026-10-24 (2):** Ordering confirmed — LIF-61, LIF-65, LIF-62 → Todo; LIF-65 → Urgent (Next 16.4.1 security upgrade); LIF-61 adds loading animation; LIF-63 picked option A; LIF-64 rescoped to `isBusiness` + contact dialog, unblocked
+- **Synced 2026-10-24 (3):** Status check against `main` — LIF-29, LIF-61, LIF-62 → Done (PRs #15, #17, #18 merged); LIF-65 → In Progress (upgrade + `server-only` merged in #16; auth hardening and manual Vercel/R2 checks remain)
 - **Canceled (unchanged prior):** LIF-40, LIF-44, LIF-47, LIF-58
 
 ---
@@ -152,7 +155,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **LIF-54:** `updatePost`/`deletePost` in `src/actions/posts.ts`; R2 cleanup via `deleteFromR2`; slug regen on rename; `AdminPostTile` with Dialog (edit) + AlertDialog (delete) on `/upload`
 - **LIF-59:** `Post.isPrivate` + migration `20260719130000_add_is_private`; public queries filter `isPrivate: false`; detail returns `notFound()` for non-admin; upload/edit checkbox + `GalleryPrivateBadge`; gallery `mode` is `view` | `edit` (UI only — private visibility always from `isAuthenticated()`)
 - **LIF-60:** `Post.isPinned` + migration `20260719140000_add_is_pinned`; gallery `orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }]`; upload/edit pin checkbox mutually exclusive with private (Zod + UI disable); `GalleryPinBadge`
-- **LIF-30:** bcrypt against `ADMIN_USERNAME` / `ADMIN_PASSWORD` in env; protects `/upload`
+- **LIF-30:** plaintext compare against `ADMIN_USERNAME` / `ADMIN_PASSWORD` in env (not bcrypt — see LIF-65); cookie is a static SHA-256 of the credentials; protects `/upload`
 - **LIF-56 / LIF-57:** Umami Cloud in prod only (`isUmamiEnabled()`); `UmamiScript` filters `/upload` + `/auth`; custom events via `trackEvent()` — `post_view`, `gallery_click`, `carousel_navigate`, `back_to_gallery`, `soundcloud_*`
 - **Deploy (LIF-33):** Dev DB = Supabase; prod DB = Neon on Vercel; images = R2 everywhere; run `prisma migrate deploy` against Neon before first prod deploy
 - **Context7:** `npx ctx7@latest` for current library docs
@@ -166,13 +169,13 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 | Pinned posts | [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) ✅ |
 | Grayscale hover on gallery | [LIF-53](https://linear.app/lifeframecn/issue/LIF-53) ✅ |
 | Web vitals / documentation | [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) ✅ |
-| Dark/Light mode | [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) ← next |
+| Dark/Light mode | [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) ✅ |
 | Infinite scroll / fetch on scroll | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) (deferred) |
 | Who watches / traffic source research | [LIF-57](https://linear.app/lifeframecn/issue/LIF-57) ✅ |
 | Server logging + analytics | [LIF-56](https://linear.app/lifeframecn/issue/LIF-56) ✅ |
 | CRUD for posts | [LIF-54](https://linear.app/lifeframecn/issue/LIF-54) ✅ |
-| Parallel route break (modal not intercepting) | [LIF-61](https://linear.app/lifeframecn/issue/LIF-61) |
-| Save dialog preference in localStorage | [LIF-62](https://linear.app/lifeframecn/issue/LIF-62) |
+| Parallel route break (modal not intercepting) | [LIF-61](https://linear.app/lifeframecn/issue/LIF-61) ✅ |
+| Save dialog preference in localStorage | [LIF-62](https://linear.app/lifeframecn/issue/LIF-62) ✅ |
 | By year separation | [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) |
 | Business mode | [LIF-64](https://linear.app/lifeframecn/issue/LIF-64) |
 | Is our env safe? | [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) |
