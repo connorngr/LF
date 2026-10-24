@@ -59,9 +59,8 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      # --passWithNoTests until the first tests land (LF-040).
       - name: Test
-        run: pnpm test:run --passWithNoTests
+        run: pnpm test:run
 
       - name: Build
         run: pnpm exec next build

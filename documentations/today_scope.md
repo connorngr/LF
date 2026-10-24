@@ -1,85 +1,63 @@
-# Today’s Scope — Sunday, August 9, 2026
+# Today’s Scope — Saturday, October 24, 2026
 
-**Part of:** Aug polish after June ship  
+**Part of:** Oct polish after June ship  
 **Full plan:** `documentations/progress.md`
 
 ---
 
-## Today = Web vitals → dark/light mode
+## Today = Parallel round (shipped) → deploy → map next round
 
-**Focus:** [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) web vitals ✅, then [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) dark/light mode.
+**Focus:** four tickets in parallel cloud sessions, merged to `main`; then plan the next feature round.
 
-**Priority order:** Web vitals (done) → dark/light mode  
-**Defer today:** Infinite scroll (LIF-37) — when posts grow.
-
-**Already live:** Core MVP, private/pinned, grayscale hover, Umami, Vercel + Neon.
+**Already live in `main`:** Core MVP, private/pinned, grayscale hover, Umami, Vercel + Neon, web vitals pass (LIF-55), plus everything below.
 
 ---
 
-## Main window — Web vitals ([LIF-55](https://linear.app/lifeframecn/issue/LIF-55)) ✅
+## Main window — Parallel round (merged)
 
-Lighthouse pass on gallery + detail (LCP / CLS / INP). **Closed** — payload/avatar wins landed; scored LCP barely moved, not worth more polish now.
+| Ticket | What | PR |
+|--------|------|----|
+| [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) | Next.js 16.4.1, `server-only` env guard, env audit | [#16](https://github.com/connorngr/LF/pull/16) |
+| [LIF-61](https://linear.app/lifeframecn/issue/LIF-61) | Photo modal intercept fix (Umami root cause) + loading skeleton | [#17](https://github.com/connorngr/LF/pull/17) |
+| [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) | Dark/light/system theme, no flash | [#15](https://github.com/connorngr/LF/pull/15) |
+| [LIF-62](https://linear.app/lifeframecn/issue/LIF-62) | SoundCloud consent persisted (`lifeframe:prefs:v1`) + music toggle | [#18](https://github.com/connorngr/LF/pull/18) |
 
-### Baseline vs after (mobile prod `/`, Aug 9)
+Also merged: Dependabot #9–#12, web vitals #14. Open: [#19](https://github.com/connorngr/LF/pull/19) (real versions for Dependabot #9–#11, `ship-tickets` + `parallel-tickets` skills, these docs).
 
-| Metric | Before | After |
-|--------|--------|-------|
-| Performance | 87 | ~85 (noise) |
-| LCP | 3.6s | ~3.6s |
-| CLS | 0 | 0 |
-| FCP | 1.7s | ~2.0s |
-| Avatar / payload | ~3MB PNG | ~15KB WebP; cache insight ~3MB → ~169KB |
+### Verified on the integration branch
 
-Detail (`/photo/...`) still hurts if full originals are LCP; display WebP path + backfill script added (`displays/`, `scripts/backfill-display-images.ts`) — ship when ready, not blocking close.
+- [x] `typecheck`, `lint`, `test:run` (30/30), `build`
+- [x] Playwright vs local Postgres: pinned order, private hidden, modal soft-nav with Umami stub, 404 for private/unknown slugs, theme before hydration, consent persistence, `/upload` login, admin sees private
 
-### Tasks
+### Still to do (manual)
 
-- [x] Baseline Lighthouse (mobile) on `/` and a post detail URL
-- [x] Fix top LCP issues (avatar downsize, WebP thumbs, display derivatives on upload, detail `getViewUrl`)
-- [x] CLS already 0 — no layout work needed
-- [x] Note remaining medium/low items for a follow-up pass
-
-**Kept signed R2 URLs** via `getUrl()` / `getViewUrl()`.
-
-**Vercel env:** `NEXT_PUBLIC_AVATAR_URL=avatars/profile-320.webp`.
-
-**Follow-up (backlog, not blocking):** public R2 CDN; gallery above-fold eager; finish display backfill + re-Lighthouse detail; JPEG→WebP thumb backfill.
-
-**Done when:** ✅ Called done — clear before/after; CLS green; no further LCP chase today.
+- [x] Merge #19
+- [x] Mark LIF-61, LIF-29, LIF-62 Done in Linear (LIF-65 In Progress)
+- [ ] Fix Vercel env vars: builds fail with "Invalid environment variables" while collecting page data for `/_not-found` (decide whether Preview may use prod Neon/R2)
+- [ ] `prisma migrate status` → `migrate deploy` on Neon (direct URL; Neon branch as backup)
+- [ ] Deploy, then: multi-image upload on real R2; modal + Umami `gallery_click` on prod; SoundCloud autoplay after "Play music"; Safari + Firefox
+- [ ] With real R2: edit a post (add to 10, remove the first image, reorder) and check cover + bucket cleanup (LIF-66); year nav on a real phone (LIF-63)
+- [ ] Ruleset on `main`: turn off "Restrict updates", keep "Require a pull request" (0 approvals), block force pushes / deletions
 
 ---
 
-## Second window — Dark/Light mode ([LIF-29](https://linear.app/lifeframecn/issue/LIF-29))
+## Second window — Next feature round
 
-### Tasks
+| Wave | Ticket | Ready? |
+|------|--------|--------|
+| 1 | [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) Gallery by year (option A, sticky year dividers) | Merged [#21](https://github.com/connorngr/LF/pull/21), Done |
+| 1 | [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) Add images to an existing post (10 limit) | Merged [#20](https://github.com/connorngr/LF/pull/20), Done |
+| 2 | [LIF-64](https://linear.app/lifeframecn/issue/LIF-64) Business mode (`isBusiness` + contact dialog) | Started after wave 1 merged |
+| deferred | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) Infinite scroll | Deferred until post count grows; after LIF-63 + LIF-64 |
 
-- [ ] Theme tokens (CSS variables) for light + dark
-- [ ] Persist preference (localStorage + no-flicker script pattern)
-- [ ] Toggle in UI (header/profile area)
-- [ ] Spot-check gallery, detail, upload, auth
-
-**Done when:** Toggle works without flash; both themes look intentional on main surfaces.
-
----
-
-## Stretch (only if both finish early)
-
-- [ ] Deploy if theme assets need prod verify
-- [ ] Quick Umami sanity check after deploy
+Wave 1 ran with the `parallel-tickets` skill after #19 merged; combined with `ship-tickets` and verified (64 unit tests, build, Playwright: year sections/nav, admin grid, edit dialog reorder saved to DB) before merging.
 
 ---
 
-## Next / defer
+## Defer until later
 
-| Focus | Ticket | Status |
-|-------|--------|--------|
-| Photo modal intercept bug + loading animation | LIF-61 | **Next** (bug — before features) |
-| Env audit + Next.js 16.4.1 security upgrade | LIF-65 | **Urgent** (on 16.1.7, affected) |
-| Dark/Light mode | LIF-29 | **Next** |
-| Persist dialog prefs | LIF-62 | Todo |
-| Gallery by year | LIF-63 | Option A picked (sticky year dividers) |
-| Business mode | LIF-64 | `isBusiness` + contact dialog; ready |
-| Add images to post | LIF-66 | Backlog |
-| Test mapping + first unit tests | LIF-67 | Backlog (High); CI workflow already runs tests from PR #16 |
-| Infinite scroll | LIF-37 | Deferred (align with LIF-63) |
-| CI/CD, rate limit, CAPTCHA, etc. | LIF-38+ | Backlog |
+- CI on PRs (slice of LIF-38) — workflow in review; test gap mapping in LIF-67
+- Admin auth hardening (plaintext compare, session revocation)
+- Theme pref via `visitor-prefs.ts`
+- Display-size image derivatives (LIF-55 described them, but they were never committed)
+- Rate limiting / CAPTCHA (LIF-51, LIF-52), stress test (LIF-50), advanced auth (LIF-41), blog (LIF-42)

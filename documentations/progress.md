@@ -51,7 +51,7 @@
 | LIF-33 | [Done](https://linear.app/lifeframecn/issue/LIF-33) | LF-012: Vercel Deployment | Vercel + Neon Postgres + R2 |
 | LIF-59 | [Done](https://linear.app/lifeframecn/issue/LIF-59) | LF-032: Private posts — hide from public gallery | `isPrivate` + admin-only visibility |
 | LIF-60 | [Done](https://linear.app/lifeframecn/issue/LIF-60) | LF-033: Pinned posts — highlight at top of gallery | `isPinned` + sort; cannot pin private |
-| LIF-55 | [Done](https://linear.app/lifeframecn/issue/LIF-55) | Web vitals optimization (LCP/CLS) | Avatar ~3MB→15KB; WebP thumbs/displays; CLS 0. Lighthouse score barely moved (~87→85); closed without further LCP chase |
+| LIF-55 | [Done](https://linear.app/lifeframecn/issue/LIF-55) | Web vitals optimization (LCP/CLS) | Avatar ~3MB→15KB; WebP thumbs; CLS 0 (`displays/` derivatives not in the code, see follow-ups). Lighthouse score barely moved (~87→85); closed without further LCP chase |
 
 ---
 
@@ -69,25 +69,41 @@
 
 ---
 
-## Next Up — Aug 2026 focus
+## Shipped 2026-10-24 — parallel round (merged to `main`)
 
-| Ticket | Linear | Title | Priority |
-|--------|--------|-------|----------|
-| LIF-29 | [Todo](https://linear.app/lifeframecn/issue/LIF-29) | Dark/Light mode | High |
-| LIF-61 | [Todo](https://linear.app/lifeframecn/issue/LIF-61) | LF-034: Fix photo modal — intercepting route often misses + loading animation | High (bug) |
-| LIF-65 | [Todo](https://linear.app/lifeframecn/issue/LIF-65) | LF-038: Env safety audit + Next.js 16.4.1 security upgrade | Urgent |
-| LIF-62 | [Todo](https://linear.app/lifeframecn/issue/LIF-62) | LF-035: Persist visitor dialog choices (SoundCloud consent) | Medium |
+| Ticket | Linear | Title | PR |
+|--------|--------|-------|----|
+| LIF-65 | [In Progress](https://linear.app/lifeframecn/issue/LIF-65) | LF-038: Env safety audit + Next.js 16.4.1 security upgrade | [#16](https://github.com/connorngr/LF/pull/16) |
+| LIF-61 | [Done](https://linear.app/lifeframecn/issue/LIF-61) | LF-034: Fix photo modal intercept + loading state | [#17](https://github.com/connorngr/LF/pull/17) |
+| LIF-29 | [Done](https://linear.app/lifeframecn/issue/LIF-29) | LF-008: Dark/Light mode | [#15](https://github.com/connorngr/LF/pull/15) |
+| LIF-62 | [Done](https://linear.app/lifeframecn/issue/LIF-62) | LF-035: Persist SoundCloud consent in localStorage | [#18](https://github.com/connorngr/LF/pull/18) |
+| LIF-63 | [Done](https://linear.app/lifeframecn/issue/LIF-63) | LF-036: Gallery by year — sticky year nav, pinned per year (wave 1) | [#21](https://github.com/connorngr/LF/pull/21) |
+| LIF-66 | [Done](https://linear.app/lifeframecn/issue/LIF-66) | LF-039: Add, remove, reorder images on an existing post (wave 1) | [#20](https://github.com/connorngr/LF/pull/20) |
+
+Also merged: Dependabot #9–#12, web vitals #14. Version pins for #9–#11 (they were lockfile no-ops) are in [#19](https://github.com/connorngr/LF/pull/19). Later Dependabot round: zod 4.6.6 (#22), vite 8.3.5 (#23), undici 7.30.1 (#24), body-parser 2.4.0 (#25; lockfile conflict resolved with a pnpm override).
+
+**Before deploy (manual):** `prisma migrate status` / `migrate deploy` on Neon (`is_private`, `is_pinned`); multi-image upload on real R2 (#16 removed the `1000mb` body limits); modal + Umami `gallery_click` on prod; SoundCloud autoplay after a stored "Play music"; Safari + Firefox; edit a post with real R2 (add to 10, remove the first image, reorder, check the gallery cover and that removed objects are gone from the bucket); year nav on a real phone.
 
 ---
 
-## Feature backlog — mapped 2026-10-24
+## Next feature round — mapped 2026-10-24
 
-| Ticket | Linear | Title | Notes |
-|--------|--------|-------|-------|
-| LIF-63 | [Backlog](https://linear.app/lifeframecn/issue/LIF-63) | LF-036: Gallery by year — breadcrumbs + pinned per year | Design picked: **A — sticky year dividers** (year = upload date) |
-| LIF-64 | [Backlog](https://linear.app/lifeframecn/issue/LIF-64) | LF-037: Business mode — `isBusiness` posts + contact icon/dialog (Gmail + Outlook) | No first-visit prompt; not blocked |
-| LIF-66 | [Backlog](https://linear.app/lifeframecn/issue/LIF-66) | LF-039: Add images to an existing post (keep 10 limit) | `MAX_IMAGES_PER_POST` only enforced on create today |
-| LIF-67 | [Backlog](https://linear.app/lifeframecn/issue/LIF-67) | LF-040: Test suite mapping + first unit tests (Vitest) | High; no tests or `vitest.config` yet; related to LIF-38 (CI) |
+Run with the `parallel-tickets` skill. Waves are split by file ownership, not priority.
+
+| Wave | Ticket | Linear | Title | Owns (files) | Ready? |
+|------|--------|--------|-------|--------------|--------|
+| 1 | LIF-63, LIF-66 | Done | Shipped — see above | — | — |
+| 2 | LIF-64 | [Backlog](https://linear.app/lifeframecn/issue/LIF-64) | LF-037: Business mode — `isBusiness` + contact dialog | `schema.prisma` + migration, `src/schemas/*`, upload/edit forms, gallery badge, `PersonalInfoHero`, `src/lib/env.ts` | Yes — wave 1 merged |
+| deferred | LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Infinite scroll / pagination | `ImageGallery.tsx` query | No — deferred until post count grows; after LIF-64; cursor `(year, isPinned, createdAt, id)` (see comment at the gallery query) |
+
+**Plan notes**
+- LIF-64: needs a Vercel env var for the contact emails and a Neon migration — both manual. Make the env var optional and hide the contact icon when it is unset, so builds without it do not fail. Defaults from the ticket: business + pinned allowed, business + private allowed. No dependency on LIF-62. `PersonalInfoHero` is a server component, so read env there and pass the emails to the client dialog.
+
+**Follow-ups found 2026-10-24 (not ticketed yet)**
+- CI on PRs (`typecheck`, `lint`, `test:run`, `build`) — slice of LIF-38; workflow added on `claude/lif-65-next-upgrade` (follow-up PR to #16). Test gaps mapped in [LIF-67](https://linear.app/lifeframecn/issue/LIF-67).
+- Admin auth: plaintext password compare; sessions only revocable by changing the password (from LIF-65 audit).
+- Theme preference could reuse `src/lib/visitor-prefs.ts` (left out of LIF-62 to avoid touching LIF-29).
+- Display-size WebP derivatives (`displays/`) and `scripts/backfill-display-images.ts` described for LIF-55 were never committed (no commit on any branch contains them). Detail and the LIF-66 edit dialog load full-size originals through signed URLs. Re-ticket if wanted.
 
 ---
 
@@ -116,16 +132,14 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 
 ## Where We're Heading
 
-**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts, grayscale hover, web vitals pass (LIF-55).
+**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts, grayscale hover, web vitals pass (LIF-55), Next.js 16.4.1 + env hardening (LIF-65), photo modal fix (LIF-61), dark/light mode (LIF-29), persisted consent (LIF-62), gallery by year (LIF-63), edit post images (LIF-66).
 
 **Next focus:**
 
-1. **Photo modal bug** — [LIF-61](https://linear.app/lifeframecn/issue/LIF-61)
-2. **Env safety audit + Next.js 16.4.1 upgrade** — [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) (we're on 16.1.7, affected by Oct 14 advisories)
-3. **Dark/Light mode** — [LIF-29](https://linear.app/lifeframecn/issue/LIF-29)
-4. **Persist dialog prefs** — [LIF-62](https://linear.app/lifeframecn/issue/LIF-62)
+1. **Deploy what shipped** — Neon migrations + manual checks (see "Shipped 2026-10-24")
+2. **Wave 2 (in progress)** — business mode [LIF-64](https://linear.app/lifeframecn/issue/LIF-64)
 
-**Deferred:** Infinite scroll ([LIF-37](https://linear.app/lifeframecn/issue/LIF-37)) when post count grows.
+**Deferred:** Infinite scroll ([LIF-37](https://linear.app/lifeframecn/issue/LIF-37)) after LIF-63, when post count grows.
 
 ---
 
@@ -138,7 +152,9 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **Synced 2026-08-09:** Marked LIF-55 Done (avatar/WebP/display path; Lighthouse score little changed — stop chasing LCP); LIF-29 remains next
 - **Synced 2026-10-24:** Feature mapping — created LIF-61 (modal intercept bug), LIF-62 (persist dialog prefs), LIF-63 (gallery by year), LIF-64 (business mode, blocked by LIF-62), LIF-65 (env audit), LIF-66 (add images to post); appended year-grouping note to LIF-37
 - **Synced 2026-10-24 (2):** Ordering confirmed — LIF-61, LIF-65, LIF-62 → Todo; LIF-65 → Urgent (Next 16.4.1 security upgrade); LIF-61 adds loading animation; LIF-63 picked option A; LIF-64 rescoped to `isBusiness` + contact dialog, unblocked
-- **Synced 2026-10-24 (3):** Created LIF-67 (LF-040 test mapping, Backlog, High, related LIF-38 / LIF-65); appended CI progress note to LIF-38 (GitHub Actions workflow added in PR #16)
+- **Synced 2026-10-24 (5):** Created LIF-67 (LF-040 test mapping, Backlog, High, related LIF-38 / LIF-65); appended CI note to LIF-38 (GitHub Actions workflow in the follow-up PR to #16)
+- **Synced 2026-10-24 (4):** Wave 1 merged (#21 LIF-63, #20 LIF-66) and marked Done in Linear with PR links. LIF-64 is next (wave 2); LIF-37 stays deferred.
+- **Synced 2026-10-24 (3):** LIF-61, LIF-29, LIF-62 merged (#17, #15, #18) and Done in Linear; LIF-65 merged (#16) but In Progress in Linear (Vercel preview env vars still failing builds). Next round mapped: wave 1 LIF-63 + LIF-66 (started via `parallel-tickets`), wave 2 LIF-64 after wave 1 merges, LIF-37 stays deferred.
 - **Canceled (unchanged prior):** LIF-40, LIF-44, LIF-47, LIF-58
 
 ---
@@ -146,7 +162,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 ## Implementation Notes
 
 - **LIF-34 / LIF-46 thumbnails:** First image only → Sharp resize 400×400 `fit: inside` → `thumbnails/`; gallery uses `Post.imageUrl`; originals stay on `Image.imageUrl`
-- **LIF-55:** Avatar compressed to `avatars/profile-320.webp`; upload builds WebP thumb + `displays/{base}.webp` (~1600px) for detail via `getViewUrl`; backfill script `scripts/backfill-display-images.ts`. Prod `/` Performance ~85–87, CLS 0 — closed without further score chasing
+- **LIF-55:** Avatar compressed to `avatars/profile-320.webp`; upload builds a WebP thumbnail; gallery/detail use `next/image` with reserved aspect boxes. The `displays/{base}.webp` derivatives, `getViewUrl` and the backfill script mentioned earlier are not in the code (checked 2026-10-24). Prod `/` Performance ~85–87, CLS 0 — closed without further score chasing
 - **LIF-45:** `ImageDetail` carousel with `CarouselPrevious` / `CarouselNext`, loop when `images.length > 1`
 - **LIF-48:** `generateUniqueSlug` from post name; `getPostBySlugOrId` OR query; migration `20260516080736_add_slug_sc_id`
 - **LIF-43:** `resolveSoundCloudTrack` via Iframely on upload; `SoundCloudTrackProvider` + crossfade engine; consent dialog in layout
@@ -157,6 +173,13 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **LIF-30:** bcrypt against `ADMIN_USERNAME` / `ADMIN_PASSWORD` in env; protects `/upload`
 - **LIF-56 / LIF-57:** Umami Cloud in prod only (`isUmamiEnabled()`); `UmamiScript` filters `/upload` + `/auth`; custom events via `trackEvent()` — `post_view`, `gallery_click`, `carousel_navigate`, `back_to_gallery`, `soundcloud_*`
 - **Deploy (LIF-33):** Dev DB = Supabase; prod DB = Neon on Vercel; images = R2 everywhere; run `prisma migrate deploy` against Neon before first prod deploy
+- **LIF-65:** `next` / `eslint-config-next` 16.4.1, `sharp` 0.35.5 (dropped `@types/sharp`); `server-only` imported in `src/lib/env.ts`, `src/lib/r2.ts`, `src/lib/auth.ts`; removed unused Unsplash image host and the `1000mb` body limits (uploads go browser → R2)
+- **LIF-61:** Root cause: `data-umami-event` on gallery `<Link>`s — Umami's capture-phase click handler calls `preventDefault()` and sets `location.href`, so the intercept never ran (prod only). `GalleryTileLink` tracks `gallery_click` via `trackEvent()` in `onClick`; modal `layout.tsx` + `loading.tsx` with `ImageDetailSkeleton`. No `loading.tsx` in `app/photo/[id]` — it turns `notFound()` into HTTP 200
+- **LIF-29:** `src/lib/theme.ts` (`lifeframe:theme:v1` = light | dark | system), inline no-flash script in `app/layout.tsx`, `ThemeToggle` cycles light → dark → system
+- **LIF-62:** `src/lib/visitor-prefs.ts` (`lifeframe:prefs:v1`, typed, try/catch, cross-tab); only Granted/Denied stored, Denied expires after 30 days; `SoundCloudPlayer` reads via `useSyncExternalStore`; `SoundCloudMusicToggle` to change the choice
+- **LIF-63:** `src/lib/gallery-years.ts` (pure grouping/sort, UTC year of `createdAt`); raw SQL picks the first N post ids ordered by year desc, isPinned desc, createdAt desc, then `findMany` loads them (private filtered in both); `GalleryYearNav` (scroll-tracked `aria-current`, anchor links, hidden for a single year); year headings h2 on `/`, h3 on `/upload`. LIF-37 cursor comment sits next to the query
+- **LIF-66:** `getPostImages` / `updatePostImages` in `src/actions/posts.ts`; planning + limit math in `src/lib/post-images.ts` (1..10 images, ids must belong to the post); DB changes in one transaction, R2 deletes only after commit; thumbnail rebuilt when the first image changes; `PostImageManager` with N / 10 counter and up/down buttons. Post and image ids must be UUIDs (existing Zod rule)
+- **Tests:** vitest + jsdom, single `vitest.config.ts` with `vitest.setup.ts`; tests live in `src/**/*.test.{ts,tsx}`
 - **Context7:** `npx ctx7@latest` for current library docs
 - **shadcn:** Card, Avatar, Skeleton, Carousel, Dialog, AlertDialog from `src/components/ui/`
 
@@ -168,17 +191,17 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 | Pinned posts | [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) ✅ |
 | Grayscale hover on gallery | [LIF-53](https://linear.app/lifeframecn/issue/LIF-53) ✅ |
 | Web vitals / documentation | [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) ✅ |
-| Dark/Light mode | [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) ← next |
+| Dark/Light mode | [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) (merged) |
 | Infinite scroll / fetch on scroll | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) (deferred) |
 | Who watches / traffic source research | [LIF-57](https://linear.app/lifeframecn/issue/LIF-57) ✅ |
 | Server logging + analytics | [LIF-56](https://linear.app/lifeframecn/issue/LIF-56) ✅ |
 | CRUD for posts | [LIF-54](https://linear.app/lifeframecn/issue/LIF-54) ✅ |
-| Parallel route break (modal not intercepting) | [LIF-61](https://linear.app/lifeframecn/issue/LIF-61) |
-| Save dialog preference in localStorage | [LIF-62](https://linear.app/lifeframecn/issue/LIF-62) |
-| By year separation | [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) |
-| Business mode | [LIF-64](https://linear.app/lifeframecn/issue/LIF-64) |
-| Is our env safe? | [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) |
-| Add more images (to existing post, keep 10 limit) | [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) |
+| Parallel route break (modal not intercepting) | [LIF-61](https://linear.app/lifeframecn/issue/LIF-61) (merged) |
+| Save dialog preference in localStorage | [LIF-62](https://linear.app/lifeframecn/issue/LIF-62) (merged) |
+| By year separation | [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) (wave 1) |
+| Business mode | [LIF-64](https://linear.app/lifeframecn/issue/LIF-64) (wave 2) |
+| Is our env safe? | [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) (merged) |
+| Add more images (to existing post, keep 10 limit) | [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) (wave 1) |
 | Pagination handling | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) (existing) |
 | Map tests for the repo | [LIF-67](https://linear.app/lifeframecn/issue/LIF-67) |
-| Improve CI (lint, tests, build) | [LIF-38](https://linear.app/lifeframecn/issue/LIF-38) (existing; workflow in PR #16) |
+| Improve CI (lint, tests, build) | [LIF-38](https://linear.app/lifeframecn/issue/LIF-38) (existing; workflow in follow-up PR) |

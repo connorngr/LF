@@ -23,14 +23,7 @@ export function LoadingPhoto({
 
   return (
     <>
-      {isLoading ? (
-        <output
-          className="absolute inset-0 flex items-center justify-center bg-neutral-950"
-          aria-label="Loading photo"
-        >
-          <div className="size-8 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-        </output>
-      ) : null}
+      {isLoading ? <LoadingPhotoPlaceholder /> : null}
 
       {hasError ? (
         <div className="absolute inset-0 flex items-center justify-center bg-neutral-950 px-6 text-center text-sm text-white/70">
@@ -54,5 +47,18 @@ export function LoadingPhoto({
         )}
       />
     </>
+  )
+}
+
+// Shared with ImageDetailSkeleton so the route loading state and the image
+// loading state look identical and swap without a visual jump.
+export function LoadingPhotoPlaceholder() {
+  return (
+    <output
+      className="absolute inset-0 flex items-center justify-center bg-neutral-950"
+      aria-label="Loading photo"
+    >
+      <div className="size-8 animate-spin rounded-full border-2 border-white/20 border-t-white motion-reduce:animate-none" />
+    </output>
   )
 }

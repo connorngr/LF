@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { isAuthenticated } from '@/lib/auth'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -5,13 +7,29 @@ import { AdminPostTile } from '@/components/molecules/AdminPostTile'
 import { GallerySoundBadge } from '@/components/atoms/GallerySoundBadge'
 import { GalleryPrivateBadge } from '@/components/atoms/GalleryPrivateBadge'
 import { GalleryPinBadge } from '@/components/atoms/GalleryPinBadge'
-import Link from 'next/link'
+import { GalleryTileLink } from '@/components/molecules/GalleryTileLink'
+import { GalleryYearNav } from '@/components/molecules/GalleryYearNav'
 import Image from 'next/image'
 import { getUrl } from '@/lib/r2'
+import { galleryYearSectionId, groupPostsByYear, type GalleryYearGroup } from '@/lib/gallery-years'
 
 type GalleryMode = 'view' | 'edit'
 
-const galleryOrderBy = [{ isPinned: 'desc' as const }, { createdAt: 'desc' as const }]
+// Gallery order is year desc -> isPinned desc -> createdAt desc (pinned posts
+// lead their own year). Prisma's orderBy cannot sort by an extracted year, so
+// the posts are picked here in SQL and ordered for display by groupPostsByYear.
+// LIF-37: paginate with the cursor (year, isPinned, createdAt, id) taken from
+// the last row, i.e. continue with rows that sort after it in this ORDER BY.
+async function getGalleryPostIds(limit: number, includePrivate: boolean): Promise<string[]> {
+  const where = includePrivate ? Prisma.empty : Prisma.sql`WHERE is_private = false`
+  const rows = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT id FROM posts
+    ${where}
+    ORDER BY EXTRACT(YEAR FROM created_at) DESC, is_pinned DESC, created_at DESC, id DESC
+    LIMIT ${limit}
+  `
+  return rows.map((row) => row.id)
+}
 
 type EditPostSummary = Readonly<{
   id: string
@@ -22,6 +40,7 @@ type EditPostSummary = Readonly<{
   soundCloudTrackId: string | null
   isPrivate: boolean
   isPinned: boolean
+  createdAt: Date
   _count: { images: number }
 }>
 
@@ -32,6 +51,7 @@ type ViewPostSummary = Readonly<{
   soundCloudTrackId: string | null
   isPrivate: boolean
   isPinned: boolean
+  createdAt: Date
   _count: { images: number }
 }>
 
@@ -50,13 +70,13 @@ async function getLatestPosts(
   mode: GalleryMode,
   includePrivate: boolean,
 ): Promise<EditPostSummary[] | ViewPostSummary[]> {
-  const where = includePrivate ? undefined : { isPrivate: false }
+  const ids = await getGalleryPostIds(limit, includePrivate)
+  if (ids.length === 0) return []
+  const where = includePrivate ? { id: { in: ids } } : { id: { in: ids }, isPrivate: false }
 
   if (mode === 'edit') {
     return prisma.post.findMany({
       where,
-      orderBy: galleryOrderBy,
-      take: limit,
       select: {
         id: true,
         slug: true,
@@ -66,6 +86,7 @@ async function getLatestPosts(
         soundCloudTrackId: true,
         isPrivate: true,
         isPinned: true,
+        createdAt: true,
         _count: { select: { images: true } },
       },
     })
@@ -73,8 +94,6 @@ async function getLatestPosts(
 
   return prisma.post.findMany({
     where,
-    orderBy: galleryOrderBy,
-    take: limit,
     select: {
       slug: true,
       name: true,
@@ -82,9 +101,88 @@ async function getLatestPosts(
       soundCloudTrackId: true,
       isPrivate: true,
       isPinned: true,
+      createdAt: true,
       _count: { select: { images: true } },
     },
   })
+}
+
+async function renderEditTile(post: EditPostSummary) {
+  return (
+    <AdminPostTile
+      key={post.slug}
+      postId={post.id}
+      slug={post.slug}
+      name={post.name}
+      caption={post.caption}
+      imageSrc={await getUrl(post.imageUrl)}
+      imageCount={post._count.images}
+      hasSoundtrack={Boolean(post.soundCloudTrackId)}
+      isPrivate={post.isPrivate}
+      isPinned={post.isPinned}
+    />
+  )
+}
+
+// Avatar keeps priority on `/`; gallery tiles stay lazy so they don't compete for LCP.
+async function renderViewTile(post: ViewPostSummary) {
+  const hasStatusBadge = post.isPrivate || post.isPinned
+  const src = await getUrl(post.imageUrl)
+  return (
+    <GalleryTileLink
+      key={post.slug}
+      slug={post.slug}
+      className="group bg-muted relative isolate block overflow-hidden rounded-lg transition-transform duration-150 motion-safe:active:scale-[0.98]"
+    >
+      <figure>
+        <div className="relative aspect-photo w-full">
+          <Image
+            src={src}
+            alt={post.name}
+            fill
+            unoptimized
+            sizes="(max-width: 768px) 33vw, 25vw"
+            loading="lazy"
+            className="object-cover transition-[filter] duration-300 [@media(hover:hover)]:grayscale [@media(hover:hover)]:group-hover:grayscale-0"
+          />
+          <p
+            className="pointer-events-none uppercase absolute bottom-2 left-2 max-w-[min(100%,12rem)] truncate text-left text-[0.75rem] font-bold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.95),0_0_12px_rgba(0,0,0,0.65)]"
+          >
+            {post.name}
+          </p>
+          {post.isPrivate ? <GalleryPrivateBadge /> : null}
+          {post.isPinned ? <GalleryPinBadge /> : null}
+          {post._count.images > 1 ? (
+            <span
+              className={`absolute top-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm ${
+                hasStatusBadge ? 'left-8' : 'left-1.5'
+              }`}
+            >
+              +{post._count.images}
+            </span>
+          ) : null}
+          {post.soundCloudTrackId ? <GallerySoundBadge /> : null}
+        </div>
+      </figure>
+    </GalleryTileLink>
+  )
+}
+
+type RenderedYearSection = Readonly<{
+  year: number
+  tiles: ReactNode[]
+}>
+
+function renderYearSections<T>(
+  groups: GalleryYearGroup<T>[],
+  renderTile: (post: T) => Promise<ReactNode>,
+): Promise<RenderedYearSection[]> {
+  return Promise.all(
+    groups.map(async ({ year, posts }) => ({
+      year,
+      tiles: await Promise.all(posts.map(renderTile)),
+    })),
+  )
 }
 
 type ImageGalleryProps = Readonly<{
@@ -108,82 +206,38 @@ export async function ImageGallery({ limit = 20, mode = 'view' }: ImageGalleryPr
     )
   }
 
-  const editTiles =
+  const sections =
     mode === 'edit'
-      ? await Promise.all(
-          (posts as EditPostSummary[]).map(async (post) => (
-            <AdminPostTile
-              key={post.slug}
-              postId={post.id}
-              slug={post.slug}
-              name={post.name}
-              caption={post.caption}
-              imageSrc={await getUrl(post.imageUrl)}
-              imageCount={post._count.images}
-              hasSoundtrack={Boolean(post.soundCloudTrackId)}
-              isPrivate={post.isPrivate}
-              isPinned={post.isPinned}
-            />
-          )),
-        )
-      : null
+      ? await renderYearSections(groupPostsByYear(posts as EditPostSummary[]), renderEditTile)
+      : await renderYearSections(groupPostsByYear(posts as ViewPostSummary[]), renderViewTile)
 
-  // Avatar keeps priority on `/`; gallery tiles stay lazy so they don't compete for LCP.
-  const viewTiles =
-    mode === 'view'
-      ? await Promise.all(
-          (posts as ViewPostSummary[]).map(async (post) => {
-            const hasStatusBadge = post.isPrivate || post.isPinned
-            const src = await getUrl(post.imageUrl)
-            return (
-              <Link
-                key={post.slug}
-                href={`/photo/${post.slug}`}
-                data-umami-event="gallery_click"
-                data-umami-event-slug={post.slug}
-                className="group bg-muted relative isolate block overflow-hidden rounded-lg"
-              >
-                <figure>
-                  <div className="relative aspect-photo w-full">
-                    <Image
-                      src={src}
-                      alt={post.name}
-                      fill
-                      unoptimized
-                      sizes="(max-width: 768px) 33vw, 25vw"
-                      loading="lazy"
-                      className="object-cover transition-[filter] duration-300 [@media(hover:hover)]:grayscale [@media(hover:hover)]:group-hover:grayscale-0"
-                    />
-                    <p
-                      className="pointer-events-none uppercase absolute bottom-2 left-2 max-w-[min(100%,12rem)] truncate text-left text-[0.75rem] font-bold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.95),0_0_12px_rgba(0,0,0,0.65)]"
-                    >
-                      {post.name}
-                    </p>
-                    {post.isPrivate ? <GalleryPrivateBadge /> : null}
-                    {post.isPinned ? <GalleryPinBadge /> : null}
-                    {post._count.images > 1 ? (
-                      <span
-                        className={`absolute top-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm ${
-                          hasStatusBadge ? 'left-8' : 'left-1.5'
-                        }`}
-                      >
-                        +{post._count.images}
-                      </span>
-                    ) : null}
-                    {post.soundCloudTrackId ? <GallerySoundBadge /> : null}
-                  </div>
-                </figure>
-              </Link>
-            )
-          }),
-        )
-      : null
+  // `/upload` nests the grid under its own h2, so year headings drop a level there.
+  const YearHeading = mode === 'edit' ? 'h3' : 'h2'
 
   return (
-    <section className="space-y-3">
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-1">
-        {editTiles ?? viewTiles}
-      </div>
+    <section className="space-y-4">
+      {sections.length > 1 ? <GalleryYearNav years={sections.map(({ year }) => year)} /> : null}
+      {sections.map(({ year, tiles }) => {
+        const sectionId = galleryYearSectionId(year)
+        return (
+          <section
+            key={year}
+            id={sectionId}
+            data-gallery-year={year}
+            aria-labelledby={`${sectionId}-heading`}
+            className="scroll-mt-14 space-y-2"
+          >
+            <YearHeading
+              id={`${sectionId}-heading`}
+              tabIndex={-1}
+              className="flex items-center gap-3 font-heading text-sm font-semibold tabular-nums text-muted-foreground outline-none after:h-px after:flex-1 after:bg-border"
+            >
+              {year}
+            </YearHeading>
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-1">{tiles}</div>
+          </section>
+        )
+      })}
     </section>
   )
 }

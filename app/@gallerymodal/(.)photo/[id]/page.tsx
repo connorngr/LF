@@ -1,19 +1,10 @@
 import { ImageDetail } from '@/components/organisms/ImageDetail'
-import { use } from 'react'
 
-type GalleryModalPageProps = {
-  params: {
-    id: string
-  }
-}
+type GalleryModalPageProps = Readonly<{
+  params: Promise<{ id: string }>
+}>
 
-export default function GalleryModalPage({ params }: GalleryModalPageProps) {
-  const { id } = use(Promise.resolve(params) as Promise<GalleryModalPageProps['params']>)
-  return (
-    <div className="fixed inset-0 z-50 bg-black/85 p-4">
-      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-center">
-        <ImageDetail id={id} />
-      </div>
-    </div>
-  )
+export default async function GalleryModalPage({ params }: GalleryModalPageProps) {
+  const { id } = await params
+  return <ImageDetail id={id} />
 }
