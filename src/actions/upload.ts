@@ -51,6 +51,7 @@ export async function finalizeImageUpload(input: {
   soundCloudUrl?: string
   isPrivate?: boolean
   isPinned?: boolean
+  isBusiness?: boolean
   imageKeys: string[]
 }) {
   const authError = await requireAdmin()
@@ -59,6 +60,7 @@ export async function finalizeImageUpload(input: {
   const { name, caption, soundCloudUrl, imageKeys } = input
   const isPrivate = input.isPrivate === true
   const isPinned = !isPrivate && input.isPinned === true
+  const isBusiness = input.isBusiness === true
 
   let soundCloudTrackId: string | null = null
   if (soundCloudUrl) {
@@ -88,6 +90,7 @@ export async function finalizeImageUpload(input: {
         caption,
         isPrivate,
         isPinned,
+        isBusiness,
       },
     })
 

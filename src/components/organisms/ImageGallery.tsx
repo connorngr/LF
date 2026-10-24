@@ -7,6 +7,7 @@ import { AdminPostTile } from '@/components/molecules/AdminPostTile'
 import { GallerySoundBadge } from '@/components/atoms/GallerySoundBadge'
 import { GalleryPrivateBadge } from '@/components/atoms/GalleryPrivateBadge'
 import { GalleryPinBadge } from '@/components/atoms/GalleryPinBadge'
+import { GalleryBusinessBadge } from '@/components/atoms/GalleryBusinessBadge'
 import { GalleryTileLink } from '@/components/molecules/GalleryTileLink'
 import { GalleryYearNav } from '@/components/molecules/GalleryYearNav'
 import Image from 'next/image'
@@ -40,6 +41,7 @@ type EditPostSummary = Readonly<{
   soundCloudTrackId: string | null
   isPrivate: boolean
   isPinned: boolean
+  isBusiness: boolean
   createdAt: Date
   _count: { images: number }
 }>
@@ -51,6 +53,7 @@ type ViewPostSummary = Readonly<{
   soundCloudTrackId: string | null
   isPrivate: boolean
   isPinned: boolean
+  isBusiness: boolean
   createdAt: Date
   _count: { images: number }
 }>
@@ -86,6 +89,7 @@ async function getLatestPosts(
         soundCloudTrackId: true,
         isPrivate: true,
         isPinned: true,
+        isBusiness: true,
         createdAt: true,
         _count: { select: { images: true } },
       },
@@ -101,6 +105,7 @@ async function getLatestPosts(
       soundCloudTrackId: true,
       isPrivate: true,
       isPinned: true,
+      isBusiness: true,
       createdAt: true,
       _count: { select: { images: true } },
     },
@@ -120,6 +125,7 @@ async function renderEditTile(post: EditPostSummary) {
       hasSoundtrack={Boolean(post.soundCloudTrackId)}
       isPrivate={post.isPrivate}
       isPinned={post.isPinned}
+      isBusiness={post.isBusiness}
     />
   )
 }
@@ -160,6 +166,9 @@ async function renderViewTile(post: ViewPostSummary) {
             >
               +{post._count.images}
             </span>
+          ) : null}
+          {post.isBusiness ? (
+            <GalleryBusinessBadge besideSoundBadge={Boolean(post.soundCloudTrackId)} />
           ) : null}
           {post.soundCloudTrackId ? <GallerySoundBadge /> : null}
         </div>

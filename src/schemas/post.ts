@@ -17,6 +17,7 @@ export const updatePostSchema = z
     changeSoundtrack: z.boolean().optional(),
     isPrivate: z.boolean().default(false),
     isPinned: z.boolean().default(false),
+    isBusiness: z.boolean().default(false),
   })
   .superRefine((data, ctx) => {
     if (data.changeSoundtrack && !data.soundCloudUrl) {

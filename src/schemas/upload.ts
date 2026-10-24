@@ -48,6 +48,7 @@ export const postMetadataSchema = z.object({
   soundCloudUrl: optionalSoundCloudUrlSchema,
   isPrivate: z.boolean().default(false),
   isPinned: z.boolean().default(false),
+  isBusiness: z.boolean().default(false),
 })
 
 function fileListToDescriptors(fileList: FileList) {

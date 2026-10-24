@@ -28,6 +28,7 @@
 
 import 'server-only'
 import { z } from 'zod'
+import { parseContactEmails } from '@/lib/contact-emails'
 
 export const defaultProfileMottoMarkdown =
   '**Life, uncurated.**\n\nEveryday frames — not reels, just real.'
@@ -48,6 +49,8 @@ const envVarSchema = z.object({
   R2_PUBLIC_URL: z.string().min(1),
   NEXT_PUBLIC_BASE_URL: z.string().min(1),
   IFRAMELY_API_KEY: z.string().min(1),
+  // Optional: comma-separated `Label:address` pairs; unset hides the contact button.
+  CONTACT_EMAILS: z.string().optional(),
 })
 
 type EnvSchema = z.infer<typeof envVarSchema>
@@ -86,6 +89,9 @@ export const {
   NEXT_PUBLIC_BASE_URL: nextPublicBaseUrl,
   IFRAMELY_API_KEY: iframelyApiKey,
 } = env
+
+/** Parsed CONTACT_EMAILS; empty when unset, empty, or every entry is malformed. */
+export const contactEmails = parseContactEmails(env.CONTACT_EMAILS)
 
 /** All env variables as object */
 export type Env = typeof env
