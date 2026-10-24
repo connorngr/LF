@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { optionalSoundCloudUrlSchema } from '@/schemas/soundcloud'
+import { MAX_IMAGES_PER_POST } from '@/schemas/upload'
 
 export const updatePostSchema = z
   .object({
@@ -38,4 +39,27 @@ export const deletePostSchema = z.object({
   postId: z.string().uuid('Invalid post ID'),
 })
 
+/** Matches keys produced by generateSecureKey. */
+const uploadedImageKeySchema = z
+  .string()
+  .regex(/^images\/\d+-[a-z0-9]+\.(jpg|png|webp|gif)$/, 'Invalid image key')
+
+export const imageOrderItemSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('existing'), id: z.string().uuid('Invalid image ID') }),
+  z.object({ kind: z.literal('new'), key: uploadedImageKeySchema }),
+])
+
+export const updatePostImagesSchema = z.object({
+  postId: z.string().uuid('Invalid post ID'),
+  order: z
+    .array(imageOrderItemSchema)
+    .min(1, 'A post needs at least one image')
+    .max(MAX_IMAGES_PER_POST, `Maximum ${MAX_IMAGES_PER_POST} images per post`),
+})
+
+export const postIdSchema = z.object({
+  postId: z.string().uuid('Invalid post ID'),
+})
+
+export type UpdatePostImagesInput = z.input<typeof updatePostImagesSchema>
 export type UpdatePostInput = z.input<typeof updatePostSchema>

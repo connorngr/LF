@@ -2,14 +2,21 @@
 
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { updatePost } from '@/actions/posts'
+import { getPostImages, updatePost, updatePostImages } from '@/actions/posts'
+import { prepareImageUploads } from '@/actions/upload'
+import {
+  PostImageManager,
+  type EditableImage,
+} from '@/components/molecules/PostImageManager'
+import { remainingImageSlots } from '@/lib/post-images'
 import { updatePostSchema, type UpdatePostInput } from '@/schemas/post'
+import { fileDescriptorSchema } from '@/schemas/upload'
 import { Button } from '@/components/ui/button'
 import {
   DialogClose,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type PostEditFormProps = Readonly<{
   postId: string
@@ -30,6 +37,68 @@ const initialState: EditFormResult = {
   message: '',
 }
 
+async function loadEditableImages(
+  postId: string,
+): Promise<{ images: EditableImage[] } | { error: string }> {
+  try {
+    const result = await getPostImages(postId)
+    if ('error' in result) return { error: result.error || 'Could not load images' }
+    return { images: result.images.map((image) => ({ kind: 'existing', ...image })) }
+  } catch {
+    return { error: 'Could not load images' }
+  }
+}
+
+function haveImagesChanged(images: EditableImage[], initialIds: string[]): boolean {
+  if (images.length !== initialIds.length) return true
+  return images.some((image, index) => image.kind !== 'existing' || image.id !== initialIds[index])
+}
+
+/** Uploads new files via presigned URLs, then saves the final order. Returns an error message or null. */
+async function saveImages(postId: string, images: EditableImage[]): Promise<string | null> {
+  const newImages = images.flatMap((image) => (image.kind === 'new' ? [image] : []))
+  const keyByLocalId = new Map<string, string>()
+
+  if (newImages.length > 0) {
+    const prepareResult = await prepareImageUploads(
+      newImages.map(({ file }) => ({ contentType: file.type, size: file.size })),
+    )
+    if ('error' in prepareResult) {
+      return prepareResult.error || 'Upload failed'
+    }
+
+    try {
+      await Promise.all(
+        prepareResult.uploads.map(async (upload, index) => {
+          const { file, localId } = newImages[index]
+          const response = await fetch(upload.uploadUrl, {
+            method: 'PUT',
+            body: file,
+            headers: { 'Content-Type': file.type },
+          })
+          if (!response.ok) {
+            throw new Error(`Failed to upload ${file.name}`)
+          }
+          keyByLocalId.set(localId, upload.key)
+        }),
+      )
+    } catch {
+      return 'Failed to upload images to storage. If this persists, check R2 CORS allows PUT from your site origin.'
+    }
+  }
+
+  const result = await updatePostImages({
+    postId,
+    order: images.map((image) =>
+      image.kind === 'existing'
+        ? { kind: 'existing' as const, id: image.id }
+        : { kind: 'new' as const, key: keyByLocalId.get(image.localId) ?? '' },
+    ),
+  })
+
+  return 'error' in result ? result.error || 'Image update failed' : null
+}
+
 export function PostEditForm({
   postId,
   name,
@@ -40,6 +109,85 @@ export function PostEditForm({
   onSuccess,
 }: PostEditFormProps) {
   const [editState, setEditState] = useState<EditFormResult>(initialState)
+  const [images, setImages] = useState<EditableImage[] | null>(null)
+  const [initialImageIds, setInitialImageIds] = useState<string[]>([])
+  const [imageLoadError, setImageLoadError] = useState<string | null>(null)
+  const [imageError, setImageError] = useState<string | null>(null)
+  const previewUrlsRef = useRef(new Set<string>())
+
+  const applyLoadedImages = (result: Awaited<ReturnType<typeof loadEditableImages>>) => {
+    if ('error' in result) {
+      setImageLoadError(result.error)
+      return
+    }
+    setImageLoadError(null)
+    setImages(result.images)
+    setInitialImageIds(result.images.flatMap((image) => (image.kind === 'existing' ? [image.id] : [])))
+  }
+
+  // The form mounts when the edit dialog opens, so this loads the post's images on open.
+  useEffect(() => {
+    let cancelled = false
+    void loadEditableImages(postId).then((result) => {
+      if (!cancelled) applyLoadedImages(result)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [postId])
+
+  useEffect(() => {
+    const previewUrls = previewUrlsRef.current
+    return () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url))
+      previewUrls.clear()
+    }
+  }, [])
+
+  const moveImage = (index: number, direction: -1 | 1) => {
+    setImages((current) => {
+      if (!current) return current
+      const target = index + direction
+      if (target < 0 || target >= current.length) return current
+      const next = [...current]
+      ;[next[index], next[target]] = [next[target], next[index]]
+      return next
+    })
+  }
+
+  const removeImage = (index: number) => {
+    if (!images || images.length <= 1) return
+    setImageError(null)
+    const image = images[index]
+    if (image.kind === 'new') {
+      URL.revokeObjectURL(image.src)
+      previewUrlsRef.current.delete(image.src)
+    }
+    setImages(images.toSpliced(index, 1))
+  }
+
+  const addFiles = (files: File[]) => {
+    if (!images) return
+    const slots = remainingImageSlots(images.length, 0, 0)
+    const invalid = files.find(
+      (file) => !fileDescriptorSchema.safeParse({ contentType: file.type, size: file.size }).success,
+    )
+    if (invalid) {
+      setImageError(`${invalid.name}: only JPEG, PNG, WebP, and GIF images under 30MB are allowed`)
+      return
+    }
+    if (files.length > slots) {
+      setImageError(`You can add ${slots} more image${slots === 1 ? '' : 's'} (maximum 10 per post)`)
+      return
+    }
+    setImageError(null)
+    const added: EditableImage[] = files.map((file) => {
+      const src = URL.createObjectURL(file)
+      previewUrlsRef.current.add(src)
+      return { kind: 'new', localId: crypto.randomUUID(), file, src }
+    })
+    setImages([...images, ...added])
+  }
 
   const {
     register,
@@ -67,6 +215,17 @@ export function PostEditForm({
 
   const onSubmit = async (data: UpdatePostInput) => {
     setEditState(initialState)
+
+    if (images && haveImagesChanged(images, initialImageIds)) {
+      const imageSaveError = await saveImages(postId, images)
+      if (imageSaveError) {
+        setEditState({ status: 'error', message: imageSaveError })
+        return
+      }
+      // Reload so a retry after a metadata error does not upload the same files again.
+      applyLoadedImages(await loadEditableImages(postId))
+    }
+
     const result = await updatePost(data)
 
     if ('error' in result) {
@@ -165,6 +324,17 @@ export function PostEditForm({
           <p className="text-xs text-destructive">{errors.isPinned.message}</p>
         ) : null}
       </div>
+
+      <PostImageManager
+        postId={postId}
+        images={images}
+        loadError={imageLoadError}
+        error={imageError}
+        disabled={isSubmitting}
+        onMove={moveImage}
+        onRemove={removeImage}
+        onAddFiles={addFiles}
+      />
 
       {hasExistingTrack ? (
         <div className="space-y-2">
