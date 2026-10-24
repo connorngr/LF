@@ -8,9 +8,15 @@ type LoadingPhotoProps = Readonly<{
   src: string
   alt: string
   className?: string
+  priority?: boolean
 }>
 
-export function LoadingPhoto({ src, alt, className }: LoadingPhotoProps) {
+export function LoadingPhoto({
+  src,
+  alt,
+  className,
+  priority = false,
+}: LoadingPhotoProps) {
   const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading')
   const isLoading = status === 'loading'
   const hasError = status === 'error'
@@ -36,8 +42,9 @@ export function LoadingPhoto({ src, alt, className }: LoadingPhotoProps) {
         src={src}
         alt={alt}
         fill
+        sizes="(max-width: 1024px) 100vw, 70vw"
+        {...(priority ? { priority: true } : { loading: 'lazy' as const })}
         unoptimized
-        sizes="100vw"
         onLoad={() => setStatus('loaded')}
         onError={() => setStatus('error')}
         className={cn(

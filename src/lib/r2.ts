@@ -21,6 +21,7 @@ const r2 = new S3Client({
 
 const BUCKET = r2BucketName
 const PRESIGNED_UPLOAD_EXPIRY_SECONDS = 600
+const PRESIGNED_GET_EXPIRY_SECONDS = 3600
 
 export async function getPresignedUploadUrl(
   key: string,
@@ -87,14 +88,14 @@ export async function uploadToR2(
 export async function uploadThumbnailToR2(
   body: Buffer,
   key: string,
-  contentType: string
 ): Promise<string> {
-  // Extract filename from key (e.g., "images/12345-abc.jpg" → "12345-abc.jpg")
-  const filename = key.split('/').pop() || ''
-  const thumbnailKey = `thumbnails/${filename}`
-  
+  const filename = key.split("/").pop() || ""
+  const base = filename.replace(/\.[^.]+$/, "") || filename
+  const thumbnailKey = `thumbnails/${base}.webp`
+
   const thumbnailBuffer = await sharp(body)
     .resize({ width: 400, height: 400, fit: "inside" })
+    .webp({ quality: 75 })
     .toBuffer()
 
   await r2.send(
@@ -102,18 +103,19 @@ export async function uploadThumbnailToR2(
       Bucket: BUCKET,
       Key: thumbnailKey,
       Body: thumbnailBuffer,
-      ContentType: contentType,
+      ContentType: "image/webp",
     })
   )
   return thumbnailKey
 }
 
+/** Signed GET URL for a private R2 object key. */
 export async function getUrl(key: string): Promise<string> {
   noStore()
-  return await getSignedUrl(
+  return getSignedUrl(
     r2,
     new GetObjectCommand({ Bucket: BUCKET, Key: key }),
-    { expiresIn: 3600 },
+    { expiresIn: PRESIGNED_GET_EXPIRY_SECONDS },
   )
 }
 

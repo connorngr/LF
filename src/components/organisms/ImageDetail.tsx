@@ -87,6 +87,7 @@ export async function ImageDetail({ id }: Readonly<{ id: string }>) {
                   <LoadingPhoto
                     src={image.url}
                     alt={`${post.caption ?? "Uploaded image"} - ${index + 1}`}
+                    priority={index === 0}
                   />
                 </figure>
               </CarouselItem>

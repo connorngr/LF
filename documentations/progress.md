@@ -1,6 +1,6 @@
 # MVP Progress Tracker
 
-> Last updated: 2026-07-19
+> Last updated: 2026-08-08
 
 ## North Star — Ship by June 30, 2026 ✅
 
@@ -54,62 +54,62 @@
 
 ---
 
-## Canceled (June ship track)
+## Canceled
 
 | Ticket | Linear | Title | Why canceled |
 |--------|--------|-------|--------------|
 | LIF-40 | [Canceled](https://linear.app/lifeframecn/issue/LIF-40) | LF-018: Image View Count Tracking | Superseded by Umami pageviews + `post_view` events |
 | LIF-44 | [Canceled](https://linear.app/lifeframecn/issue/LIF-44) | LF-023: Social share research (IG/FB, OG, Web Share) | Not feasible for personal accounts |
+| LIF-47 | [Canceled](https://linear.app/lifeframecn/issue/LIF-47) | Email share via mailto | Folded into canceled share track |
 | LIF-58 | [Canceled](https://linear.app/lifeframecn/issue/LIF-58) | LF-031: Social media integration — share UX & OG cards | Deprioritized; Umami covers traffic source tracking |
+| LIF-35 | [Canceled](https://linear.app/lifeframecn/issue/LIF-35) | LF-015: Storage Comparison - R2 vs Supabase | R2 already selected |
+| LIF-39 | [Canceled](https://linear.app/lifeframecn/issue/LIF-39) | Comments, Likes & Reactions | Not wanted for personal use |
+| LIF-49 | [Canceled](https://linear.app/lifeframecn/issue/LIF-49) | Prisma Accelerate | Neon connection pooling covers this |
 
 ---
 
-## In progress today — see `documentations/today_scope.md`
+## Next Up — Aug 2026 focus
 
 | Ticket | Linear | Title | Priority |
 |--------|--------|-------|----------|
-| — | — | Session focus complete (LIF-59 + LIF-60) | — |
+| LIF-55 | [Todo](https://linear.app/lifeframecn/issue/LIF-55) | Web vitals optimization (LCP/CLS) | High |
+| LIF-29 | [Todo](https://linear.app/lifeframecn/issue/LIF-29) | Dark/Light mode | High |
 
 ---
 
-## Next Up — July 2026 (Linear: Backlog)
+## Deferred (when posts grow)
 
-| Ticket | Linear | Title | Priority |
-|--------|--------|-------|----------|
-| LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Image Infinite Scroll / Pagination | High |
+| Ticket | Linear | Title | Why deferred |
+|--------|--------|-------|--------------|
+| LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Image Infinite Scroll / Pagination | Implement when gallery size warrants it |
 
 Cursor-based pagination: as the user scrolls the gallery, fetch and append more posts (IntersectionObserver + loading skeleton + end state).
 
 ---
 
-## Deferred (post-July)
+## Still backlog (not current focus)
 
-| Ticket | Linear | Title | Why deferred |
-|--------|--------|-------|--------------|
-| LIF-55 | [Todo](https://linear.app/lifeframecn/issue/LIF-55) | Side quest: Web vitals audit | Optional polish — Lighthouse pass on gallery + detail |
-| LIF-39 | [Backlog](https://linear.app/lifeframecn/issue/LIF-39) | Comments, Likes & Reactions | Not needed for daily personal use |
-| LIF-47 | [Backlog](https://linear.app/lifeframecn/issue/LIF-47) | Email share via mailto | May fold into future share work |
-| LIF-50 | [Backlog](https://linear.app/lifeframecn/issue/LIF-50) | Stress testing baseline | Post-ship hardening |
-| LIF-49 | [Backlog](https://linear.app/lifeframecn/issue/LIF-49) | Prisma Accelerate | Post-ship if needed |
-| LIF-35 | [Backlog](https://linear.app/lifeframecn/issue/LIF-35) | Storage comparison R2 vs Supabase | R2 already chosen |
+| Ticket | Linear | Title | Notes |
+|--------|--------|-------|-------|
+| LIF-38 | [Backlog](https://linear.app/lifeframecn/issue/LIF-38) | CI/CD Pipeline & Automated Testing | Post-ship hardening |
 | LIF-41 | [Backlog](https://linear.app/lifeframecn/issue/LIF-41) | Advanced auth | Basic auth sufficient |
+| LIF-42 | [Backlog](https://linear.app/lifeframecn/issue/LIF-42) | Blog Engine Integration | Future |
+| LIF-50 | [Backlog](https://linear.app/lifeframecn/issue/LIF-50) | Stress testing baseline | Post-ship hardening |
 | LIF-51 | [Backlog](https://linear.app/lifeframecn/issue/LIF-51) | Rate limiting | Post-ship security |
 | LIF-52 | [Backlog](https://linear.app/lifeframecn/issue/LIF-52) | CAPTCHA | Post-ship security |
-| LIF-29 | [Backlog](https://linear.app/lifeframecn/issue/LIF-29) | Dark/Light mode | Nice-to-have |
 
 ---
 
 ## Where We're Heading
 
-**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts.
+**Done:** Core MVP — grid, upload, multi-image, carousel, slugs, SoundCloud, admin CRUD, Umami analytics, Vercel deploy, private posts, pinned posts, grayscale hover.
 
-**Remaining today:**
+**Next focus:**
 
-_(none — LIF-60 shipped)_
+1. **Web vitals** — [LIF-55](https://linear.app/lifeframecn/issue/LIF-55): Lighthouse pass on gallery + detail
+2. **Dark/Light mode** — [LIF-29](https://linear.app/lifeframecn/issue/LIF-29)
 
-**Next after today:**
-
-1. ∞ **Infinite scroll** — [LIF-37](https://linear.app/lifeframecn/issue/LIF-37): on-demand fetch as user scrolls the gallery
+**Deferred:** Infinite scroll ([LIF-37](https://linear.app/lifeframecn/issue/LIF-37)) when post count grows.
 
 ---
 
@@ -118,8 +118,8 @@ _(none — LIF-60 shipped)_
 - **Team:** Lifeframecn (ID: `de769793-61ec-44d2-b53e-88eb6b36f346`)
 - **Synced 2026-07-12:** Marked LIF-33, LIF-56, LIF-57 Done; synced LIF-54 Done; created LIF-59 (private posts), LIF-60 (pinned posts)
 - **Synced 2026-07-19:** Marked LIF-59 Done (private posts shipped); marked LIF-60 Done (pinned posts); LIF-37 stays Next Up
-- **Canceled (unchanged):** LIF-40, LIF-44, LIF-58 — superseded by Umami / not feasible
-- **ID note:** LIF-59 = LF-032 private posts; LIF-60 = LF-033 pinned posts; LIF-37 = LF-016 infinite scroll / pagination
+- **Synced 2026-08-08:** Marked LIF-53 Done; promoted LIF-55 + LIF-29 to Todo (next focus); deferred LIF-37 to Backlog; canceled LIF-35 (R2 chosen), LIF-39 (no comments), LIF-49 (Neon pooling)
+- **Canceled (unchanged prior):** LIF-40, LIF-44, LIF-47, LIF-58
 
 ---
 
@@ -145,9 +145,10 @@ _(none — LIF-60 shipped)_
 |------|--------|
 | Private posts | [LIF-59](https://linear.app/lifeframecn/issue/LIF-59) ✅ |
 | Pinned posts | [LIF-60](https://linear.app/lifeframecn/issue/LIF-60) ✅ |
-| Infinite scroll / fetch on scroll | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) |
-| Who watches / traffic source research | [LIF-57](https://linear.app/lifeframecn/issue/LIF-57) |
-| Server logging + analytics | [LIF-56](https://linear.app/lifeframecn/issue/LIF-56) |
-| Grayscale hover on gallery | [LIF-53](https://linear.app/lifeframecn/issue/LIF-53) |
-| CRUD for posts | [LIF-54](https://linear.app/lifeframecn/issue/LIF-54) |
-| Web vitals / documentation | [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) |
+| Grayscale hover on gallery | [LIF-53](https://linear.app/lifeframecn/issue/LIF-53) ✅ |
+| Web vitals / documentation | [LIF-55](https://linear.app/lifeframecn/issue/LIF-55) ← next |
+| Dark/Light mode | [LIF-29](https://linear.app/lifeframecn/issue/LIF-29) ← next |
+| Infinite scroll / fetch on scroll | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) (deferred) |
+| Who watches / traffic source research | [LIF-57](https://linear.app/lifeframecn/issue/LIF-57) ✅ |
+| Server logging + analytics | [LIF-56](https://linear.app/lifeframecn/issue/LIF-56) ✅ |
+| CRUD for posts | [LIF-54](https://linear.app/lifeframecn/issue/LIF-54) ✅ |

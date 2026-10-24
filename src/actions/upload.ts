@@ -3,7 +3,6 @@
 import {
   type AllowedImageType,
   generateSecureKey,
-  getContentTypeFromKey,
 } from '@/schemas/upload'
 import {
   deleteFromR2,
@@ -76,11 +75,7 @@ export async function finalizeImageUpload(input: {
 
   try {
     const firstBuffer = await getObjectBufferFromR2(firstKey)
-    const thumbnailKey = await uploadThumbnailToR2(
-      firstBuffer,
-      firstKey,
-      getContentTypeFromKey(firstKey),
-    )
+    const thumbnailKey = await uploadThumbnailToR2(firstBuffer, firstKey)
 
     const slug = await generateUniqueSlug(name)
 
