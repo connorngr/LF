@@ -6,6 +6,7 @@ import { SoundCloudPlayer } from "@/components/organisms/SoundCloudPlayer";
 import { SoundCloudTrackProvider } from "@/components/organisms/SoundCloudTrackProvider";
 import { getLatestPostTrackId } from "@/lib/posts";
 import { UmamiScript } from "@/components/organisms/UmamiScript";
+import { themeInitScript } from "@/lib/theme";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -29,8 +30,12 @@ export default async function RootLayout({
   const latestTrackId = await getLatestPostTrackId();
 
   return (
-    <html lang="en" className={cn("dark:bg-background", "font-sans", geist.variable)}>
-      <body className={`${spaceGrotesk.className} antialiased dark:bg-background dark:text-foreground`}>
+    // suppressHydrationWarning: the theme script sets class/style on <html> before hydration.
+    <html lang="en" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className={`${spaceGrotesk.className} antialiased`}>
         <UmamiScript />
         <SoundCloudTrackProvider initialTrackId={latestTrackId}>
           {children}
