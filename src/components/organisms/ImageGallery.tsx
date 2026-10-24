@@ -5,7 +5,7 @@ import { AdminPostTile } from '@/components/molecules/AdminPostTile'
 import { GallerySoundBadge } from '@/components/atoms/GallerySoundBadge'
 import { GalleryPrivateBadge } from '@/components/atoms/GalleryPrivateBadge'
 import { GalleryPinBadge } from '@/components/atoms/GalleryPinBadge'
-import Link from 'next/link'
+import { GalleryTileLink } from '@/components/molecules/GalleryTileLink'
 import Image from 'next/image'
 import { getUrl } from '@/lib/r2'
 
@@ -136,12 +136,10 @@ export async function ImageGallery({ limit = 20, mode = 'view' }: ImageGalleryPr
             const hasStatusBadge = post.isPrivate || post.isPinned
             const src = await getUrl(post.imageUrl)
             return (
-              <Link
+              <GalleryTileLink
                 key={post.slug}
-                href={`/photo/${post.slug}`}
-                data-umami-event="gallery_click"
-                data-umami-event-slug={post.slug}
-                className="group bg-muted relative isolate block overflow-hidden rounded-lg"
+                slug={post.slug}
+                className="group bg-muted relative isolate block overflow-hidden rounded-lg transition-transform duration-150 motion-safe:active:scale-[0.98]"
               >
                 <figure>
                   <div className="relative aspect-photo w-full">
@@ -173,7 +171,7 @@ export async function ImageGallery({ limit = 20, mode = 'view' }: ImageGalleryPr
                     {post.soundCloudTrackId ? <GallerySoundBadge /> : null}
                   </div>
                 </figure>
-              </Link>
+              </GalleryTileLink>
             )
           }),
         )
