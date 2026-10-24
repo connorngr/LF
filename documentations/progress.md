@@ -80,7 +80,7 @@
 | LIF-63 | [Done](https://linear.app/lifeframecn/issue/LIF-63) | LF-036: Gallery by year — sticky year nav, pinned per year (wave 1) | [#21](https://github.com/connorngr/LF/pull/21) |
 | LIF-66 | [Done](https://linear.app/lifeframecn/issue/LIF-66) | LF-039: Add, remove, reorder images on an existing post (wave 1) | [#20](https://github.com/connorngr/LF/pull/20) |
 
-Also merged: Dependabot #9–#12, web vitals #14. Version pins for #9–#11 (they were lockfile no-ops) are in [#19](https://github.com/connorngr/LF/pull/19).
+Also merged: Dependabot #9–#12, web vitals #14. Version pins for #9–#11 (they were lockfile no-ops) are in [#19](https://github.com/connorngr/LF/pull/19). Later Dependabot round: zod 4.6.6 (#22), vite 8.3.5 (#23), undici 7.30.1 (#24), body-parser 2.4.0 (#25; lockfile conflict resolved with a pnpm override).
 
 **Before deploy (manual):** `prisma migrate status` / `migrate deploy` on Neon (`is_private`, `is_pinned`); multi-image upload on real R2 (#16 removed the `1000mb` body limits); modal + Umami `gallery_click` on prod; SoundCloud autoplay after a stored "Play music"; Safari + Firefox; edit a post with real R2 (add to 10, remove the first image, reorder, check the gallery cover and that removed objects are gone from the bucket); year nav on a real phone.
 
