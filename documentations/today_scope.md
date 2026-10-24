@@ -31,8 +31,9 @@ Also merged: Dependabot #9–#12, web vitals #14. Open: [#19](https://github.com
 
 ### Still to do (manual)
 
-- [ ] Merge #19
-- [ ] Mark LIF-65, LIF-61, LIF-29, LIF-62 Done in Linear
+- [x] Merge #19
+- [x] Mark LIF-61, LIF-29, LIF-62 Done in Linear (LIF-65 In Progress)
+- [ ] Fix Vercel env vars: builds fail with "Invalid environment variables" while collecting page data for `/_not-found` (decide whether Preview may use prod Neon/R2)
 - [ ] `prisma migrate status` → `migrate deploy` on Neon (direct URL; Neon branch as backup)
 - [ ] Deploy, then: multi-image upload on real R2; modal + Umami `gallery_click` on prod; SoundCloud autoplay after "Play music"; Safari + Firefox
 - [ ] Ruleset on `main`: turn off "Restrict updates", keep "Require a pull request" (0 approvals), block force pushes / deletions
@@ -46,9 +47,9 @@ Also merged: Dependabot #9–#12, web vitals #14. Open: [#19](https://github.com
 | 1 | [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) Gallery by year (option A, sticky year dividers) | Yes |
 | 1 | [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) Add images to an existing post (10 limit) | Yes |
 | 2 | [LIF-64](https://linear.app/lifeframecn/issue/LIF-64) Business mode (`isBusiness` + contact dialog) | After wave 1 (shares gallery, edit form, schemas) |
-| later | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) Infinite scroll | After LIF-63 |
+| deferred | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) Infinite scroll | Deferred until post count grows; after LIF-63 + LIF-64 |
 
-Start wave 1 with the `parallel-tickets` skill once #19 is merged and the deploy checks pass.
+Wave 1 started with the `parallel-tickets` skill after #19 merged.
 
 ---
 

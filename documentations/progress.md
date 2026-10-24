@@ -69,14 +69,14 @@
 
 ---
 
-## Shipped 2026-10-24 — parallel round (merged to `main`, Linear still Todo)
+## Shipped 2026-10-24 — parallel round (merged to `main`)
 
 | Ticket | Linear | Title | PR |
 |--------|--------|-------|----|
-| LIF-65 | [Todo](https://linear.app/lifeframecn/issue/LIF-65) | LF-038: Env safety audit + Next.js 16.4.1 security upgrade | [#16](https://github.com/connorngr/LF/pull/16) |
-| LIF-61 | [Todo](https://linear.app/lifeframecn/issue/LIF-61) | LF-034: Fix photo modal intercept + loading state | [#17](https://github.com/connorngr/LF/pull/17) |
-| LIF-29 | [Todo](https://linear.app/lifeframecn/issue/LIF-29) | LF-008: Dark/Light mode | [#15](https://github.com/connorngr/LF/pull/15) |
-| LIF-62 | [Todo](https://linear.app/lifeframecn/issue/LIF-62) | LF-035: Persist SoundCloud consent in localStorage | [#18](https://github.com/connorngr/LF/pull/18) |
+| LIF-65 | [In Progress](https://linear.app/lifeframecn/issue/LIF-65) | LF-038: Env safety audit + Next.js 16.4.1 security upgrade | [#16](https://github.com/connorngr/LF/pull/16) |
+| LIF-61 | [Done](https://linear.app/lifeframecn/issue/LIF-61) | LF-034: Fix photo modal intercept + loading state | [#17](https://github.com/connorngr/LF/pull/17) |
+| LIF-29 | [Done](https://linear.app/lifeframecn/issue/LIF-29) | LF-008: Dark/Light mode | [#15](https://github.com/connorngr/LF/pull/15) |
+| LIF-62 | [Done](https://linear.app/lifeframecn/issue/LIF-62) | LF-035: Persist SoundCloud consent in localStorage | [#18](https://github.com/connorngr/LF/pull/18) |
 
 Also merged: Dependabot #9–#12, web vitals #14. Version pins for #9–#11 (they were lockfile no-ops) are in [#19](https://github.com/connorngr/LF/pull/19).
 
@@ -93,7 +93,7 @@ Run with the `parallel-tickets` skill. Waves are split by file ownership, not pr
 | 1 | LIF-63 | [Backlog](https://linear.app/lifeframecn/issue/LIF-63) | LF-036: Gallery by year — sticky year dividers + pinned per year | `ImageGallery.tsx` (`galleryOrderBy`, grouping), new year-nav component | Yes — option A, year = `createdAt` |
 | 1 | LIF-66 | [Backlog](https://linear.app/lifeframecn/issue/LIF-66) | LF-039: Add images to an existing post (keep 10 limit) | `PostEditForm.tsx`, `AdminPostTile.tsx`, `updatePost` in `src/actions/posts.ts`, `src/schemas/post.ts` | Yes — assume up/down buttons for reorder |
 | 2 | LIF-64 | [Backlog](https://linear.app/lifeframecn/issue/LIF-64) | LF-037: Business mode — `isBusiness` + contact dialog | `schema.prisma` + migration, `src/schemas/*`, upload/edit forms, gallery badge, `PersonalInfoHero`, `src/lib/env.ts` | After wave 1 — overlaps LIF-63 (gallery) and LIF-66 (edit form, schemas, actions) |
-| later | LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Infinite scroll / pagination | `ImageGallery.tsx` query | After LIF-63; cursor `(year, isPinned, createdAt, id)` |
+| deferred | LIF-37 | [Backlog](https://linear.app/lifeframecn/issue/LIF-37) | LF-016: Infinite scroll / pagination | `ImageGallery.tsx` query | No — deferred until post count grows; after LIF-63 and LIF-64 (both edit `ImageGallery.tsx`); cursor `(year, isPinned, createdAt, id)` |
 
 **Plan notes**
 - LIF-63: the gallery query lives in `ImageGallery.tsx` (`galleryOrderBy`), not `src/lib/posts.ts` as the ticket says. Assumption: admin `/upload` grid uses the same grouping.
@@ -154,7 +154,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **Synced 2026-08-09:** Marked LIF-55 Done (avatar/WebP/display path; Lighthouse score little changed — stop chasing LCP); LIF-29 remains next
 - **Synced 2026-10-24:** Feature mapping — created LIF-61 (modal intercept bug), LIF-62 (persist dialog prefs), LIF-63 (gallery by year), LIF-64 (business mode, blocked by LIF-62), LIF-65 (env audit), LIF-66 (add images to post); appended year-grouping note to LIF-37
 - **Synced 2026-10-24 (2):** Ordering confirmed — LIF-61, LIF-65, LIF-62 → Todo; LIF-65 → Urgent (Next 16.4.1 security upgrade); LIF-61 adds loading animation; LIF-63 picked option A; LIF-64 rescoped to `isBusiness` + contact dialog, unblocked
-- **2026-10-24 (3), docs only:** LIF-65, LIF-61, LIF-29, LIF-62 merged (#16, #17, #15, #18) — **Linear not yet marked Done**. Next round mapped: wave 1 LIF-63 + LIF-66, wave 2 LIF-64, LIF-37 after LIF-63. No Linear changes made.
+- **Synced 2026-10-24 (3):** LIF-61, LIF-29, LIF-62 merged (#17, #15, #18) and Done in Linear; LIF-65 merged (#16) but In Progress in Linear (Vercel preview env vars still failing builds). Next round mapped: wave 1 LIF-63 + LIF-66 (started via `parallel-tickets`), wave 2 LIF-64 after wave 1 merges, LIF-37 stays deferred.
 - **Canceled (unchanged prior):** LIF-40, LIF-44, LIF-47, LIF-58
 
 ---
