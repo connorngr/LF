@@ -36,6 +36,7 @@ export function UploadForm() {
     defaultValues: {
       isPrivate: false,
       isPinned: false,
+      isBusiness: false,
     },
   })
 
@@ -93,6 +94,7 @@ export function UploadForm() {
         soundCloudUrl: data.soundCloudUrl,
         isPrivate: data.isPrivate === true,
         isPinned: data.isPinned === true,
+        isBusiness: data.isBusiness === true,
         imageKeys: prepareResult.uploads.map((upload) => upload.key),
       })
 
@@ -265,6 +267,21 @@ export function UploadForm() {
         {errors.isPinned ? (
           <p className="text-xs text-destructive">{errors.isPinned.message}</p>
         ) : null}
+      </div>
+
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            {...register('isBusiness')}
+            type="checkbox"
+            className="size-4 rounded border-input"
+            disabled={isSubmitting}
+          />
+          Business
+        </label>
+        <p className="text-xs text-muted-foreground">
+          Marks the post as business work with a badge in the gallery.
+        </p>
       </div>
 
       <Button type="submit" size="sm" disabled={isSubmitting} className="w-full">

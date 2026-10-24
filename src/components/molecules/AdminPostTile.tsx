@@ -5,6 +5,7 @@ import { PostEditForm } from '@/components/molecules/PostEditForm'
 import { GallerySoundBadge } from '@/components/atoms/GallerySoundBadge'
 import { GalleryPrivateBadge } from '@/components/atoms/GalleryPrivateBadge'
 import { GalleryPinBadge } from '@/components/atoms/GalleryPinBadge'
+import { GalleryBusinessBadge } from '@/components/atoms/GalleryBusinessBadge'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +39,7 @@ type AdminPostTileProps = Readonly<{
   hasSoundtrack: boolean
   isPrivate: boolean
   isPinned: boolean
+  isBusiness: boolean
 }>
 
 export function AdminPostTile({
@@ -50,6 +52,7 @@ export function AdminPostTile({
   hasSoundtrack,
   isPrivate,
   isPinned,
+  isBusiness,
 }: AdminPostTileProps) {
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
@@ -106,6 +109,7 @@ export function AdminPostTile({
                   +{imageCount}
                 </span>
               ) : null}
+              {isBusiness ? <GalleryBusinessBadge besideSoundBadge={hasSoundtrack} /> : null}
               {hasSoundtrack ? <GallerySoundBadge /> : null}
             </div>
           </figure>
@@ -149,7 +153,7 @@ export function AdminPostTile({
           <DialogHeader>
             <DialogTitle>Edit post</DialogTitle>
             <DialogDescription>
-              Update the name, caption, images, privacy, pin, or soundtrack. Renaming changes the public URL slug.
+              Update the name, caption, images, privacy, pin, business tag, or soundtrack. Renaming changes the public URL slug.
             </DialogDescription>
           </DialogHeader>
           <PostEditForm
@@ -159,6 +163,7 @@ export function AdminPostTile({
             hasExistingTrack={hasSoundtrack}
             isPrivate={isPrivate}
             isPinned={isPinned}
+            isBusiness={isBusiness}
             onSuccess={() => {
               setEditOpen(false)
               router.refresh()

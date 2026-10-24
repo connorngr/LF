@@ -36,7 +36,7 @@ vi.mock('@/lib/r2', () => ({
   }),
 }))
 
-const { updatePostImages } = await import('@/actions/posts')
+const { updatePost, updatePostImages } = await import('@/actions/posts')
 const { isAuthenticated } = await import('@/lib/auth')
 
 const POST_ID = '11111111-1111-4111-8111-111111111111'
@@ -137,5 +137,42 @@ describe('updatePostImages', () => {
     const result = await updatePostImages({ postId: POST_ID, order: [{ kind: 'existing', id: IMG_B }] })
     expect(result).toEqual({ error: 'Failed to update images. Please try again.' })
     expect(calls).toEqual(['thumbnail:images/2-bbb.jpg', 'delete:thumbnails/2-bbb.webp'])
+  })
+})
+
+describe('updatePost isBusiness', () => {
+  beforeEach(() => {
+    prismaMock.post.update.mockClear()
+    prismaMock.post.findUnique.mockResolvedValue({
+      id: POST_ID,
+      name: 'Studio',
+      slug: 'studio',
+      soundCloudTrackId: null,
+    })
+  })
+
+  it('persists isBusiness together with pinned', async () => {
+    const result = await updatePost({
+      postId: POST_ID,
+      name: 'Studio',
+      caption: 'Client shoot',
+      isPinned: true,
+      isBusiness: true,
+    })
+
+    expect(result).toEqual({ success: true, newSlug: undefined })
+    expect(prismaMock.post.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ isBusiness: true, isPinned: true }),
+      }),
+    )
+  })
+
+  it('clears isBusiness when omitted', async () => {
+    await updatePost({ postId: POST_ID, name: 'Studio', caption: 'Client shoot' })
+
+    expect(prismaMock.post.update).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ isBusiness: false }) }),
+    )
   })
 })

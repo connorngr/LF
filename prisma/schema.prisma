@@ -15,6 +15,7 @@ model Post {
   caption   String
   isPrivate Boolean  @default(false) @map("is_private")
   isPinned  Boolean  @default(false) @map("is_pinned")
+  isBusiness Boolean @default(false) @map("is_business")
   createdAt DateTime @default(now()) @map("created_at")
   images    Image[]
 

@@ -3,11 +3,13 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ProfileMottoMarkdown } from '@/components/molecules/ProfileMottoMarkdown'
+import { ContactDialog } from '@/components/molecules/ContactDialog'
 import {
   profileName,
   profileHandle,
   avatarUrl,
   profileMottoMarkdown,
+  contactEmails,
 } from '@/lib/env'
 import { prisma } from '@/lib/prisma'
 import { isAuthenticated } from '@/lib/auth'
@@ -33,9 +35,12 @@ export async function PersonalInfoHero() {
             </Avatar>
           </Link>
           <div className="min-w-0 flex-1 space-y-2 md:space-y-3">
-            <h1 className="font-heading text-xl leading-tight tracking-tight md:text-2xl">
-              {profileName}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="font-heading text-xl leading-tight tracking-tight md:text-2xl">
+                {profileName}
+              </h1>
+              {contactEmails.length > 0 ? <ContactDialog emails={contactEmails} /> : null}
+            </div>
             <div className="flex flex-row flex-wrap items-center gap-x-3 gap-y-1 text-sm">
               <span className="text-muted-foreground">@{profileHandle}</span>
               <span aria-hidden className="text-muted-foreground/60">
