@@ -21,8 +21,17 @@ type GalleryMode = 'view' | 'edit'
 // the posts are picked here in SQL and ordered for display by groupPostsByYear.
 // LIF-37: paginate with the cursor (year, isPinned, createdAt, id) taken from
 // the last row, i.e. continue with rows that sort after it in this ORDER BY.
-async function getGalleryPostIds(limit: number, includePrivate: boolean): Promise<string[]> {
-  const where = includePrivate ? Prisma.empty : Prisma.sql`WHERE is_private = false`
+async function getGalleryPostIds(
+  limit: number,
+  includePrivate: boolean,
+  businessOnly: boolean,
+): Promise<string[]> {
+  const conditions = [
+    ...(includePrivate ? [] : [Prisma.sql`is_private = false`]),
+    ...(businessOnly ? [Prisma.sql`is_business = true`] : []),
+  ]
+  const where =
+    conditions.length > 0 ? Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}` : Prisma.empty
   const rows = await prisma.$queryRaw<{ id: string }[]>`
     SELECT id FROM posts
     ${where}
@@ -62,20 +71,27 @@ async function getLatestPosts(
   limit: number,
   mode: 'edit',
   includePrivate: boolean,
+  businessOnly: boolean,
 ): Promise<EditPostSummary[]>
 async function getLatestPosts(
   limit: number,
   mode: 'view',
   includePrivate: boolean,
+  businessOnly: boolean,
 ): Promise<ViewPostSummary[]>
 async function getLatestPosts(
   limit: number,
   mode: GalleryMode,
   includePrivate: boolean,
+  businessOnly: boolean,
 ): Promise<EditPostSummary[] | ViewPostSummary[]> {
-  const ids = await getGalleryPostIds(limit, includePrivate)
+  const ids = await getGalleryPostIds(limit, includePrivate, businessOnly)
   if (ids.length === 0) return []
-  const where = includePrivate ? { id: { in: ids } } : { id: { in: ids }, isPrivate: false }
+  const where = {
+    id: { in: ids },
+    ...(includePrivate ? {} : { isPrivate: false }),
+    ...(businessOnly ? { isBusiness: true } : {}),
+  }
 
   if (mode === 'edit') {
     return prisma.post.findMany({
@@ -197,20 +213,30 @@ function renderYearSections<T>(
 type ImageGalleryProps = Readonly<{
   limit?: number
   mode?: GalleryMode
+  /** View mode only: show business posts only (`/?mode=business`). */
+  businessOnly?: boolean
 }>
 
-export async function ImageGallery({ limit = 20, mode = 'view' }: ImageGalleryProps) {
+export async function ImageGallery({
+  limit = 20,
+  mode = 'view',
+  businessOnly = false,
+}: ImageGalleryProps) {
   const includePrivate = await isAuthenticated()
   const posts =
     mode === 'edit'
-      ? await getLatestPosts(limit, 'edit', includePrivate)
-      : await getLatestPosts(limit, 'view', includePrivate)
+      ? await getLatestPosts(limit, 'edit', includePrivate, false)
+      : await getLatestPosts(limit, 'view', includePrivate, businessOnly)
 
   if (posts.length === 0) {
     return (
       <section className="space-y-3">
         <h2 className="font-heading text-xl">Photo grid</h2>
-        <p className="text-sm text-muted-foreground">No posts have been uploaded yet.</p>
+        <p className="text-sm text-muted-foreground">
+          {businessOnly && mode === 'view'
+            ? 'No business posts yet.'
+            : 'No posts have been uploaded yet.'}
+        </p>
       </section>
     )
   }
