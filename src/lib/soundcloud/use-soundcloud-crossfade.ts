@@ -29,6 +29,7 @@ export function useSoundCloudCrossfade(
   const [mountTrackId, setMountTrackId] = useState<string | null>(null);
   const playingTrackRef = useRef<string | null>(null);
   const latestTrackRef = useRef<string | null>(trackId);
+  const consentRef = useRef(consent);
   const transitionGenerationRef = useRef(0);
   const activeWidgetRef = useRef<ActiveWidget | null>(null);
   const activeRampAbortRef = useRef<(() => void) | null>(null);
@@ -42,6 +43,10 @@ export function useSoundCloudCrossfade(
   useEffect(() => {
     latestTrackRef.current = trackId;
   }, [trackId]);
+
+  useEffect(() => {
+    consentRef.current = consent;
+  }, [consent]);
 
   const abortActiveRamp = () => {
     activeRampAbortRef.current?.();
@@ -164,24 +169,23 @@ export function useSoundCloudCrossfade(
     }
   };
 
+  const shouldDrain = () =>
+    consentRef.current === SoundCloudConsent.Granted &&
+    latestTrackRef.current !== null &&
+    playingTrackRef.current !== latestTrackRef.current;
+
   const drainTransitions = async () => {
     if (isDrainingRef.current) return;
     isDrainingRef.current = true;
 
     try {
-      while (
-        latestTrackRef.current &&
-        playingTrackRef.current !== latestTrackRef.current
-      ) {
+      while (shouldDrain() && latestTrackRef.current) {
         await runTransition(latestTrackRef.current);
       }
     } finally {
       isDrainingRef.current = false;
 
-      if (
-        latestTrackRef.current &&
-        playingTrackRef.current !== latestTrackRef.current
-      ) {
+      if (shouldDrain()) {
         void drainTransitionsRef.current();
       }
     }
@@ -200,6 +204,19 @@ export function useSoundCloudCrossfade(
 
     void drainTransitionsRef.current();
   }, [consent, trackId]);
+
+  // Turning music off unmounts the iframe (the player only renders it while
+  // consent is granted); cancel in-flight work and forget the playing track
+  // so turning it back on starts a fresh transition.
+  useEffect(() => {
+    if (consent === SoundCloudConsent.Granted) return;
+
+    transitionGenerationRef.current += 1;
+    playingTrackRef.current = null;
+    abortActiveRamp();
+    clearActiveWidget();
+    iframeRef.current = null;
+  }, [consent]);
 
   useEffect(() => {
     return () => {
