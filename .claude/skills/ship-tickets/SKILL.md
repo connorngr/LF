@@ -1,30 +1,21 @@
 ---
 name: ship-tickets
-description: Work several LifeFrame Linear tickets in parallel cloud sessions (one ticket per session, one PR each), then fold all open PRs (Dependabot first) into one integration branch, build and browser-test it, and report what needs a human. Use when the user asks to "handle these tickets at the same time", "run sessions in parallel", "merge all the PRs into a branch and test it", or names several LIF tickets to ship together.
+description: Fold all open LifeFrame PRs (Dependabot first, then ticket PRs) into one integration branch, build and browser-test it against a local Postgres, merge them into main in dependency order, and report what needs a human. Use when the user asks to "merge all the PRs into a branch and test it", "integrate the PRs", or to ship a finished wave. Starting the ticket sessions themselves is the parallel-tickets skill.
 ---
 
-# Ship tickets in parallel, then integrate and test
+# Integrate, test and merge ticket PRs
 
-Two phases. Run phase 1 only when there are tickets to implement; run phase 2 whenever the user wants the open PRs combined and tested.
+Phase 1 (starting ticket sessions) lives in the `parallel-tickets` skill. This skill is mainly phase 2: combining, testing and merging the PRs.
 
 ## 0. Preflight (always)
 
 - `check_repo_access` for `connorngr/LF`. If push is refused (`repo_not_connected`), stop and send the user to https://claude.ai/connect-github (install the Claude GitHub App if missing). Sessions started without push access finish their work but cannot push or open PRs.
-- Find the freshest base: `git fetch origin` and compare `origin/main` with any unmerged `chore/*` / `perf/*` branches that carry newer `documentations/progress.md`. Start sessions from the newest one and say so in every PR.
+- Find the freshest base: `git fetch origin` and compare `origin/main` with any unmerged `chore/*` / `perf/*` branches that carry newer `documentations/progress.md`. Merge the newest one into the integration branch before the ticket branches.
 - Read `documentations/progress.md` and the Linear issues (`get_issue`) for each ticket so briefs name real files.
 
 ## 1. Dispatch (one session per ticket)
 
-Ask once (`AskUserQuestion`, multiSelect) which tickets to run and whether each session should open a PR. Then `create_session` for each, all in one message:
-
-- `source_url` https://github.com/connorngr/LF, `source_revision` = base from step 0, `outcome_branch` = `claude/lif-<N>-<slug>`.
-- Brief = goal, files to read, scope checklist from the ticket, verify commands, deliverable. Always include:
-  - Which other tickets run in parallel and which files each one owns, so they stay out of each other's way (e.g. one session owns `src/lib/visitor-prefs.ts`; another stores theme under its own key).
-  - Verify: `pnpm typecheck`, `pnpm lint`, `pnpm test:run`, and `next build` if env allows.
-  - "Open a PR against `main`; note the base branch; no emojis; do not merge; do not update Linear; list what you could not verify."
-- Tell the user the session table, the expected conflicts, and that finished sessions do not report back. Arm one `send_later` check-in (~30 min).
-
-On check-in: `get_session` each (status_bucket), then `list_events` with `kinds: ["result"]` for the final summary. If pushes failed, fix access, then `send_message` each session to push and open its PR.
+Use the `parallel-tickets` skill. It checks that the plan and tickets are current and clear, splits tickets into waves with no shared files, and starts one session per ticket. If a session's push failed, fix access, then `send_message` that session to push and open its PR.
 
 ## 2. Integrate and test
 
