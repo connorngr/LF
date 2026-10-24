@@ -100,7 +100,7 @@ Run with the `parallel-tickets` skill. Waves are split by file ownership, not pr
 - LIF-64: needs a Vercel env var for the contact emails and a Neon migration — both manual. Make the env var optional and hide the contact icon when it is unset, so builds without it do not fail. Defaults from the ticket: business + pinned allowed, business + private allowed. No dependency on LIF-62. `PersonalInfoHero` is a server component, so read env there and pass the emails to the client dialog.
 
 **Follow-ups found 2026-10-24 (not ticketed yet)**
-- CI on PRs (`typecheck`, `lint`, `test:run`, `build`) — slice of LIF-38; would have caught the duplicate vitest configs.
+- CI on PRs (`typecheck`, `lint`, `test:run`, `build`) — slice of LIF-38; workflow added on `claude/lif-65-next-upgrade` (follow-up PR to #16). Test gaps mapped in [LIF-67](https://linear.app/lifeframecn/issue/LIF-67).
 - Admin auth: plaintext password compare; sessions only revocable by changing the password (from LIF-65 audit).
 - Theme preference could reuse `src/lib/visitor-prefs.ts` (left out of LIF-62 to avoid touching LIF-29).
 - Display-size WebP derivatives (`displays/`) and `scripts/backfill-display-images.ts` described for LIF-55 were never committed (no commit on any branch contains them). Detail and the LIF-66 edit dialog load full-size originals through signed URLs. Re-ticket if wanted.
@@ -152,6 +152,7 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 - **Synced 2026-08-09:** Marked LIF-55 Done (avatar/WebP/display path; Lighthouse score little changed — stop chasing LCP); LIF-29 remains next
 - **Synced 2026-10-24:** Feature mapping — created LIF-61 (modal intercept bug), LIF-62 (persist dialog prefs), LIF-63 (gallery by year), LIF-64 (business mode, blocked by LIF-62), LIF-65 (env audit), LIF-66 (add images to post); appended year-grouping note to LIF-37
 - **Synced 2026-10-24 (2):** Ordering confirmed — LIF-61, LIF-65, LIF-62 → Todo; LIF-65 → Urgent (Next 16.4.1 security upgrade); LIF-61 adds loading animation; LIF-63 picked option A; LIF-64 rescoped to `isBusiness` + contact dialog, unblocked
+- **Synced 2026-10-24 (5):** Created LIF-67 (LF-040 test mapping, Backlog, High, related LIF-38 / LIF-65); appended CI note to LIF-38 (GitHub Actions workflow in the follow-up PR to #16)
 - **Synced 2026-10-24 (4):** Wave 1 merged (#21 LIF-63, #20 LIF-66) and marked Done in Linear with PR links. LIF-64 is next (wave 2); LIF-37 stays deferred.
 - **Synced 2026-10-24 (3):** LIF-61, LIF-29, LIF-62 merged (#17, #15, #18) and Done in Linear; LIF-65 merged (#16) but In Progress in Linear (Vercel preview env vars still failing builds). Next round mapped: wave 1 LIF-63 + LIF-66 (started via `parallel-tickets`), wave 2 LIF-64 after wave 1 merges, LIF-37 stays deferred.
 - **Canceled (unchanged prior):** LIF-40, LIF-44, LIF-47, LIF-58
@@ -202,3 +203,5 @@ Cursor-based pagination: as the user scrolls the gallery, fetch and append more 
 | Is our env safe? | [LIF-65](https://linear.app/lifeframecn/issue/LIF-65) (merged) |
 | Add more images (to existing post, keep 10 limit) | [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) (wave 1) |
 | Pagination handling | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) (existing) |
+| Map tests for the repo | [LIF-67](https://linear.app/lifeframecn/issue/LIF-67) |
+| Improve CI (lint, tests, build) | [LIF-38](https://linear.app/lifeframecn/issue/LIF-38) (existing; workflow in follow-up PR) |

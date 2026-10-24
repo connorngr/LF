@@ -56,7 +56,7 @@ Wave 1 ran with the `parallel-tickets` skill after #19 merged; combined with `sh
 
 ## Defer until later
 
-- CI on PRs (slice of LIF-38)
+- CI on PRs (slice of LIF-38) — workflow in review; test gap mapping in LIF-67
 - Admin auth hardening (plaintext compare, session revocation)
 - Theme pref via `visitor-prefs.ts`
 - Display-size image derivatives (LIF-55 described them, but they were never committed)
