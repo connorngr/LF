@@ -26,6 +26,7 @@
  * @see {@link https://github.com/colinhacks/zod Zod documentation}
  */
 
+import 'server-only'
 import { z } from 'zod'
 
 export const defaultProfileMottoMarkdown =
