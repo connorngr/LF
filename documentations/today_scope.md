@@ -36,20 +36,21 @@ Also merged: Dependabot #9–#12, web vitals #14. Open: [#19](https://github.com
 - [ ] Fix Vercel env vars: builds fail with "Invalid environment variables" while collecting page data for `/_not-found` (decide whether Preview may use prod Neon/R2)
 - [ ] `prisma migrate status` → `migrate deploy` on Neon (direct URL; Neon branch as backup)
 - [ ] Deploy, then: multi-image upload on real R2; modal + Umami `gallery_click` on prod; SoundCloud autoplay after "Play music"; Safari + Firefox
+- [ ] With real R2: edit a post (add to 10, remove the first image, reorder) and check cover + bucket cleanup (LIF-66); year nav on a real phone (LIF-63)
 - [ ] Ruleset on `main`: turn off "Restrict updates", keep "Require a pull request" (0 approvals), block force pushes / deletions
 
 ---
 
-## Second window — Next feature round (mapped, not started)
+## Second window — Next feature round
 
 | Wave | Ticket | Ready? |
 |------|--------|--------|
-| 1 | [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) Gallery by year (option A, sticky year dividers) | Yes |
-| 1 | [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) Add images to an existing post (10 limit) | Yes |
-| 2 | [LIF-64](https://linear.app/lifeframecn/issue/LIF-64) Business mode (`isBusiness` + contact dialog) | After wave 1 (shares gallery, edit form, schemas) |
+| 1 | [LIF-63](https://linear.app/lifeframecn/issue/LIF-63) Gallery by year (option A, sticky year dividers) | Merged [#21](https://github.com/connorngr/LF/pull/21), Done |
+| 1 | [LIF-66](https://linear.app/lifeframecn/issue/LIF-66) Add images to an existing post (10 limit) | Merged [#20](https://github.com/connorngr/LF/pull/20), Done |
+| 2 | [LIF-64](https://linear.app/lifeframecn/issue/LIF-64) Business mode (`isBusiness` + contact dialog) | Started after wave 1 merged |
 | deferred | [LIF-37](https://linear.app/lifeframecn/issue/LIF-37) Infinite scroll | Deferred until post count grows; after LIF-63 + LIF-64 |
 
-Wave 1 started with the `parallel-tickets` skill after #19 merged.
+Wave 1 ran with the `parallel-tickets` skill after #19 merged; combined with `ship-tickets` and verified (64 unit tests, build, Playwright: year sections/nav, admin grid, edit dialog reorder saved to DB) before merging.
 
 ---
 
@@ -58,5 +59,5 @@ Wave 1 started with the `parallel-tickets` skill after #19 merged.
 - CI on PRs (slice of LIF-38)
 - Admin auth hardening (plaintext compare, session revocation)
 - Theme pref via `visitor-prefs.ts`
-- Display-image backfill script (LIF-55 follow-up)
+- Display-size image derivatives (LIF-55 described them, but they were never committed)
 - Rate limiting / CAPTCHA (LIF-51, LIF-52), stress test (LIF-50), advanced auth (LIF-41), blog (LIF-42)
